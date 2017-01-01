@@ -1,0 +1,43 @@
+plugins {
+    id "com.jfrog.bintray" version "1.7"
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'groovy'
+
+jar {
+	baseName = 'fint-portal-api'
+	version = '0.0.1-SNAPSHOT'
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+	jcenter()
+	repositories {
+		maven {
+			url "http://dl.bintray.com/rfkikt/maven"
+		}
+	}
+}
+
+apply from: 'https://raw.githubusercontent.com/FINTprosjektet/fint-buildscripts/master/dependencies.gradle'
+dependencies {
+
+    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
+	compile('org.springframework.ldap:spring-ldap-core:2.2.1.RELEASE')
+
+	compile("com.github.springfox.loader:springfox-loader:${springfoxLoaderVersion}")
+	compile('no.rogfk:spring-hateoas-hal-extension:0.0.6')
+
+	//runtime('org.springframework.boot:spring-boot-devtools')
+	compileOnly("org.projectlombok:lombok:${lombokVersion}")
+	testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+    testCompile("org.spockframework:spock-spring:${spockSpringVersion}")
+}
+
+if (project.hasProperty('bintrayUser') && project.hasProperty('bintrayKey')) {
+    apply from: 'https://raw.githubusercontent.com/FINTprosjektet/fint-buildscripts/master/bintray.gradle'
+}
