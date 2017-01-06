@@ -1,4 +1,4 @@
-package no.fint.portal.model;
+package no.fint.portal.ldap;
 
 import org.springframework.ldap.odm.annotations.Entry;
 
@@ -6,9 +6,9 @@ import javax.naming.Name;
 
 @Entry(objectClasses = "")
 public interface BasicLdapEntry {
-  String getDn();
+    String getDn();
 
-  void setDn(Name dn);
+    void setDn(String dn);
 
-  void setDn(String dn);
+    void setDn(Name dn);
 }
