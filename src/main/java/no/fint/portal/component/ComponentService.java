@@ -18,9 +18,6 @@ public class ComponentService {
     @Autowired
     private LdapService ldapService;
 
-    //@Autowired
-    //private ObjectService objectService;
-
     @Autowired
     private ComponentObjectService componentObjectService;
 
@@ -30,6 +27,7 @@ public class ComponentService {
     @Autowired
     private AdapterObjectService adapterObjectService;
 
+    @Autowired
     private ClientObjectService clientObjectService;
 
     @Value("${fint.ldap.component-base}")

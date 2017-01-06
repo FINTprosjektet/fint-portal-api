@@ -17,12 +17,12 @@ public class OrganisationService {
     @Autowired
     OrganisationObjectService organisationObjectService;
 
-    //@Autowired
-    //private ObjectService objectService;
     @Autowired
     ContactObjectService contactObjectService;
+
     @Autowired
     private LdapService ldapService;
+
     @Value("${fint.ldap.organisation-base}")
     private String organisationBase;
 
