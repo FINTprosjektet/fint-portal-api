@@ -57,7 +57,7 @@ public class LdapService {
         return ((BasicLdapEntry) getEntryByUniqueName(name, base, type)).getDn();
     }
 
-    private boolean entryExists(String dn) {
+    public boolean entryExists(String dn) {
         try {
             ldapTemplate.lookup(LdapNameBuilder.newInstance(dn).build());
             return true;

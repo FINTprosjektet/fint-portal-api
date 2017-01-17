@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +51,20 @@ public class ComponentService {
 
     public List<Component> getComponents() {
         return ldapService.getAll(componentBase, Component.class);
+    }
+
+    // TODO: 17.01.2017 Refactor this method and add tests
+    public List<Component> getComponentsByOrgUUID(String uuid) {
+        List<Component> components = getComponents();
+        List<Component> orgComponents = new ArrayList<>();
+        components.forEach(component -> {
+            String dn = component.getDn();
+            String orgDn = String.format("ou=%s,%s", uuid, dn);
+            if (ldapService.entryExists(orgDn)) {
+                orgComponents.add(component);
+            }
+        });
+        return orgComponents;
     }
 
   /*
