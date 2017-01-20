@@ -123,7 +123,7 @@ public class ComponentService {
         }
 
         List<Adapter> adapters = getAdapters(componentUuid, organistionUuid);
-        if (adapters != null) {
+        if (adapters != null && adapters.size() > 0) {
             adapters.forEach(adapter -> ldapService.deleteEntry(adapter));
         }
 
