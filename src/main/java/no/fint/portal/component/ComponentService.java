@@ -2,6 +2,7 @@ package no.fint.portal.component;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.portal.ldap.LdapService;
+import no.fint.portal.organisation.Organisation;
 import no.fint.portal.utilities.LdapConstants;
 import no.fint.portal.utilities.PasswordUtility;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,13 +138,13 @@ public class ComponentService {
         ldapService.deleteEntry(organisationContainer);
     }
 
-    public boolean addClient(Client client, String compUuid, String orgUuid) {
-        clientObjectService.setupClient(client, compUuid, orgUuid);
+    public boolean addClient(Client client, String compUuid, Organisation organisation) {
+        clientObjectService.setupClient(client, compUuid, organisation);
         return ldapService.createEntry(client);
     }
 
-    public boolean addAdapter(Adapter adapter, String compUuid, String orgUuid) {
-        adapterObjectService.setupAdapter(adapter, compUuid, orgUuid);
+    public boolean addAdapter(Adapter adapter, String compUuid, Organisation organisation) {
+        adapterObjectService.setupAdapter(adapter, compUuid, organisation);
         return ldapService.createEntry(adapter);
     }
 
@@ -186,12 +187,12 @@ public class ComponentService {
     }
 
     public void resetClientPassword(Client client) {
-        client.setPassword(PasswordUtility.newPassword());
+        client.setSecret(PasswordUtility.newPassword());
         ldapService.updateEntry(client);
     }
 
     public void resetAdapterPassword(Adapter adapter) {
-        adapter.setPassword(PasswordUtility.newPassword());
+        adapter.setSecret(PasswordUtility.newPassword());
         ldapService.updateEntry(adapter);
     }
 }

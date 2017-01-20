@@ -1,5 +1,6 @@
 package no.fint.portal.component
 
+import no.fint.portal.organisation.Organisation
 import spock.lang.Specification
 
 class AdapterObjectServiceSpec extends Specification {
@@ -34,10 +35,10 @@ class AdapterObjectServiceSpec extends Specification {
 
 
         when:
-        adapterObjectService.setupAdapter(adapter, "compUuid", "orgUuid")
+        adapterObjectService.setupAdapter(adapter, "compUuid", new Organisation(orgId: "test.no", uuid: "uuid"))
 
         then:
-        adapter.password != null
+        adapter.secret != null
         adapter.dn != null
         adapter.uuid != null
     }

@@ -1,5 +1,6 @@
 package no.fint.portal.component
 
+import no.fint.portal.organisation.Organisation
 import spock.lang.Specification
 
 class ClientObjectServiceSpec extends Specification {
@@ -14,7 +15,7 @@ class ClientObjectServiceSpec extends Specification {
         def client = new Client()
 
         when:
-        clientObjectService.setupClient(client, "compUuid", "orgUuid")
+        clientObjectService.setupClient(client, "compUuid",  new Organisation(orgId: "test.no", uuid: "orgUuid"))
 
         then:
         client.password != null

@@ -1,5 +1,6 @@
 package no.fint.portal.component;
 
+import no.fint.portal.organisation.Organisation;
 import no.fint.portal.utilities.LdapConstants;
 import no.fint.portal.utilities.PasswordUtility;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,14 +16,15 @@ public class ClientObjectService {
     @Value("${fint.ldap.component-base}")
     private String componentBase;
 
-    public void setupClient(Client client, String compUuid, String orgUuid) {
+    public void setupClient(Client client, String compUuid, Organisation organisation) {
         client.setUuid(UUID.randomUUID().toString());
         client.setDn(
-                LdapNameBuilder.newInstance(getClientBase(compUuid, orgUuid))
+                LdapNameBuilder.newInstance(getClientBase(compUuid, organisation.getUuid()))
                         .add(LdapConstants.CN, client.getUuid())
                         .build()
         );
-        client.setPassword(PasswordUtility.newPassword());
+        client.setOrgId(organisation.getOrgId());
+        client.setSecret(PasswordUtility.newPassword());
     }
 
     public Name getClientBase(String compUuid, String orgUuid) {

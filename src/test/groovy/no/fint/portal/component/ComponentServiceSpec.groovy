@@ -1,6 +1,7 @@
 package no.fint.portal.component
 
 import no.fint.portal.ldap.LdapService
+import no.fint.portal.organisation.Organisation
 import no.fint.portal.testutils.ObjectFactory
 import spock.lang.Specification
 
@@ -102,7 +103,7 @@ class ComponentServiceSpec extends Specification {
         def client = ObjectFactory.newClient()
 
         when:
-        def created = componentService.addClient(client, UUID.randomUUID().toString(), UUID.randomUUID().toString())
+        def created = componentService.addClient(client, UUID.randomUUID().toString(),  new Organisation(orgId: "test.no", uuid: "uuid"))
 
         then:
         created == true
@@ -116,7 +117,7 @@ class ComponentServiceSpec extends Specification {
         def adapter = ObjectFactory.newAdapter()
 
         when:
-        def created = componentService.addAdapter(adapter, UUID.randomUUID().toString(), UUID.randomUUID().toString())
+        def created = componentService.addAdapter(adapter, UUID.randomUUID().toString(),  new Organisation(orgId: "test.no", uuid: "uuid"))
 
         then:
         created == true
@@ -215,7 +216,7 @@ class ComponentServiceSpec extends Specification {
         componentService.resetAdapterPassword(adapter)
 
         then:
-        adapter.password != null
+        adapter.secret != null
         1 * ldapService.updateEntry(_ as Adapter)
     }
 }
