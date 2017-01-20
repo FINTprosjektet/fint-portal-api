@@ -19,7 +19,7 @@ public class LdapConfiguration {
         LdapContextSource contextSource = new LdapContextSource();
         contextSource.setUrl(env.getRequiredProperty("fint.ldap.url"));
         contextSource.setUserDn(env.getRequiredProperty("fint.ldap.user"));
-        contextSource.setPassword(env.getRequiredProperty("fint.ldap.secret"));
+        contextSource.setPassword(env.getRequiredProperty("fint.ldap.password"));
         return contextSource;
     }
 
