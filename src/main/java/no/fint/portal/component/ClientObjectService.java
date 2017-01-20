@@ -24,7 +24,7 @@ public class ClientObjectService {
                         .build()
         );
         client.setOrgId(organisation.getOrgId());
-        client.setSecret(PasswordUtility.newPassword());
+        client.setSecret(PasswordUtility.generateSecret());
     }
 
     public Name getClientBase(String compUuid, String orgUuid) {

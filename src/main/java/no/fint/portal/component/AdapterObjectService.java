@@ -24,7 +24,7 @@ public class AdapterObjectService {
                         .build()
         );
         adapter.setOrgId(organisation.getOrgId());
-        adapter.setSecret(PasswordUtility.newPassword());
+        adapter.setSecret(PasswordUtility.generateSecret());
     }
 
     public Name getAdapterBase(String compUuid, String orgUuid) {

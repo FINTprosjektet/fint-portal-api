@@ -187,12 +187,12 @@ public class ComponentService {
     }
 
     public void resetClientPassword(Client client) {
-        client.setSecret(PasswordUtility.newPassword());
+        client.setSecret(PasswordUtility.generateSecret());
         ldapService.updateEntry(client);
     }
 
     public void resetAdapterPassword(Adapter adapter) {
-        adapter.setSecret(PasswordUtility.newPassword());
+        adapter.setSecret(PasswordUtility.generateSecret());
         ldapService.updateEntry(adapter);
     }
 }
