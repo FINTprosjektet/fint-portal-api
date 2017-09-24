@@ -1,9 +1,15 @@
 package no.fint.portal.component;
 
 import lombok.extern.slf4j.Slf4j;
+import no.fint.portal.adapter.Adapter;
+import no.fint.portal.client.Client;
 import no.fint.portal.ldap.LdapService;
+import no.fint.portal.organisation.Organisation;
+import no.fint.portal.organisation.OrganisationService;
+import no.fint.portal.utilities.LdapConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,6 +25,9 @@ public class ComponentService {
 
     @Autowired
     private ComponentObjectService componentObjectService;
+
+    @Autowired
+    private OrganisationService organisationService;
 
     @Value("${fint.ldap.component-base}")
     private String componentBase;
@@ -57,7 +66,7 @@ public class ComponentService {
     }
 
     public Optional<Component> getComponentByUUID(String uuid) {
-        String dn = componentObjectService.getComponentDnByUUID(uuid);
+        String dn = getComponentDnByUUID(uuid);
 
         return Optional.ofNullable(ldapService.getEntry(dn, Component.class));
     }
@@ -66,12 +75,60 @@ public class ComponentService {
         ldapService.deleteEntry(component);
     }
 
-    public void addOrganisationToComponent(String componentUuid, String organistionUuid) {
-
-    }
 
     public void removeOrganisationFromComponent(String componentUuid, String organistionUuid) {
 
     }
 
+    public String getComponentDnByUUID(String uuid) {
+        if (uuid != null) {
+            return LdapNameBuilder.newInstance(componentBase)
+                    .add(LdapConstants.OU, uuid)
+                    .build().toString();
+        }
+        return null;
+    }
+
+    public void linkOrganisation(Component component, Organisation organisation) {
+
+
+        component.addOrganisation(organisation.getDn());
+
+        ldapService.updateEntry(component);
+    }
+
+    public void unLinkOrganisation(Component component, Organisation organisation) {
+
+        component.removeOrganisation(organisation.getDn());
+
+        ldapService.updateEntry(component);
+    }
+
+    public void linkClient(Component component, Client client) {
+
+        component.addClient(client.getDn());
+
+        ldapService.updateEntry(component);
+    }
+
+    public void unLinkClient(Component component, Client client) {
+
+        component.removeClient(client.getDn());
+
+        ldapService.updateEntry(component);
+    }
+
+    public void linkAdapter(Component component, Adapter adapter) {
+
+        component.addAdapter(adapter.getDn());
+
+        ldapService.updateEntry(component);
+    }
+
+    public void unLinkAdapter(Component component, Adapter adapter) {
+
+        component.removeAdapter(adapter.getDn());
+
+        ldapService.updateEntry(component);
+    }
 }

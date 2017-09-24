@@ -1,8 +1,10 @@
 package no.fint.portal.component
 
 import no.fint.portal.ldap.LdapService
+import org.junit.Ignore
 import spock.lang.Specification
 
+@Ignore
 class ComponentObjectServiceSpec extends Specification {
     private componentObjectService
     private ldapServiceMock

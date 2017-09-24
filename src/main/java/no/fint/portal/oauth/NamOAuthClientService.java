@@ -2,7 +2,6 @@ package no.fint.portal.oauth;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -68,7 +67,7 @@ public class NamOAuthClientService {
         HttpEntity request = new HttpEntity(jsonOAuthClient, headers);
 
 
-        String response = restTemplate.postForObject(String.format(NamOAuthConstants.CLIENT_API_URL_TEMPLATE, idpHostname), request, String.class);
+        String response = restTemplate.postForObject(String.format(NamOAuthConstants.CLIENT_REGISTRATION_URL_TEMPLATE, idpHostname), request, String.class);
 
         try {
             return mapper.readValue(response, OAuthClient.class);
@@ -76,5 +75,16 @@ public class NamOAuthClientService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public void removeOAuthClient(String clientId) {
+
+        restTemplate.delete(String.format(NamOAuthConstants.CLIENT_URL_TEMPLATE, idpHostname, clientId));
+
+    }
+
+    public OAuthClient getOAuthClient(String clientId) {
+
+        return restTemplate.getForObject(String.format(NamOAuthConstants.CLIENT_URL_TEMPLATE, idpHostname, clientId), OAuthClient.class);
     }
 }

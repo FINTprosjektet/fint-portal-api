@@ -5,6 +5,9 @@ import no.fint.portal.adapter.Adapter;
 import no.fint.portal.adapter.AdapterService;
 import no.fint.portal.client.Client;
 import no.fint.portal.client.ClientService;
+import no.fint.portal.component.Component;
+import no.fint.portal.component.ComponentObjectService;
+import no.fint.portal.component.ComponentService;
 import no.fint.portal.contact.Contact;
 import no.fint.portal.contact.ContactService;
 import no.fint.portal.ldap.LdapService;
@@ -37,6 +40,9 @@ public class OrganisationService {
 
     @Autowired
     private ClientService clientService;
+
+    @Autowired
+    private ComponentService componentService;
 
     @Value("${fint.ldap.organisation-base}")
     private String organisationBase;
@@ -84,6 +90,24 @@ public class OrganisationService {
         ldapService.deleteEntry(organisation);
     }
 
+    public void linkComponent(Organisation organisation, Component component) {
+
+        organisation.addComponent(component.getDn());
+        ldapService.updateEntry(organisation);
+
+        componentService.linkOrganisation(component, organisation);
+
+    }
+
+    public void unLinkComponent(Organisation organisation, Component component) {
+
+        organisation.removeComponent(component.getDn());
+        ldapService.updateEntry(organisation);
+
+        componentService.unLinkOrganisation(component, organisation);
+
+    }
+
     private void removeAllContacts(String organisationUuid) {
         List<Contact> contacts = contactService.getContacts(organisationUuid);
 
@@ -96,7 +120,7 @@ public class OrganisationService {
         List<Adapter> adapters = adapterService.getAdapters(organisationUuid);
 
         if (adapters != null) {
-            adapters.forEach(adapter -> ldapService.deleteEntry(adapter));
+            adapters.forEach(adapter -> adapterService.deleteAdapter(adapter));
         }
     }
 
@@ -104,7 +128,7 @@ public class OrganisationService {
         List<Client> clients = clientService.getClients(organisationUuid);
 
         if (clients != null) {
-            clients.forEach(client -> ldapService.deleteEntry(client));
+            clients.forEach(client -> clientService.deleteClient(client));
         }
     }
 
@@ -132,7 +156,7 @@ public class OrganisationService {
     }
 
     public String getOrganisationId(String uuid) {
-        String dn = organisationObjectService.getOrganisationDnByUUID(uuid);
+        String dn = getOrganisationDnByUUID(uuid);
         Organisation organisation = ldapService.getEntry(dn, Organisation.class);
 
         return organisation.getOrgId();
@@ -140,10 +164,19 @@ public class OrganisationService {
     }
 
     public Optional<Organisation> getOrganisationByUUID(String uuid) {
-        String dn = organisationObjectService.getOrganisationDnByUUID(uuid);
+        String dn = getOrganisationDnByUUID(uuid);
 
         return Optional.ofNullable(ldapService.getEntry(dn, Organisation.class));
 
+    }
+
+    public String getOrganisationDnByUUID(String uuid) {
+        if (uuid != null) {
+            return LdapNameBuilder.newInstance(organisationBase)
+                    .add(LdapConstants.OU, uuid)
+                    .build().toString();
+        }
+        return null;
     }
 
     private void createClientContainer(String organisationDn) {
@@ -168,4 +201,5 @@ public class OrganisationService {
                 .build());
         ldapService.createEntry(adapterContainer);
     }
+
 }

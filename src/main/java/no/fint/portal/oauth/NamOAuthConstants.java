@@ -5,7 +5,8 @@ public class NamOAuthConstants {
     public static final String SCOPE = "urn:netiq.com:nam:scope:oauth:registration:full";
     public static final String GRANT_TYPE = "password";
     public static final String ACCESS_TOKEN_URL_TEMPLATE = "https://%s//nidp/oauth/nam/token";
-    public static final String CLIENT_API_URL_TEMPLATE = "https://%s/nidp/oauth/nam/clients/";
+    public static final String CLIENT_REGISTRATION_URL_TEMPLATE = "https://%s/nidp/oauth/nam/clients/";
+    public static final String CLIENT_URL_TEMPLATE = "https://%s/nidp/oauth/nam/clients/%s";
     public static final String APPLICATION_TYPE = "web";
 
     public static final String DEFAULT_REDIRECT_URI = "https://dummy.com";

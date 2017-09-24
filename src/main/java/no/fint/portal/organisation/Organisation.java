@@ -4,12 +4,15 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import no.fint.portal.ldap.UuidLdapEntry;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Entry;
 import org.springframework.ldap.odm.annotations.Id;
 import org.springframework.ldap.support.LdapNameBuilder;
 
 import javax.naming.Name;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @SuppressWarnings("ALL")
@@ -42,6 +45,23 @@ public final class Organisation implements UuidLdapEntry {
     )
     @Attribute(name = "fintOrgDisplayName")
     private String displayName;
+
+    @Attribute(name = "fintOrganisationComponents")
+    private List<String> components;
+
+    public Organisation() {
+        components = new ArrayList<>();
+    }
+
+    public void addComponent(String componentDn) {
+        if (!components.stream().anyMatch(componentDn::equalsIgnoreCase)) {
+            components.add(componentDn);
+        }
+    }
+
+    public void removeComponent(String componentDn) {
+        components.removeIf(component  -> component.equalsIgnoreCase(componentDn));
+    }
 
     @Override
     public void setUuid(String uuid) {

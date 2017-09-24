@@ -11,6 +11,7 @@ import no.fint.portal.contact.ContactObjectService
 import no.fint.portal.contact.ContactService
 import no.fint.portal.ldap.LdapService
 import no.fint.portal.model.Container
+import no.fint.portal.oauth.NamOAuthClientService
 import no.fint.portal.testutils.ObjectFactory
 import spock.lang.Specification
 
@@ -21,6 +22,7 @@ class OrganisationServiceSpec extends Specification {
     private contactService
     private adapterService
     private clientService
+    private oauthService
 
     def setup() {
         def organisationBase = "ou=org,o=fint"
@@ -29,8 +31,9 @@ class OrganisationServiceSpec extends Specification {
         def adapterObjectService = new AdapterObjectService(organisationBase: organisationBase)
 
         ldapService = Mock(LdapService)
-        adapterService = new AdapterService(adapterObjectService: adapterObjectService, ldapService: ldapService)
-        clientService = new ClientService(clientObjectService: clientObjectService, ldapService: ldapService)
+        oauthService = Mock(NamOAuthClientService)
+        adapterService = new AdapterService(adapterObjectService: adapterObjectService, ldapService: ldapService, namOAuthClientService: oauthService)
+        clientService = new ClientService(clientObjectService: clientObjectService, ldapService: ldapService, namOAuthClientService: oauthService)
         contactService = new ContactService(contactObjectService: contactObjectService, ldapService: ldapService)
         organisationObjectService = new OrganisationObjectService(organisationBase: organisationBase, ldapService: ldapService)
         organisationService = new OrganisationService(
@@ -102,11 +105,11 @@ class OrganisationServiceSpec extends Specification {
         2 * ldapService.deleteEntry(_ as Client)
         2 * ldapService.deleteEntry(_ as Adapter)
         2 * ldapService.deleteEntry(_ as Container)
+        4 * oauthService.getOAuthClient(_ as String) >> ObjectFactory.newOAuthClient()
         3 * ldapService.getAll(_ as String, _ as Class) >>
                 Arrays.asList(ObjectFactory.newContact(), ObjectFactory.newContact()) >>
                 Arrays.asList(ObjectFactory.newAdapter(), ObjectFactory.newAdapter()) >>
                 Arrays.asList(ObjectFactory.newClient(), ObjectFactory.newClient())
-
     }
 
     def "Get Organisation By UUID"() {

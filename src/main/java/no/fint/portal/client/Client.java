@@ -11,6 +11,8 @@ import org.springframework.ldap.odm.annotations.Transient;
 import org.springframework.ldap.support.LdapNameBuilder;
 
 import javax.naming.Name;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApiModel
 //@Data
@@ -44,13 +46,31 @@ public class Client implements BasicLdapEntry {
     @ApiModelProperty(value = "Client secret.")
     @Attribute(name = "fintClientSecret")
     private String secret;
+
     @ApiModelProperty(value = "OAuth client id")
-    @Transient
+    @Attribute(name = "fintOAuthClientId")
     private String clientId;
 
     @ApiModelProperty(value = "OAuth client secret")
     @Transient
     private String clientSecret;
+
+    @Attribute(name = "fintClientComponents")
+    private List<String> components;
+
+    public Client() {
+        components = new ArrayList<>();
+    }
+
+    public void addComponent(String componentDn) {
+        if (!components.stream().anyMatch(componentDn::equalsIgnoreCase)) {
+            components.add(componentDn);
+        }
+    }
+
+    public void removeComponent(String componentDn) {
+        components.removeIf(component  -> component.equalsIgnoreCase(componentDn));
+    }
 
     public String getUuid() {
         return uuid;

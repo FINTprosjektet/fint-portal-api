@@ -10,6 +10,8 @@ import org.springframework.ldap.odm.annotations.Id;
 import org.springframework.ldap.support.LdapNameBuilder;
 
 import javax.naming.Name;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApiModel
 @Data
@@ -35,6 +37,52 @@ public class Component implements UuidLdapEntry {
     @Attribute(name = "description")
     private String description;
 
+    @Attribute(name = "fintComponentOrganisations")
+    private List<String> organisations;
+
+    @Attribute(name = "fintComponentClients")
+    private List<String> clients;
+
+    @Attribute(name = "fintComponentAdapters")
+    private List<String> adapters;
+
+    public Component() {
+
+        organisations = new ArrayList<>();
+        clients = new ArrayList<>();
+        adapters = new ArrayList<>();
+    }
+
+    public void addOrganisation(String organisationDn) {
+        if (!organisations.stream().anyMatch(organisationDn::equalsIgnoreCase)) {
+            organisations.add(organisationDn);
+        }
+    }
+
+    public void removeOrganisation(String organisationDn) {
+        organisations.removeIf(component -> component.equalsIgnoreCase(organisationDn));
+    }
+
+    public void addClient(String clientDn) {
+        if (!clients.stream().anyMatch(clientDn::equalsIgnoreCase)) {
+            clients.add(clientDn);
+        }
+    }
+
+    public void removeClient(String clientDn) {
+        clients.removeIf(client -> client.equalsIgnoreCase(clientDn));
+    }
+
+    public void addAdapter(String adapterDn) {
+        if (!adapters.stream().anyMatch(adapterDn::equalsIgnoreCase)) {
+            adapters.add(adapterDn);
+        }
+    }
+
+    public void removeAdapter(String adapterDn) {
+        adapters.removeIf(adapter -> adapter.equalsIgnoreCase(adapterDn));
+    }
+
     @Override
     public String getDn() {
         if (dn != null) {
@@ -45,14 +93,14 @@ public class Component implements UuidLdapEntry {
     }
 
     @Override
-    public void setDn(Name dn) {
-        this.dn = dn;
-
+    public void setDn(String dn) {
+        this.dn = LdapNameBuilder.newInstance(dn).build();
     }
 
     @Override
-    public void setDn(String dn) {
-        this.dn = LdapNameBuilder.newInstance(dn).build();
+    public void setDn(Name dn) {
+        this.dn = dn;
+
     }
 
     @Override

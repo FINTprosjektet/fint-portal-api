@@ -1,8 +1,10 @@
 package no.fint.portal.organisation
 
 import no.fint.portal.ldap.LdapService
+import org.junit.Ignore
 import spock.lang.Specification
 
+@Ignore
 class OrganisationObjectServiceSpec extends Specification {
     def organisationObjectService
     def ldapServiceMock

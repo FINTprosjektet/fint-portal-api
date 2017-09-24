@@ -22,13 +22,4 @@ public class ComponentObjectService {
         Component componentFromLdap = ldapService.getEntryByUniqueName(component.getTechnicalName(), componentBase, Component.class);
         ObjectUtility.setupUuidContainerObject(component, componentFromLdap, componentBase);
     }
-
-    public String getComponentDnByUUID(String uuid) {
-        if (uuid != null) {
-            return LdapNameBuilder.newInstance(componentBase)
-                    .add(LdapConstants.OU, uuid)
-                    .build().toString();
-        }
-        return null;
-    }
 }
