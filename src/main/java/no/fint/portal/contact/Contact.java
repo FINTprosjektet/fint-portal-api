@@ -1,4 +1,4 @@
-package no.fint.portal.organisation;
+package no.fint.portal.contact;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

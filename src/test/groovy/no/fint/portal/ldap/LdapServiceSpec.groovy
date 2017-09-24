@@ -1,6 +1,6 @@
 package no.fint.portal.ldap
 
-import no.fint.portal.organisation.Contact
+import no.fint.portal.contact.Contact
 import org.springframework.ldap.NameNotFoundException
 import org.springframework.ldap.core.LdapTemplate
 import org.springframework.ldap.filter.EqualsFilter

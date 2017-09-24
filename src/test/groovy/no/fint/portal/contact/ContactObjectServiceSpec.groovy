@@ -1,6 +1,6 @@
-package no.fint.portal.organisation
+package no.fint.portal.contact
 
-import no.fint.portal.ldap.LdapService
+import no.fint.portal.organisation.Organisation
 import spock.lang.Specification
 
 class ContactObjectServiceSpec extends Specification {
@@ -8,22 +8,22 @@ class ContactObjectServiceSpec extends Specification {
     def contactObjectService
 
     void setup() {
-        def ldapServiceMock = Mock(LdapService)
-        def organisationObjectService = new OrganisationObjectService(ldapService: ldapServiceMock, organisationBase: "ou=org,o=fint")
-        contactObjectService = new ContactObjectService(organisationObjectService: organisationObjectService)
+        def organisationBase = "ou=org,o=fint"
+        contactObjectService = new ContactObjectService(organisationBase: organisationBase)
     }
 
     def "Set Contact Dn"() {
         given:
         def contact = new Contact(nin: "12345")
+        def organisation = new Organisation(orgId: "test", uuid: "uuid")
 
         when:
-        contactObjectService.setContactDn(contact, "test")
+        contactObjectService.setupContact(contact, organisation)
 
         then:
-        contact.dn != null
         contact.dn.contains(contact.nin)
-        contact.dn.contains("test")
+        contact.dn.contains("uuid")
+        contact.orgId.contains("test")
     }
 
     def "Get Contact Dn"() {

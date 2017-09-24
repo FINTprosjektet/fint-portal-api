@@ -1,0 +1,43 @@
+package no.fint.portal.oauth;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Arrays;
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+public class OAuthClient {
+
+    @JsonProperty("grant_types")
+    private List<String> grantTypes;
+
+    @JsonProperty("application_type")
+    private String applicationType;
+
+    @JsonProperty("redirect_uris")
+    private List<String> redirectUris;
+
+    @JsonProperty("client_name")
+    private String clientName;
+
+    @JsonProperty("response_types")
+    private List<String> responseTypes;
+
+    @JsonProperty("client_id")
+    private String clientId;
+
+    @JsonProperty("client_secret")
+    private String clientSecret;
+
+    public OAuthClient(String name) {
+        clientName = name;
+
+        grantTypes = Arrays.asList(NamOAuthConstants.GRANT_TYPE);
+        applicationType = NamOAuthConstants.APPLICATION_TYPE;
+        redirectUris = Arrays.asList(NamOAuthConstants.DEFAULT_REDIRECT_URI);
+        responseTypes = Arrays.asList(NamOAuthConstants.RESPONSE_TYPE);
+    }
+}

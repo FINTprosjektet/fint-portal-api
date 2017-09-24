@@ -1,4 +1,4 @@
-package no.fint.portal.component
+package no.fint.portal.adapter
 
 import no.fint.portal.organisation.Organisation
 import spock.lang.Specification
@@ -7,22 +7,21 @@ class AdapterObjectServiceSpec extends Specification {
     def adapterObjectService
 
     def setup() {
-        adapterObjectService = new AdapterObjectService(componentBase: "ou=comp,o=fint")
+        adapterObjectService = new AdapterObjectService(organisationBase: "ou=comp,o=fint")
     }
 
     def "Get Adapter Base"() {
         when:
-        def dn = adapterObjectService.getAdapterBase("compUuid", "orgUuid")
+        def dn = adapterObjectService.getAdapterBase("orgUuid")
 
         then:
         dn != null
-        dn.toString().contains("compUuid") == true
         dn.toString().contains("orgUuid") == true
     }
 
     def "Get Adapter Dn"() {
         when:
-        def dn = adapterObjectService.getAdapterDn("adapterUuid", "compUuid", "orgUuid")
+        def dn = adapterObjectService.getAdapterDn("adapterUuid", "orgUuid")
 
         then:
         dn != null
@@ -35,7 +34,7 @@ class AdapterObjectServiceSpec extends Specification {
 
 
         when:
-        adapterObjectService.setupAdapter(adapter, "compUuid", new Organisation(orgId: "test.no", uuid: "uuid"))
+        adapterObjectService.setupAdapter(adapter, new Organisation(orgId: "test.no", uuid: "uuid"))
 
         then:
         adapter.secret != null

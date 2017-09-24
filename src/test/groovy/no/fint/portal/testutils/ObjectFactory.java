@@ -1,9 +1,9 @@
 package no.fint.portal.testutils;
 
-import no.fint.portal.component.Adapter;
-import no.fint.portal.component.Client;
+import no.fint.portal.adapter.Adapter;
+import no.fint.portal.client.Client;
 import no.fint.portal.component.Component;
-import no.fint.portal.organisation.Contact;
+import no.fint.portal.contact.Contact;
 import no.fint.portal.organisation.Organisation;
 
 public enum ObjectFactory {
