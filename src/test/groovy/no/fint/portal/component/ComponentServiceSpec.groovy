@@ -9,24 +9,15 @@ class ComponentServiceSpec extends Specification {
     private componentService
     private componentObjectService
     private ldapService
-    private organisationComponentService
-    private adapterObjectService
-    private clientObjectService
 
     def setup() {
         def componentBase = "ou=comp,o=fint"
         ldapService = Mock(LdapService)
         componentObjectService = new ComponentObjectService(ldapService: ldapService, componentBase: componentBase)
-        organisationComponentService = new OrganisationComponentService(componentObjectService: componentObjectService)
-        adapterObjectService = new AdapterObjectService(componentBase: componentBase)
-        clientObjectService = new ClientObjectService(componentBase: componentBase)
         componentService = new ComponentService(
                 ldapService: ldapService,
                 componentBase: componentBase,
-                organisationComponentService: organisationComponentService,
                 componentObjectService: componentObjectService,
-                adapterObjectService: adapterObjectService,
-                clientObjectService: clientObjectService
         )
     }
 
@@ -79,144 +70,128 @@ class ComponentServiceSpec extends Specification {
         1 * ldapService.deleteEntry(_ as Component)
     }
 
-    def "Add Organisation To Component"() {
+    def "Get Component DN By UUID"() {
+        given:
+        def uuid = UUID.randomUUID().toString()
+
         when:
-        componentService.addOrganisationToComponent(UUID.randomUUID().toString(), UUID.randomUUID().toString())
+        def dn1 = componentService.getComponentDnByUUID(uuid)
+        def dn2 = componentService.getComponentDnByUUID(null)
 
         then:
-        3 * ldapService.createEntry(_ as Container)
+        dn1 != null
+        dn1 == String.format("ou=%s,%s", uuid, componentObjectService.getComponentBase())
+        dn1.contains(uuid) == true
+        dn2 == null
+
     }
 
-    def "Remove Organisation From Component"() {
+    def "Add organisation to component"() {
+        given:
+        def organisation = ObjectFactory.newOrganisation()
+        def component = ObjectFactory.newComponent()
+
+        organisation.setDn("ou=org1")
+        component.setDn("ou=comp1")
+
         when:
-        componentService.removeOrganisationFromComponent(UUID.randomUUID().toString(), UUID.randomUUID().toString())
+        componentService.linkOrganisation(component, organisation)
 
         then:
-        2 * ldapService.getAll(_ as String, _ as Class) >> Arrays.asList(ObjectFactory.newClient(), ObjectFactory.newClient()) >> Arrays.asList(ObjectFactory.newAdapter())
-        3 * ldapService.deleteEntry(_ as Container)
-        1 * ldapService.deleteEntry(_ as Adapter)
-        2 * ldapService.deleteEntry(_ as Client)
+        component.getOrganisations().size() == 1
+        1 * ldapService.updateEntry(_ as Component)
     }
 
-    def "Add Client"() {
+    def "Remove organisation from component"() {
+        given:
+        def component = ObjectFactory.newComponent()
+        def org1 = ObjectFactory.newOrganisation()
+        def org2 = ObjectFactory.newOrganisation()
+
+        org1.setDn("ou=org1,o=fint")
+        org2.setDn("ou=org2,o=fint")
+        component.addOrganisation(org1.getDn())
+        component.addOrganisation(org2.getDn())
+
+        when:
+        componentService.unLinkOrganisation(component, org1)
+
+        then:
+        component.getOrganisations().size() == 1
+        component.getOrganisations().get(0).equals("ou=org2,o=fint")
+        1 * ldapService.updateEntry(_ as Component)
+    }
+
+    def "Add client to component"() {
         given:
         def client = ObjectFactory.newClient()
+        def component = ObjectFactory.newComponent()
+
+        client.setDn("cn=c1")
+        component.setDn("ou=comp1")
 
         when:
-        def created = componentService.addClient(client, UUID.randomUUID().toString(),  new Organisation(orgId: "test.no", uuid: "uuid"))
+        componentService.linkClient(component, client)
 
         then:
-        created == true
-        client.dn != null
-        client.uuid != null
-        1 * ldapService.createEntry(_ as Client) >> true
+        component.getClients().size() == 1
+        1 * ldapService.updateEntry(_ as Component)
     }
 
-    def "Add Adapter"() {
+    def "Remove client from component"() {
+        given:
+        def component = ObjectFactory.newComponent()
+        def c1 = ObjectFactory.newClient()
+        def c2 = ObjectFactory.newClient()
+
+        c1.setDn("cn=c1,o=fint")
+        c2.setDn("cn=c2,o=fint")
+        component.addClient(c1.getDn())
+        component.addClient(c2.getDn())
+
+        when:
+        componentService.unLinkClient(component, c1)
+
+        then:
+        component.getClients().size() == 1
+        component.getClients().get(0) == "cn=c2,o=fint"
+        1 * ldapService.updateEntry(_ as Component)
+    }
+
+    def "Add adapter to component"() {
         given:
         def adapter = ObjectFactory.newAdapter()
+        def component = ObjectFactory.newComponent()
+
+        adapter.setDn("cn=a1")
+        component.setDn("ou=comp1")
 
         when:
-        def created = componentService.addAdapter(adapter, UUID.randomUUID().toString(),  new Organisation(orgId: "test.no", uuid: "uuid"))
+        componentService.linkAdapter(component, adapter)
 
         then:
-        created == true
-        adapter.dn != null
-        adapter.uuid != null
-        1 * ldapService.createEntry(_ as Adapter) >> true
+        component.getAdapters().size() == 1
+        1 * ldapService.updateEntry(_ as Component)
     }
 
-    def "Get Clients"() {
-        when:
-        def clients = componentService.getClients(UUID.randomUUID().toString(), UUID.randomUUID().toString())
-
-        then:
-        clients.size() == 2
-        1 * ldapService.getAll(_ as String, _ as Class) >> Arrays.asList(ObjectFactory.newClient(), ObjectFactory.newClient())
-    }
-
-    def "Get Adapters"() {
-        when:
-        def adapters = componentService.getAdapters(UUID.randomUUID().toString(), UUID.randomUUID().toString())
-
-        then:
-        adapters.size() == 2
-        1 * ldapService.getAll(_ as String, _ as Class) >> Arrays.asList(ObjectFactory.newAdapter(), ObjectFactory.newAdapter())
-    }
-
-    def "Get Client"() {
-        when:
-        def client = componentService.getClient(UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString())
-
-        then:
-        client.isPresent()
-        1 * ldapService.getEntry(_ as String, _ as Class) >> ObjectFactory.newClient()
-    }
-
-    def "Get Adapter"() {
-        when:
-        def adapter = componentService.getAdapter(UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString())
-
-        then:
-        adapter.isPresent()
-        1 * ldapService.getEntry(_ as String, _ as Class) >> ObjectFactory.newAdapter()
-    }
-
-    def "Update Client"() {
-        when:
-        def updated = componentService.updateClient(ObjectFactory.newClient())
-
-        then:
-        updated == true
-        1 * ldapService.updateEntry(_ as Client) >> true
-    }
-
-    def "Update Adapter"() {
-        when:
-        def updated = componentService.updateAdapter(ObjectFactory.newAdapter())
-
-        then:
-        updated == true
-        1 * ldapService.updateEntry(_ as Adapter) >> true
-    }
-
-    def "Delete Client"() {
-        when:
-        componentService.deleteClient(ObjectFactory.newClient())
-
-        then:
-        1 * ldapService.deleteEntry(_ as Client)
-    }
-
-    def "Delete Adapter"() {
-        when:
-        componentService.deleteAdapter(ObjectFactory.newAdapter())
-
-        then:
-        1 * ldapService.deleteEntry(_ as Adapter)
-    }
-
-    def "Reset Client Password"() {
+    def "Remove adapter from component"() {
         given:
-        def client = ObjectFactory.newClient()
+        def component = ObjectFactory.newComponent()
+        def a1 = ObjectFactory.newAdapter()
+        def a2 = ObjectFactory.newAdapter()
+
+        a1.setDn("cn=a1,o=fint")
+        a2.setDn("cn=a2,o=fint")
+        component.addAdapter(a1.getDn())
+        component.addAdapter(a2.getDn())
 
         when:
-        componentService.resetClientPassword(client)
+        componentService.unLinkAdapter(component, a1)
 
         then:
-        client.password != null
-        1 * ldapService.updateEntry(_ as Client)
+        component.getAdapters().size() == 1
+        component.getAdapters().get(0) == "cn=a2,o=fint"
+        1 * ldapService.updateEntry(_ as Component)
     }
 
-    def "Reset Adapter Password"() {
-        given:
-        def adapter = ObjectFactory.newAdapter()
-
-        when:
-        componentService.resetAdapterPassword(adapter)
-
-        then:
-        adapter.secret != null
-        1 * ldapService.updateEntry(_ as Adapter)
-    }
 }

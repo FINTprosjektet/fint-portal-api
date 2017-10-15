@@ -1,4 +1,4 @@
-package no.fint.portal.component;
+package no.fint.portal.adapter;
 
 import no.fint.portal.organisation.Organisation;
 import no.fint.portal.utilities.LdapConstants;
@@ -13,13 +13,13 @@ import java.util.UUID;
 @Service
 public class AdapterObjectService {
 
-    @Value("${fint.ldap.component-base}")
-    private String componentBase;
+    @Value("${fint.ldap.organisation-base}")
+    private String organisationBase;
 
-    public void setupAdapter(Adapter adapter, String compUuid, Organisation organisation) {
+    public void setupAdapter(Adapter adapter, Organisation organisation) {
         adapter.setUuid(UUID.randomUUID().toString());
         adapter.setDn(
-                LdapNameBuilder.newInstance(getAdapterBase(compUuid, organisation.getUuid()))
+                LdapNameBuilder.newInstance(getAdapterBase(organisation.getUuid()))
                         .add(LdapConstants.CN, adapter.getUuid())
                         .build()
         );
@@ -27,16 +27,15 @@ public class AdapterObjectService {
         adapter.setSecret(PasswordUtility.generateSecret());
     }
 
-    public Name getAdapterBase(String compUuid, String orgUuid) {
-        return LdapNameBuilder.newInstance(componentBase)
-                .add(LdapConstants.OU, compUuid)
+    public Name getAdapterBase(String orgUuid) {
+        return LdapNameBuilder.newInstance(organisationBase)
                 .add(LdapConstants.OU, orgUuid)
                 .add(LdapConstants.OU, LdapConstants.ADAPTER_CONTAINER_NAME)
                 .build();
     }
 
-    public String getAdapterDn(String adapterUuid, String compUuid, String orgUuid) {
-        return LdapNameBuilder.newInstance(getAdapterBase(compUuid, orgUuid))
+    public String getAdapterDn(String adapterUuid, String orgUuid) {
+        return LdapNameBuilder.newInstance(getAdapterBase(orgUuid))
                 .add(LdapConstants.CN, adapterUuid)
                 .build()
                 .toString();

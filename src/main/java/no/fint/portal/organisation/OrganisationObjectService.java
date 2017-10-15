@@ -23,13 +23,4 @@ public class OrganisationObjectService {
         Organisation organisationFromLdap = ldapService.getEntryByUniqueName(organisation.getOrgId(), organisationBase, Organisation.class);
         ObjectUtility.setupUuidContainerObject(organisation, organisationFromLdap, organisationBase);
     }
-
-    public String getOrganisationDnByUUID(String uuid) {
-        if (uuid != null) {
-            return LdapNameBuilder.newInstance(organisationBase)
-                    .add(LdapConstants.OU, uuid)
-                    .build().toString();
-        }
-        return null;
-    }
 }

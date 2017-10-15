@@ -1,9 +1,20 @@
 package no.fint.portal.organisation;
 
 import lombok.extern.slf4j.Slf4j;
+import no.fint.portal.adapter.Adapter;
+import no.fint.portal.adapter.AdapterService;
+import no.fint.portal.client.Client;
+import no.fint.portal.client.ClientService;
+import no.fint.portal.component.Component;
+import no.fint.portal.component.ComponentService;
+import no.fint.portal.contact.Contact;
+import no.fint.portal.contact.ContactService;
 import no.fint.portal.ldap.LdapService;
+import no.fint.portal.ldap.Container;
+import no.fint.portal.utilities.LdapConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,13 +26,22 @@ import java.util.Optional;
 public class OrganisationService {
 
     @Autowired
-    OrganisationObjectService organisationObjectService;
-
-    @Autowired
-    ContactObjectService contactObjectService;
+    private OrganisationObjectService organisationObjectService;
 
     @Autowired
     private LdapService ldapService;
+
+    @Autowired
+    private ContactService contactService;
+
+    @Autowired
+    private AdapterService adapterService;
+
+    @Autowired
+    private ClientService clientService;
+
+    @Autowired
+    private ComponentService componentService;
 
     @Value("${fint.ldap.organisation-base}")
     private String organisationBase;
@@ -32,7 +52,13 @@ public class OrganisationService {
         if (organisation.getDn() == null) {
             organisationObjectService.setupOrganisation(organisation);
         }
-        return ldapService.createEntry(organisation);
+
+        boolean createdOrganisation = ldapService.createEntry(organisation);
+
+        createClientContainer(organisation.getDn());
+        createAdapterContainer(organisation.getDn());
+
+        return createdOrganisation;
     }
 
     public boolean updateOrganisation(Organisation organisation) {
@@ -52,45 +78,84 @@ public class OrganisationService {
         return Optional.empty();
     }
 
-    public List<Contact> getContacts(String uuid) {
-        return ldapService.getAll(organisationObjectService.getOrganisationDnByUUID(uuid), Contact.class);
-    }
-
-    public boolean addContact(Contact contact, String orgUUID) {
-        log.info("Creating contact: {}", contact);
-
-        if (contact.getDn() == null) {
-            contactObjectService.setContactDn(contact, orgUUID);
-        }
-        contact.setOrgId(getOrganisationId(orgUUID));
-        return ldapService.createEntry(contact);
-    }
-
-    public Optional<Contact> getContact(String orgUUID, String nin) {
-
-        return Optional.ofNullable(ldapService.getEntry(contactObjectService.getContactDn(orgUUID, nin), Contact.class));
-    }
-
-    public boolean updateContact(Contact contact) {
-        return ldapService.updateEntry(contact);
-    }
-
-    public void deleteContact(Contact contact) {
-        ldapService.deleteEntry(contact);
-    }
-
     public void deleteOrganisation(Organisation organisation) {
-        List<Contact> contacts = getContacts(organisation.getUuid());
 
-        if (contacts != null) {
-            contacts.forEach(contact -> ldapService.deleteEntry(contact));
-        }
+        removeAllContacts(organisation.getUuid());
+        removeAllAdapters(organisation.getUuid());
+        removeAllClients(organisation.getUuid());
+        removeAdapterContainer(organisation.getDn());
+        removeClientContainer(organisation.getDn());
 
         ldapService.deleteEntry(organisation);
     }
 
-    private String getOrganisationId(String uuid) {
-        String dn = organisationObjectService.getOrganisationDnByUUID(uuid);
+    public void linkComponent(Organisation organisation, Component component) {
+
+        organisation.addComponent(component.getDn());
+        ldapService.updateEntry(organisation);
+
+        componentService.linkOrganisation(component, organisation);
+
+    }
+
+    public void unLinkComponent(Organisation organisation, Component component) {
+
+        organisation.removeComponent(component.getDn());
+        ldapService.updateEntry(organisation);
+
+        componentService.unLinkOrganisation(component, organisation);
+
+    }
+
+    private void removeAllContacts(String organisationUuid) {
+        List<Contact> contacts = contactService.getContacts(organisationUuid);
+
+        if (contacts != null) {
+            contacts.forEach(contact -> ldapService.deleteEntry(contact));
+        }
+    }
+
+    private void removeAllAdapters(String organisationUuid) {
+        List<Adapter> adapters = adapterService.getAdapters(organisationUuid);
+
+        if (adapters != null) {
+            adapters.forEach(adapter -> adapterService.deleteAdapter(adapter));
+        }
+    }
+
+    private void removeAllClients(String organisationUuid) {
+        List<Client> clients = clientService.getClients(organisationUuid);
+
+        if (clients != null) {
+            clients.forEach(client -> clientService.deleteClient(client));
+        }
+    }
+
+    private void removeClientContainer(String organisationDn) {
+        Container clientContainer = new Container();
+
+        clientContainer.setOu(LdapConstants.CLIENT_CONTAINER_NAME);
+        clientContainer.setDn(LdapNameBuilder.newInstance(organisationDn)
+                .add(LdapConstants.OU, LdapConstants.CLIENT_CONTAINER_NAME)
+                .build());
+
+
+        ldapService.deleteEntry(clientContainer);
+
+    }
+
+    private void removeAdapterContainer(String organisationDn) {
+        Container adapterContainer = new Container();
+
+        adapterContainer.setOu(LdapConstants.ADAPTER_CONTAINER_NAME);
+        adapterContainer.setDn(LdapNameBuilder.newInstance(organisationDn)
+                .add(LdapConstants.OU, LdapConstants.ADAPTER_CONTAINER_NAME)
+                .build());
+        ldapService.deleteEntry(adapterContainer);
+    }
+
+    public String getOrganisationId(String uuid) {
+        String dn = getOrganisationDnByUUID(uuid);
         Organisation organisation = ldapService.getEntry(dn, Organisation.class);
 
         return organisation.getOrgId();
@@ -98,9 +163,42 @@ public class OrganisationService {
     }
 
     public Optional<Organisation> getOrganisationByUUID(String uuid) {
-        String dn = organisationObjectService.getOrganisationDnByUUID(uuid);
+        String dn = getOrganisationDnByUUID(uuid);
 
         return Optional.ofNullable(ldapService.getEntry(dn, Organisation.class));
 
     }
+
+    public String getOrganisationDnByUUID(String uuid) {
+        if (uuid != null) {
+            return LdapNameBuilder.newInstance(organisationBase)
+                    .add(LdapConstants.OU, uuid)
+                    .build().toString();
+        }
+        return null;
+    }
+
+    private void createClientContainer(String organisationDn) {
+        Container clientContainer = new Container();
+
+        clientContainer.setOu(LdapConstants.CLIENT_CONTAINER_NAME);
+        clientContainer.setDn(LdapNameBuilder.newInstance(organisationDn)
+                .add(LdapConstants.OU, LdapConstants.CLIENT_CONTAINER_NAME)
+                .build());
+
+
+        ldapService.createEntry(clientContainer);
+
+    }
+
+    private void createAdapterContainer(String organisationDn) {
+        Container adapterContainer = new Container();
+
+        adapterContainer.setOu(LdapConstants.ADAPTER_CONTAINER_NAME);
+        adapterContainer.setDn(LdapNameBuilder.newInstance(organisationDn)
+                .add(LdapConstants.OU, LdapConstants.ADAPTER_CONTAINER_NAME)
+                .build());
+        ldapService.createEntry(adapterContainer);
+    }
+
 }

@@ -1,7 +1,7 @@
 package no.fint.portal.utilities;
 
 import no.fint.portal.component.Component;
-import no.fint.portal.organisation.Contact;
+import no.fint.portal.contact.Contact;
 import no.fint.portal.organisation.Organisation;
 
 public enum LdapUniqueNameUtility {

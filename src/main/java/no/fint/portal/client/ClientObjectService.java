@@ -1,4 +1,4 @@
-package no.fint.portal.component;
+package no.fint.portal.client;
 
 import no.fint.portal.organisation.Organisation;
 import no.fint.portal.utilities.LdapConstants;
@@ -13,13 +13,13 @@ import java.util.UUID;
 @Service
 public class ClientObjectService {
 
-    @Value("${fint.ldap.component-base}")
-    private String componentBase;
+    @Value("${fint.ldap.organisation-base}")
+    private String organisationBase;
 
-    public void setupClient(Client client, String compUuid, Organisation organisation) {
+    public void setupClient(Client client, Organisation organisation) {
         client.setUuid(UUID.randomUUID().toString());
         client.setDn(
-                LdapNameBuilder.newInstance(getClientBase(compUuid, organisation.getUuid()))
+                LdapNameBuilder.newInstance(getClientBase(organisation.getUuid()))
                         .add(LdapConstants.CN, client.getUuid())
                         .build()
         );
@@ -27,16 +27,15 @@ public class ClientObjectService {
         client.setSecret(PasswordUtility.generateSecret());
     }
 
-    public Name getClientBase(String compUuid, String orgUuid) {
-        return LdapNameBuilder.newInstance(componentBase)
-                .add(LdapConstants.OU, compUuid)
+    public Name getClientBase(String orgUuid) {
+        return LdapNameBuilder.newInstance(organisationBase)
                 .add(LdapConstants.OU, orgUuid)
                 .add(LdapConstants.OU, LdapConstants.CLIENT_CONTAINER_NAME)
                 .build();
     }
 
-    public String getClientDn(String clientUuid, String compUuid, String orgUuid) {
-        return LdapNameBuilder.newInstance(getClientBase(compUuid, orgUuid))
+    public String getClientDn(String clientUuid, String orgUuid) {
+        return LdapNameBuilder.newInstance(getClientBase(orgUuid))
                 .add(LdapConstants.CN, clientUuid)
                 .build()
                 .toString();

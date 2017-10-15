@@ -1,16 +1,18 @@
-package no.fint.portal.component;
+package no.fint.portal.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 import no.fint.portal.ldap.BasicLdapEntry;
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Entry;
 import org.springframework.ldap.odm.annotations.Id;
+import org.springframework.ldap.odm.annotations.Transient;
 import org.springframework.ldap.support.LdapNameBuilder;
 
 import javax.naming.Name;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApiModel
 //@Data
@@ -44,6 +46,35 @@ public class Client implements BasicLdapEntry {
     @ApiModelProperty(value = "Client secret.")
     @Attribute(name = "fintClientSecret")
     private String secret;
+
+    @ApiModelProperty(value = "OAuth client id")
+    @Attribute(name = "fintOAuthClientId")
+    private String clientId;
+
+    @ApiModelProperty(value = "OAuth client secret")
+    @Transient
+    private String clientSecret;
+
+    @Attribute(name = "fintClientComponents")
+    private List<String> components;
+
+    public Client() {
+        components = new ArrayList<>();
+    }
+
+    public void addComponent(String componentDn) {
+        if (!components.stream().anyMatch(componentDn::equalsIgnoreCase)) {
+            components.add(componentDn);
+        }
+    }
+
+    public void removeComponent(String componentDn) {
+        components.removeIf(component  -> component.equalsIgnoreCase(componentDn));
+    }
+
+    public List<String> getComponents() {
+        return components;
+    }
 
     public String getUuid() {
         return uuid;
@@ -95,12 +126,28 @@ public class Client implements BasicLdapEntry {
     }
 
     @Override
-    public void setDn(String dn) {
-        this.dn = LdapNameBuilder.newInstance(dn).build();
+    public void setDn(Name dn) {
+        this.dn = dn;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
     }
 
     @Override
-    public void setDn(Name dn) {
-        this.dn = dn;
+    public void setDn(String dn) {
+        this.dn = LdapNameBuilder.newInstance(dn).build();
     }
 }

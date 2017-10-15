@@ -1,12 +1,15 @@
 package no.fint.portal.component;
 
 import lombok.extern.slf4j.Slf4j;
+import no.fint.portal.adapter.Adapter;
+import no.fint.portal.client.Client;
 import no.fint.portal.ldap.LdapService;
 import no.fint.portal.organisation.Organisation;
+import no.fint.portal.organisation.OrganisationService;
 import no.fint.portal.utilities.LdapConstants;
-import no.fint.portal.utilities.PasswordUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,15 +25,6 @@ public class ComponentService {
 
     @Autowired
     private ComponentObjectService componentObjectService;
-
-    @Autowired
-    private OrganisationComponentService organisationComponentService;
-
-    @Autowired
-    private AdapterObjectService adapterObjectService;
-
-    @Autowired
-    private ClientObjectService clientObjectService;
 
     @Value("${fint.ldap.component-base}")
     private String componentBase;
@@ -68,19 +62,8 @@ public class ComponentService {
         return orgComponents;
     }
 
-  /*
-  public Optional<Component> getComponentByTechnicalName(String technicalName) {
-    Optional<String> stringDnById = Optional.ofNullable(ldapService.getStringDnByUniqueName(technicalName, componentBase, Component.class));
-
-    if (stringDnById.isPresent()) {
-      return Optional.of(ldapService.getEntry(stringDnById.get(), Component.class));
-    }
-    return Optional.empty();
-  }
-  */
-
     public Optional<Component> getComponentByUUID(String uuid) {
-        String dn = componentObjectService.getComponentDnByUUID(uuid);
+        String dn = getComponentDnByUUID(uuid);
 
         return Optional.ofNullable(ldapService.getEntry(dn, Component.class));
     }
@@ -89,110 +72,55 @@ public class ComponentService {
         ldapService.deleteEntry(component);
     }
 
-    public void addOrganisationToComponent(String componentUuid, String organistionUuid) {
-        Container organisationContainer = new Container();
-        Container clientContainer = new Container();
-        Container adapterContainer = new Container();
-
-        organisationContainer.setOu(organistionUuid);
-        clientContainer.setOu(LdapConstants.CLIENT_CONTAINER_NAME);
-        adapterContainer.setOu(LdapConstants.ADAPTER_CONTAINER_NAME);
-
-        organisationComponentService.setOrganisationContainerDN(organisationContainer, componentUuid);
-        ldapService.createEntry(organisationContainer);
-
-        organisationComponentService.setClientContainerDN(clientContainer, organisationContainer);
-        ldapService.createEntry(clientContainer);
-
-        organisationComponentService.setAdapterContainerDN(adapterContainer, organisationContainer);
-        ldapService.createEntry(adapterContainer);
-    }
-
-    public void removeOrganisationFromComponent(String componentUuid, String organistionUuid) {
-        Container organisationContainer = new Container();
-        Container clientContainer = new Container();
-        Container adapterContainer = new Container();
-
-        organisationContainer.setOu(organistionUuid);
-        clientContainer.setOu(LdapConstants.CLIENT_CONTAINER_NAME);
-        adapterContainer.setOu(LdapConstants.ADAPTER_CONTAINER_NAME);
-
-        List<Client> clients = getClients(componentUuid, organistionUuid);
-        if (clients != null) {
-            clients.forEach(client -> ldapService.deleteEntry(client));
+    public String getComponentDnByUUID(String uuid) {
+        if (uuid != null) {
+            return LdapNameBuilder.newInstance(componentBase)
+                    .add(LdapConstants.OU, uuid)
+                    .build().toString();
         }
-
-        List<Adapter> adapters = getAdapters(componentUuid, organistionUuid);
-        if (adapters != null && adapters.size() > 0) {
-            adapters.forEach(adapter -> ldapService.deleteEntry(adapter));
-        }
-
-        organisationComponentService.setOrganisationContainerDN(organisationContainer, componentUuid);
-
-        organisationComponentService.setClientContainerDN(clientContainer, organisationContainer);
-        ldapService.deleteEntry(clientContainer);
-
-        organisationComponentService.setAdapterContainerDN(adapterContainer, organisationContainer);
-        ldapService.deleteEntry(adapterContainer);
-
-        ldapService.deleteEntry(organisationContainer);
+        return null;
     }
 
-    public boolean addClient(Client client, String compUuid, Organisation organisation) {
-        clientObjectService.setupClient(client, compUuid, organisation);
-        return ldapService.createEntry(client);
+    public void linkOrganisation(Component component, Organisation organisation) {
+
+
+        component.addOrganisation(organisation.getDn());
+
+        ldapService.updateEntry(component);
     }
 
-    public boolean addAdapter(Adapter adapter, String compUuid, Organisation organisation) {
-        adapterObjectService.setupAdapter(adapter, compUuid, organisation);
-        return ldapService.createEntry(adapter);
+    public void unLinkOrganisation(Component component, Organisation organisation) {
+
+        component.removeOrganisation(organisation.getDn());
+
+        ldapService.updateEntry(component);
     }
 
-    public List<Client> getClients(String compUuid, String orgUuid) {
-        return ldapService.getAll(clientObjectService.getClientBase(compUuid, orgUuid).toString(), Client.class);
+    public void linkClient(Component component, Client client) {
+
+        component.addClient(client.getDn());
+
+        ldapService.updateEntry(component);
     }
 
-    public List<Adapter> getAdapters(String compUuid, String orgUuid) {
-        return ldapService.getAll(adapterObjectService.getAdapterBase(compUuid, orgUuid).toString(), Adapter.class);
+    public void unLinkClient(Component component, Client client) {
+
+        component.removeClient(client.getDn());
+
+        ldapService.updateEntry(component);
     }
 
-    public Optional<Client> getClient(String clientUuid, String compUuid, String orgUuid) {
-        return Optional.ofNullable(ldapService.getEntry(
-                clientObjectService.getClientDn(clientUuid, compUuid, orgUuid),
-                Client.class
-        ));
+    public void linkAdapter(Component component, Adapter adapter) {
+
+        component.addAdapter(adapter.getDn());
+
+        ldapService.updateEntry(component);
     }
 
-    public Optional<Adapter> getAdapter(String adapterUuid, String compUuid, String orgUuid) {
-        return Optional.ofNullable(ldapService.getEntry(
-                adapterObjectService.getAdapterDn(adapterUuid, compUuid, orgUuid),
-                Adapter.class
-        ));
-    }
+    public void unLinkAdapter(Component component, Adapter adapter) {
 
-    public boolean updateClient(Client client) {
-        return ldapService.updateEntry(client);
-    }
+        component.removeAdapter(adapter.getDn());
 
-    public boolean updateAdapter(Adapter adapter) {
-        return ldapService.updateEntry(adapter);
-    }
-
-    public void deleteClient(Client client) {
-        ldapService.deleteEntry(client);
-    }
-
-    public void deleteAdapter(Adapter adapter) {
-        ldapService.deleteEntry(adapter);
-    }
-
-    public void resetClientPassword(Client client) {
-        client.setSecret(PasswordUtility.generateSecret());
-        ldapService.updateEntry(client);
-    }
-
-    public void resetAdapterPassword(Adapter adapter) {
-        adapter.setSecret(PasswordUtility.generateSecret());
-        ldapService.updateEntry(adapter);
+        ldapService.updateEntry(component);
     }
 }

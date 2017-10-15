@@ -1,6 +1,7 @@
 package no.fint.portal.organisation
 
 import no.fint.portal.ldap.LdapService
+import org.junit.Ignore
 import spock.lang.Specification
 
 class OrganisationObjectServiceSpec extends Specification {
@@ -23,21 +24,5 @@ class OrganisationObjectServiceSpec extends Specification {
         organisation.dn != null
         organisation.uuid.length() == 36
         1 * ldapServiceMock.getEntryByUniqueName(_ as String, _ as String, _ as Class) >> null
-    }
-
-    def "Get Organisation DN By UUID"() {
-        given:
-        def uuid = UUID.randomUUID().toString()
-
-        when:
-        def dn1 = organisationObjectService.getOrganisationDnByUUID(uuid)
-        def dn2 = organisationObjectService.getOrganisationDnByUUID(null)
-
-        then:
-        dn1 != null
-        dn1 == String.format("ou=%s,%s", uuid, organisationObjectService.getOrganisationBase())
-        dn1.contains(uuid) == true
-        dn2 == null
-
     }
 }
