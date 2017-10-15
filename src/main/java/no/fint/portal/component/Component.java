@@ -53,6 +53,18 @@ public class Component implements UuidLdapEntry {
         adapters = new ArrayList<>();
     }
 
+    public List<String> getOrganisations() {
+        return organisations;
+    }
+
+    public List<String> getClients() {
+        return clients;
+    }
+
+    public List<String> getAdapters() {
+        return adapters;
+    }
+
     public void addOrganisation(String organisationDn) {
         if (!organisations.stream().anyMatch(organisationDn::equalsIgnoreCase)) {
             organisations.add(organisationDn);

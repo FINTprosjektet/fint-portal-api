@@ -1,4 +1,4 @@
-package no.fint.portal.model;
+package no.fint.portal.ldap;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

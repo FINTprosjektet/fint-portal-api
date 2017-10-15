@@ -6,11 +6,14 @@ import no.fint.portal.adapter.AdapterService
 import no.fint.portal.client.Client
 import no.fint.portal.client.ClientObjectService
 import no.fint.portal.client.ClientService
+import no.fint.portal.component.Component
+import no.fint.portal.component.ComponentObjectService
+import no.fint.portal.component.ComponentService
 import no.fint.portal.contact.Contact
 import no.fint.portal.contact.ContactObjectService
 import no.fint.portal.contact.ContactService
 import no.fint.portal.ldap.LdapService
-import no.fint.portal.model.Container
+import no.fint.portal.ldap.Container
 import no.fint.portal.oauth.NamOAuthClientService
 import no.fint.portal.testutils.ObjectFactory
 import spock.lang.Specification
@@ -23,9 +26,11 @@ class OrganisationServiceSpec extends Specification {
     private adapterService
     private clientService
     private oauthService
+    private componentService
 
     def setup() {
         def organisationBase = "ou=org,o=fint"
+        def componentBase = "ou=comp,o=fint"
         def contactObjectService = new ContactObjectService(organisationBase: organisationBase)
         def clientObjectService = new ClientObjectService(organisationBase: organisationBase)
         def adapterObjectService = new AdapterObjectService(organisationBase: organisationBase)
@@ -36,13 +41,19 @@ class OrganisationServiceSpec extends Specification {
         clientService = new ClientService(clientObjectService: clientObjectService, ldapService: ldapService, namOAuthClientService: oauthService)
         contactService = new ContactService(contactObjectService: contactObjectService, ldapService: ldapService)
         organisationObjectService = new OrganisationObjectService(organisationBase: organisationBase, ldapService: ldapService)
+        componentService = new ComponentService(
+                componentBase: componentBase,
+                ldapService: ldapService,
+                componentObjectService: new ComponentObjectService(ldapService: ldapService),
+        )
         organisationService = new OrganisationService(
                 organisationBase: organisationBase,
                 ldapService: ldapService,
                 organisationObjectService: organisationObjectService,
                 contactService: contactService,
                 adapterService: adapterService,
-                clientService: clientService
+                clientService: clientService,
+                componentService: componentService
         )
     }
 
@@ -121,5 +132,59 @@ class OrganisationServiceSpec extends Specification {
         organisation1.isPresent()
         organisation2.empty()
         2 * ldapService.getEntry(_ as String, _ as Class) >> ObjectFactory.newOrganisation() >> null
+    }
+
+    def "Get Organisation DN By UUID"() {
+        given:
+        def uuid = UUID.randomUUID().toString()
+
+        when:
+        def dn1 = organisationService.getOrganisationDnByUUID(uuid)
+        def dn2 = organisationService.getOrganisationDnByUUID(null)
+
+        then:
+        dn1 != null
+        dn1 == String.format("ou=%s,%s", uuid, organisationObjectService.getOrganisationBase())
+        dn1.contains(uuid) == true
+        dn2 == null
+
+    }
+
+    def "Add component to organisation"() {
+        given:
+        def organisation = ObjectFactory.newOrganisation()
+        def component = ObjectFactory.newComponent()
+
+        organisation.setDn("ou=org1")
+        component.setDn("ou=comp1")
+
+        when:
+        organisationService.linkComponent(organisation, component)
+
+        then:
+        organisation.getComponents().size() == 1
+        1 * ldapService.updateEntry(_ as Organisation)
+        1 * ldapService.updateEntry(_ as Component)
+    }
+
+    def "Remove component from organisation"() {
+        given:
+        def organisation = ObjectFactory.newOrganisation()
+        def comp1 = ObjectFactory.newComponent()
+        def comp2 = ObjectFactory.newComponent()
+
+        comp1.setDn("ou=comp1,o=fint")
+        comp2.setDn("ou=comp2,o=fint")
+        organisation.addComponent("ou=comp1,o=fint")
+        organisation.addComponent("ou=comp2,o=fint")
+
+        when:
+        organisationService.unLinkComponent(organisation, comp1)
+
+        then:
+        organisation.getComponents().size() == 1
+        organisation.getComponents().get(0).equals("ou=comp2,o=fint")
+        1 * ldapService.updateEntry(_ as Organisation)
+        1 * ldapService.updateEntry(_ as Component)
     }
 }

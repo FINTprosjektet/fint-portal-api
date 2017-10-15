@@ -4,7 +4,6 @@ import no.fint.portal.ldap.LdapService
 import org.junit.Ignore
 import spock.lang.Specification
 
-@Ignore
 class ComponentObjectServiceSpec extends Specification {
     private componentObjectService
     private ldapServiceMock
@@ -25,21 +24,5 @@ class ComponentObjectServiceSpec extends Specification {
         component.dn != null
         component.uuid.length() == 36
         1 * ldapServiceMock.getEntryByUniqueName(_ as String, _ as String, _ as Class) >> null
-    }
-
-    def "Get Component DN By UUID"() {
-        given:
-        def uuid = UUID.randomUUID().toString()
-
-        when:
-        def dn1 = componentObjectService.getComponentDnByUUID(uuid)
-        def dn2 = componentObjectService.getComponentDnByUUID(null)
-
-        then:
-        dn1 != null
-        dn1 == String.format("ou=%s,%s", uuid, componentObjectService.getComponentBase())
-        dn1.contains(uuid) == true
-        dn2 == null
-
     }
 }

@@ -1,23 +1,16 @@
-#!groovy
-
-node {
-    currentBuild.result = "SUCCESS"
-
-    try {
-        stage('checkout') {
-            checkout scm
-        }
-
-        stage('build') {
-            sh './gradlew clean build'
-        }
-
-        stage('deploy') {
+pipeline {
+    agent {
+        docker {
+            image 'gradle:alpine'
+            args '-v /root/.m2:/root/.m2'
         }
     }
-
-    catch (err) {
-        currentBuild.result = "FAILURE"
-        throw err
+    stages {
+        stage('Build') {
+            steps {
+                sh './gradlew clean build'
+            }
+        }
     }
 }
+

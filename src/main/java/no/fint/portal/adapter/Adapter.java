@@ -72,6 +72,10 @@ public class Adapter implements BasicLdapEntry {
         components.removeIf(component  -> component.equalsIgnoreCase(componentDn));
     }
 
+    public List<String> getComponents() {
+        return components;
+    }
+
 
     public String getUuid() {
         return uuid;

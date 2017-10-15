@@ -1,5 +1,8 @@
 package no.fint.portal.adapter
 
+import no.fint.portal.component.Component
+import no.fint.portal.component.ComponentObjectService
+import no.fint.portal.component.ComponentService
 import no.fint.portal.ldap.LdapService
 import no.fint.portal.oauth.NamOAuthClientService
 import no.fint.portal.oauth.OAuthClient
@@ -13,13 +16,24 @@ class AdapterServiceSpec extends Specification {
     private ldapService
     private adapterObjectService
     private oauthService
+    private componentService
 
     def setup() {
         def organisationBase = "ou=org,o=fint"
+        def componentBase = "ou=comp,o=fint"
         ldapService = Mock(LdapService)
         adapterObjectService = new AdapterObjectService(organisationBase: organisationBase)
         oauthService = Mock(NamOAuthClientService)
-        adapterService = new AdapterService(adapterObjectService: adapterObjectService, ldapService: ldapService, namOAuthClientService: oauthService)
+        componentService = new ComponentService(
+                componentBase: componentBase,
+                ldapService: ldapService,
+                componentObjectService: new ComponentObjectService(ldapService: ldapService))
+        adapterService = new AdapterService(
+                adapterObjectService: adapterObjectService,
+                ldapService: ldapService,
+                namOAuthClientService: oauthService,
+                componentService: componentService
+        )
 
     }
 
@@ -85,5 +99,42 @@ class AdapterServiceSpec extends Specification {
         then:
         adapter.secret != null
         1 * ldapService.updateEntry(_ as Adapter)
+    }
+
+    def "Add component to adapter"() {
+        given:
+        def adapter = ObjectFactory.newAdapter()
+        def component = ObjectFactory.newComponent()
+        adapter.setDn("cn=a1")
+        component.setDn("ou=comp1")
+
+        when:
+        adapterService.linkComponent(adapter, component)
+
+        then:
+        adapter.getComponents().size() == 1
+        1 * ldapService.updateEntry(_ as Adapter)
+        1 * ldapService.updateEntry(_ as Component)
+    }
+
+    def "Remove component form adapter"() {
+        given:
+        def adapter = ObjectFactory.newAdapter()
+        def comp1 = ObjectFactory.newComponent()
+        def comp2 = ObjectFactory.newComponent()
+
+        comp1.setDn("ou=comp1,o=fint")
+        comp2.setDn("ou=comp2,o=fint")
+        adapter.addComponent("ou=comp1,o=fint")
+        adapter.addComponent("ou=comp2,o=fint")
+
+        when:
+        adapterService.unLinkComponent(adapter, comp1)
+
+        then:
+        adapter.getComponents().size() == 1
+        adapter.getComponents().get(0).equals("ou=comp2,o=fint")
+        1 * ldapService.updateEntry(_ as Adapter)
+        1 * ldapService.updateEntry(_ as Component)
     }
 }

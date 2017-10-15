@@ -26,9 +26,6 @@ public class ComponentService {
     @Autowired
     private ComponentObjectService componentObjectService;
 
-    @Autowired
-    private OrganisationService organisationService;
-
     @Value("${fint.ldap.component-base}")
     private String componentBase;
 
@@ -73,11 +70,6 @@ public class ComponentService {
 
     public void deleteComponent(Component component) {
         ldapService.deleteEntry(component);
-    }
-
-
-    public void removeOrganisationFromComponent(String componentUuid, String organistionUuid) {
-
     }
 
     public String getComponentDnByUUID(String uuid) {
