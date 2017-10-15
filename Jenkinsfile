@@ -1,7 +1,7 @@
 pipeline {
     agent {
         docker {
-            image 'gradle:alpine'
+            image 'gradle'
             args '-v /root/.m2:/root/.m2'
         }
     }
