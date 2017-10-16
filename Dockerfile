@@ -1,3 +1,5 @@
-FROM gradle:4.0-alpine
+FROM gradle:4.2.1-jdk8-alpine
+#RUN apk update && apk add libstdc++ && rm -rf /var/cache/apk/*
+USER root
 ADD . .
-RUN gradle clean build
+RUN gradle --no-daemon clean build
