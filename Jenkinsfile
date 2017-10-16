@@ -8,12 +8,7 @@ pipeline {
             }
         }
         stage('Build') {
-            agent { 
-                node {
-                    label 'docker'
-                    dockerfile true 
-                }
-            }
+            agent { dockerfile true }
             steps {
                 sh "find build/libs/"
                 archive includes: 'build/libs/*.jar'
