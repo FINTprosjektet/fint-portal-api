@@ -19,7 +19,7 @@ pipeline {
                 unstash 'version'
                 sh 'cat version.txt'
                 sh 'gradle --no-daemon clean build'
-                stash includes: 'build/libs/*.jar', name 'libs'
+                stash includes: 'build/libs/*.jar', name: 'libs'
             }
         }
         stage('Deploy') {
