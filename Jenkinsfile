@@ -10,8 +10,10 @@ pipeline {
         }
         stage('Build') {
             agent { 
-                label 'docker'
-                docker 'gradle:4.2.1-jdk8-alpine' 
+                docker {
+                    label 'docker'
+                    image 'gradle:4.2.1-jdk8-alpine' 
+                }
             }
             steps {
                 unstash 'version'
