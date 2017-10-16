@@ -9,7 +9,10 @@ pipeline {
             }
         }
         stage('Build') {
-            agent { docker 'gradle:4.2.1-jdk8-alpine' }
+            agent { 
+                label 'docker'
+                docker 'gradle:4.2.1-jdk8-alpine' 
+            }
             steps {
                 unstash 'version'
                 sh 'cat version.txt'
