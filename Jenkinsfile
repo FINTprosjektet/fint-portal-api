@@ -5,8 +5,8 @@ pipeline {
             agent { docker 'gradle:4.2.1-jdk8-alpine' }
             steps {
                 sh 'gradle --no-daemon clean build'
-                sh 'find build/libs -ls'
-                archive includes: 'build/libs/*.jar'
+                sh 'find build/libs'
+                archiveArtifacts 'build/libs/*.jar'
             }
         }
     }
