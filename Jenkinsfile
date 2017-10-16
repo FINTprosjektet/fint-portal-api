@@ -4,7 +4,7 @@ pipeline {
         stage('Prepare') {
             agent any
             steps {
-                sh "git log --oneline | nl -nln | perl -lne 'if (/^(\\d+).*Version (\\d+\\.\\d+\.\\d+)/) { print \"$2-$1\"; exit; }"
+                sh "git log --oneline | nl -nln | perl -lne 'if (/^(\\d+).*Version (\\d+\\.\\d+\\.\\d+)/) { print \"$2-$1\"; exit; }"
             }
         }
         stage('Build') {
