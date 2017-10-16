@@ -11,7 +11,12 @@ pipeline {
             }
         }
         stage('Build') {
-            agent { dockerfile { label 'docker' } }
+            agent { 
+                dockerfile { 
+                    label 'docker' 
+                    additionalBuildArgs "--build-arg VERSION=${VERSION}"
+                } 
+            }
             steps {
                 archive includes: 'build/libs/*.jar'
             }
