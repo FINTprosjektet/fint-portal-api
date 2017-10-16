@@ -1,9 +1,11 @@
 pipeline {
-    agent any
+    agent {
+        docker 'gradle:4.0'
+    }
     stages {
         stage('Build') {
             steps {
-                sh './gradlew clean build'
+                sh 'gradle clean build'
             }
         }
     }
