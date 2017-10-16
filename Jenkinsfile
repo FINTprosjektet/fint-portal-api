@@ -3,8 +3,8 @@ library 'git-commit-version-number'
 
 pipeline {
     agent { label 'master' }
-    def MY_VERSION=gitCommitVersion{}
     stages {
+        def MY_VERSION=gitCommitVersion{}
         stage('Prepare') {
             steps {
                 echo "Version is: ${env.VERSION}"
