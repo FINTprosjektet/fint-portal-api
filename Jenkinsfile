@@ -1,14 +1,10 @@
 pipeline {
-    agent { dockerfile true }
+    agent none
     stages {
         stage('Build') {
+            agent { dockerfile true }
             steps {
-                sh 'gradle clean build'
-            }
-        }
-        stage('Publish') {
-            steps {
-                sh 'gradle bintrayUpload'
+                echo 'Success'
             }
         }
     }
