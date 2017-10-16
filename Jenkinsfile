@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        docker 'gradle:4.0'
+        dockerfile true
     }
     stages {
         stage('Build') {
