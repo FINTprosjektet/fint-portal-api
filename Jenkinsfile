@@ -14,7 +14,7 @@ pipeline {
             agent { 
                 dockerfile { 
                     label 'docker' 
-                    additionalBuildArgs //'--build-arg VERSION=${VERSION}'
+                    additionalBuildArgs '--build-arg VERSION=${VERSION}'
                 } 
             }
             steps {
