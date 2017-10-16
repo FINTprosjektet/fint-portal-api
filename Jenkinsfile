@@ -9,8 +9,10 @@ pipeline {
         }
         stage('Build') {
             agent { 
-                label 'docker'
-                dockerfile true 
+                node {
+                    label 'docker'
+                    dockerfile true 
+                }
             }
             steps {
                 sh "find build/libs/"
