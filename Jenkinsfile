@@ -1,9 +1,9 @@
 library 'git-commit-version-number'
 
-def MY_VERSION=gitCommitVersion{}
 
 pipeline {
     agent { label 'master' }
+    def MY_VERSION=gitCommitVersion{}
     stages {
         stage('Prepare') {
             steps {
