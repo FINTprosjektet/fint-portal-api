@@ -3,8 +3,7 @@ package no.fint.portal.organisation;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import no.fint.portal.ldap.UuidLdapEntry;
-import org.springframework.beans.factory.annotation.Autowired;
+import no.fint.portal.ldap.BasicLdapEntry;
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Entry;
 import org.springframework.ldap.odm.annotations.Id;
@@ -19,7 +18,7 @@ import java.util.List;
 @ApiModel
 @Data
 @Entry(objectClasses = {"organizationalUnit", "top", "fintOrg"})
-public final class Organisation implements UuidLdapEntry {
+public final class Organisation implements BasicLdapEntry {
 
     @Id
     private Name dn;
@@ -28,7 +27,7 @@ public final class Organisation implements UuidLdapEntry {
             value = "Unique identifier for the organisation (UUID). This is automatically generated and should not be set."
     )
     @Attribute(name = "ou")
-    private String uuid;
+    private String name;
 
     @ApiModelProperty(value = "The organisation number from Enhetsregisteret (https://w2.brreg.no/enhet/sok/index.jsp)")
     @Attribute(name = "fintOrgNumber")
@@ -63,9 +62,8 @@ public final class Organisation implements UuidLdapEntry {
         components.removeIf(component  -> component.equalsIgnoreCase(componentDn));
     }
 
-    @Override
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

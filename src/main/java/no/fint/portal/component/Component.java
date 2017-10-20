@@ -3,7 +3,7 @@ package no.fint.portal.component;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import no.fint.portal.ldap.UuidLdapEntry;
+import no.fint.portal.ldap.BasicLdapEntry;
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Entry;
 import org.springframework.ldap.odm.annotations.Id;
@@ -16,18 +16,18 @@ import java.util.List;
 @ApiModel
 @Data
 @Entry(objectClasses = {"organizationalUnit", "top", "fintComponent"})
-public class Component implements UuidLdapEntry {
+public class Component implements BasicLdapEntry {
 
     @Id
     private Name dn;
 
-    @ApiModelProperty(value = "Unique identifier for the component (UUID). This is automatically generated and should not be set")
-    @Attribute(name = "ou")
-    private String uuid;
-
     @ApiModelProperty(value = "Technical name of the component.")
-    @Attribute(name = "fintCompTechnicalName")
-    private String technicalName;
+    @Attribute(name = "ou")
+    private String name;
+
+    //@ApiModelProperty(value = "Technical name of the component.")
+    //@Attribute(name = "fintCompTechnicalName")
+    //private String technicalName;
 
     @ApiModelProperty(value = "Displayname of the component.")
     @Attribute(name = "fintCompDisplayName")
@@ -115,14 +115,12 @@ public class Component implements UuidLdapEntry {
 
     }
 
-    @Override
-    public String getUuid() {
-        return uuid;
+    public String getName() {
+        return name;
     }
 
-    @Override
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setName(String name) {
+        this.name = name;
     }
 }
 

@@ -1,7 +1,5 @@
 package no.fint.portal.client
 
-import no.fint.portal.client.Client
-import no.fint.portal.client.ClientObjectService
 import no.fint.portal.organisation.Organisation
 import spock.lang.Specification
 
@@ -14,15 +12,15 @@ class ClientObjectServiceSpec extends Specification {
 
     def "Setup Client"() {
         given:
-        def client = new Client()
+        def client = new Client(cn: "TestClient")
 
         when:
-        clientObjectService.setupClient(client, new Organisation(orgId: "test.no", uuid: "orgUuid"))
+        clientObjectService.setupClient(client, new Organisation(orgId: "test.no", name: "orgUuid"))
 
         then:
         client.password != null
         client.dn.contains("orgUuid")
-        client.uuid.length() == 36
+        client.cn != null
     }
 
     def "Get Client Base"() {

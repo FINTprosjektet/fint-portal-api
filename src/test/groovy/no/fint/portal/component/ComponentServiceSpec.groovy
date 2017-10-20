@@ -1,7 +1,6 @@
 package no.fint.portal.component
 
 import no.fint.portal.ldap.LdapService
-import no.fint.portal.organisation.Organisation
 import no.fint.portal.testutils.ObjectFactory
 import spock.lang.Specification
 
@@ -30,7 +29,7 @@ class ComponentServiceSpec extends Specification {
 
         then:
         component.dn != null
-        component.uuid != null
+        component.name != null
         created == true
         1 * ldapService.createEntry(_ as Component) >> true
     }

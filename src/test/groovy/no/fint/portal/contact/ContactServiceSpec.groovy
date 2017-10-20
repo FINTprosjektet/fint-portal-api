@@ -36,7 +36,7 @@ class ContactServiceSpec extends Specification {
         def contact = ObjectFactory.newContact()
 
         when:
-        def created = contactService.addContact(contact, new Organisation(orgId: "test", uuid: "uuid"))
+        def created = contactService.addContact(contact, new Organisation(orgId: "test", name: "cn"))
 
         then:
         created == true

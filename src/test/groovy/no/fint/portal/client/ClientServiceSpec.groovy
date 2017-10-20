@@ -43,12 +43,12 @@ class ClientServiceSpec extends Specification {
         def client = ObjectFactory.newClient()
 
         when:
-        def created = clientService.addClient(client, new Organisation(orgId: "test.no", uuid: "uuid"))
+        def created = clientService.addClient(client, new Organisation(orgId: "test.no", name: "cn"))
 
         then:
         created == true
         client.dn != null
-        client.uuid != null
+        client.cn != null
         1 * ldapService.createEntry(_ as Client) >> true
         1 * oauthService.addOAuthClient(_ as String) >> new OAuthClient()
     }

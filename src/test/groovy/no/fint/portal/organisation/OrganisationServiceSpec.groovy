@@ -67,7 +67,7 @@ class OrganisationServiceSpec extends Specification {
         then:
         created == true
         organisation.dn != null
-        organisation.uuid != null
+        organisation.name != null
         1 * ldapService.createEntry(_ as Organisation) >> true
     }
 
@@ -104,8 +104,8 @@ class OrganisationServiceSpec extends Specification {
     def "Delete Organisation"() {
         given:
         def organisation = ObjectFactory.newOrganisation()
-        organisation.uuid = UUID.randomUUID().toString()
-        organisation.dn = String.format("ou=%s,ou=org,o=fint", organisation.uuid)
+        organisation.name = UUID.randomUUID().toString()
+        organisation.dn = String.format("ou=%s,ou=org,o=fint", organisation.name)
 
         when:
         organisationService.deleteOrganisation(organisation)

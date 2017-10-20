@@ -16,7 +16,7 @@ public class ContactObjectService {
     private String organisationBase;
 
     public void setupContact(Contact contact, Organisation organisation) {
-        contact.setDn(getContactDn(organisation.getUuid(), contact.getNin()));
+        contact.setDn(getContactDn(organisation.getName(), contact.getNin()));
         contact.setOrgId(organisation.getOrgId());
     }
 

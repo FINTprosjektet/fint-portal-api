@@ -1,7 +1,6 @@
 package no.fint.portal.component
 
 import no.fint.portal.ldap.LdapService
-import org.junit.Ignore
 import spock.lang.Specification
 
 class ComponentObjectServiceSpec extends Specification {
@@ -15,14 +14,14 @@ class ComponentObjectServiceSpec extends Specification {
 
     def "Setup Component"() {
         given:
-        def component = new Component(technicalName: "test")
+        def component = new Component(name: "test")
 
         when:
         componentObjectService.setupComponent(component)
 
         then:
         component.dn != null
-        component.uuid.length() == 36
+        component.name != null
         1 * ldapServiceMock.getEntryByUniqueName(_ as String, _ as String, _ as Class) >> null
     }
 }

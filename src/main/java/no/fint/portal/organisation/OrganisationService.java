@@ -80,9 +80,9 @@ public class OrganisationService {
 
     public void deleteOrganisation(Organisation organisation) {
 
-        removeAllContacts(organisation.getUuid());
-        removeAllAdapters(organisation.getUuid());
-        removeAllClients(organisation.getUuid());
+        removeAllContacts(organisation.getName());
+        removeAllAdapters(organisation.getName());
+        removeAllClients(organisation.getName());
         removeAdapterContainer(organisation.getDn());
         removeClientContainer(organisation.getDn());
 

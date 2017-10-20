@@ -23,9 +23,9 @@ public class Client implements BasicLdapEntry {
     @Id
     private Name dn;
 
-    @ApiModelProperty(value = "Username for the client. This is automatically set.")
+    @ApiModelProperty(value = "Username for the client.")
     @Attribute(name = "cn")
-    private String uuid;
+    private String cn;
 
     @ApiModelProperty(value = "Short description of the client")
     @Attribute(name = "sn")
@@ -76,12 +76,12 @@ public class Client implements BasicLdapEntry {
         return components;
     }
 
-    public String getUuid() {
-        return uuid;
+    public String getCn() {
+        return cn;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setCn(String cn) {
+        this.cn = cn;
     }
 
     public String getShortDescription() {

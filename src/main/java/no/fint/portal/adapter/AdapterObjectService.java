@@ -8,7 +8,6 @@ import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.stereotype.Service;
 
 import javax.naming.Name;
-import java.util.UUID;
 
 @Service
 public class AdapterObjectService {
@@ -17,10 +16,10 @@ public class AdapterObjectService {
     private String organisationBase;
 
     public void setupAdapter(Adapter adapter, Organisation organisation) {
-        adapter.setUuid(UUID.randomUUID().toString());
+        //adapter.setCn(UUID.randomUUID().toString());
         adapter.setDn(
-                LdapNameBuilder.newInstance(getAdapterBase(organisation.getUuid()))
-                        .add(LdapConstants.CN, adapter.getUuid())
+                LdapNameBuilder.newInstance(getAdapterBase(organisation.getName()))
+                        .add(LdapConstants.CN, adapter.getCn())
                         .build()
         );
         adapter.setOrgId(organisation.getOrgId());
