@@ -126,7 +126,7 @@ class ComponentServiceSpec extends Specification {
         def client = ObjectFactory.newClient()
         def component = ObjectFactory.newComponent()
 
-        client.setDn("cn=c1")
+        client.setDn("name=c1")
         component.setDn("ou=comp1")
 
         when:
@@ -143,8 +143,8 @@ class ComponentServiceSpec extends Specification {
         def c1 = ObjectFactory.newClient()
         def c2 = ObjectFactory.newClient()
 
-        c1.setDn("cn=c1,o=fint")
-        c2.setDn("cn=c2,o=fint")
+        c1.setDn("name=c1,o=fint")
+        c2.setDn("name=c2,o=fint")
         component.addClient(c1.getDn())
         component.addClient(c2.getDn())
 
@@ -153,7 +153,7 @@ class ComponentServiceSpec extends Specification {
 
         then:
         component.getClients().size() == 1
-        component.getClients().get(0) == "cn=c2,o=fint"
+        component.getClients().get(0) == "name=c2,o=fint"
         1 * ldapService.updateEntry(_ as Component)
     }
 
@@ -162,7 +162,7 @@ class ComponentServiceSpec extends Specification {
         def adapter = ObjectFactory.newAdapter()
         def component = ObjectFactory.newComponent()
 
-        adapter.setDn("cn=a1")
+        adapter.setDn("name=a1")
         component.setDn("ou=comp1")
 
         when:
@@ -179,8 +179,8 @@ class ComponentServiceSpec extends Specification {
         def a1 = ObjectFactory.newAdapter()
         def a2 = ObjectFactory.newAdapter()
 
-        a1.setDn("cn=a1,o=fint")
-        a2.setDn("cn=a2,o=fint")
+        a1.setDn("name=a1,o=fint")
+        a2.setDn("name=a2,o=fint")
         component.addAdapter(a1.getDn())
         component.addAdapter(a2.getDn())
 
@@ -189,7 +189,7 @@ class ComponentServiceSpec extends Specification {
 
         then:
         component.getAdapters().size() == 1
-        component.getAdapters().get(0) == "cn=a2,o=fint"
+        component.getAdapters().get(0) == "name=a2,o=fint"
         1 * ldapService.updateEntry(_ as Component)
     }
 

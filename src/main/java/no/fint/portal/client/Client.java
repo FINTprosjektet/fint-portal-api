@@ -25,7 +25,7 @@ public class Client implements BasicLdapEntry {
 
     @ApiModelProperty(value = "Username for the client.")
     @Attribute(name = "cn")
-    private String cn;
+    private String name;
 
     @ApiModelProperty(value = "Short description of the client")
     @Attribute(name = "sn")
@@ -76,12 +76,12 @@ public class Client implements BasicLdapEntry {
         return components;
     }
 
-    public String getCn() {
-        return cn;
+    public String getName() {
+        return name;
     }
 
-    public void setCn(String cn) {
-        this.cn = cn;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getShortDescription() {

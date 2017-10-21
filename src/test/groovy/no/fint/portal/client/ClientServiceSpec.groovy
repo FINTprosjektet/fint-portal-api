@@ -43,12 +43,12 @@ class ClientServiceSpec extends Specification {
         def client = ObjectFactory.newClient()
 
         when:
-        def created = clientService.addClient(client, new Organisation(orgId: "test.no", name: "cn"))
+        def created = clientService.addClient(client, new Organisation(orgId: "test.no", name: "name"))
 
         then:
         created == true
         client.dn != null
-        client.cn != null
+        client.name != null
         1 * ldapService.createEntry(_ as Client) >> true
         1 * oauthService.addOAuthClient(_ as String) >> new OAuthClient()
     }
@@ -107,7 +107,7 @@ class ClientServiceSpec extends Specification {
         def client = ObjectFactory.newClient()
         def component = ObjectFactory.newComponent()
 
-        client.setDn("cn=c1")
+        client.setDn("name=c1")
         component.setDn("ou=comp1")
 
         when:

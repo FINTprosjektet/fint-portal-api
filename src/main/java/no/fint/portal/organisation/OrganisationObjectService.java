@@ -22,14 +22,14 @@ public class OrganisationObjectService {
 
     public void setupOrganisation(Organisation organisation) {
         Organisation organisationFromLdap = ldapService.getEntryByUniqueName(organisation.getOrgId(), organisationBase, Organisation.class);
-        //ObjectUtility.setupUuidContainerObject(organisation, organisationFromLdap, organisationBase);
-
 
         if (organisationFromLdap == null) {
+            String name = organisation.getOrgId().replace(".", "_");
             Name dn = LdapNameBuilder.newInstance(organisationBase)
-                    .add(LdapConstants.OU, organisation.getOrgId().replace(".", "_"))
+                    .add(LdapConstants.OU, name)
                     .build();
             organisation.setDn(dn);
+            organisation.setName(name);
         } else {
             organisation.setDn(LdapNameBuilder.newInstance(organisationFromLdap.getDn()).build());
         }

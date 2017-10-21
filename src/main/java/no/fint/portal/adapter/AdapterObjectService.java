@@ -16,10 +16,10 @@ public class AdapterObjectService {
     private String organisationBase;
 
     public void setupAdapter(Adapter adapter, Organisation organisation) {
-        //adapter.setCn(UUID.randomUUID().toString());
+        //adapter.setName(UUID.randomUUID().toString());
         adapter.setDn(
                 LdapNameBuilder.newInstance(getAdapterBase(organisation.getName()))
-                        .add(LdapConstants.CN, adapter.getCn())
+                        .add(LdapConstants.CN, adapter.getName())
                         .build()
         );
         adapter.setOrgId(organisation.getOrgId());

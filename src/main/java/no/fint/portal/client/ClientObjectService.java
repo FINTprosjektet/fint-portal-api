@@ -16,10 +16,10 @@ public class ClientObjectService {
     private String organisationBase;
 
     public void setupClient(Client client, Organisation organisation) {
-        //client.setCn(UUID.randomUUID().toString());
+        //client.setName(UUID.randomUUID().toString());
         client.setDn(
                 LdapNameBuilder.newInstance(getClientBase(organisation.getName()))
-                        .add(LdapConstants.CN, client.getCn())
+                        .add(LdapConstants.CN, client.getName())
                         .build()
         );
         client.setOrgId(organisation.getOrgId());

@@ -15,14 +15,14 @@ class ContactObjectServiceSpec extends Specification {
     def "Set Contact Dn"() {
         given:
         def contact = new Contact(nin: "12345")
-        def organisation = new Organisation(orgId: "test", name: "cn")
+        def organisation = new Organisation(orgId: "test", name: "name")
 
         when:
         contactObjectService.setupContact(contact, organisation)
 
         then:
         contact.dn.contains(contact.nin)
-        contact.dn.contains("cn")
+        contact.dn.contains("name")
         contact.orgId.contains("test")
     }
 
@@ -32,8 +32,6 @@ class ContactObjectServiceSpec extends Specification {
 
         then:
         dn != null
-        dn.contains("cn")
-        dn.contains("ou")
         dn.contains("orgUUID")
         dn.contains("nin")
     }

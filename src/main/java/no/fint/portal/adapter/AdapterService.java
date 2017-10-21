@@ -33,7 +33,7 @@ public class AdapterService {
     public boolean addAdapter(Adapter adapter, Organisation organisation) {
         adapterObjectService.setupAdapter(adapter, organisation);
 
-        OAuthClient oAuthClient = namOAuthClientService.addOAuthClient(String.format("A_%s_%s", organisation.getOrgId().replace(".", "_"), adapter.getCn()));
+        OAuthClient oAuthClient = namOAuthClientService.addOAuthClient(String.format("A_%s_%s", organisation.getOrgId().replace(".", "_"), adapter.getName()));
 
         adapter.setClientId(oAuthClient.getClientId());
         adapter.setClientSecret(oAuthClient.getClientSecret());

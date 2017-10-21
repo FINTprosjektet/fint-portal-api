@@ -21,7 +21,7 @@ public enum ObjectFactory {
 
     public static Adapter newAdapter() {
         Adapter adapter = new Adapter();
-        adapter.setCn("TestAdapter");
+        adapter.setName("TestAdapter");
         adapter.setNote("Test adapter for test organisation");
         adapter.setOrgId("test.no");
         adapter.setShortDescription("Test Adapter");
@@ -31,7 +31,7 @@ public enum ObjectFactory {
 
     public static Client newClient() {
         Client client = new Client();
-        client.setCn("TestClient");
+        client.setName("TestClient");
         client.setNote("Test client for test organisation");
         client.setOrgId("test.no");
         client.setShortDescription("Test Client");

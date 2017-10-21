@@ -12,7 +12,7 @@ class ClientObjectServiceSpec extends Specification {
 
     def "Setup Client"() {
         given:
-        def client = new Client(cn: "TestClient")
+        def client = new Client(name: "TestClient")
 
         when:
         clientObjectService.setupClient(client, new Organisation(orgId: "test.no", name: "orgUuid"))
@@ -20,7 +20,7 @@ class ClientObjectServiceSpec extends Specification {
         then:
         client.password != null
         client.dn.contains("orgUuid")
-        client.cn != null
+        client.name != null
     }
 
     def "Get Client Base"() {

@@ -20,8 +20,8 @@ class LdapServiceSpec extends Specification {
     }
 
     def "Create Entry"() {
-        def contact1 = new Contact(dn: "cn=test1,o=fint.no", firstName: "Ole", lastName: "Olsen", orgId: "test.no")
-        def contact2 = new Contact(dn: "cn=test2,o=fint.no", firstName: "Ola", lastName: "Hansen", orgId: "test.no")
+        def contact1 = new Contact(dn: "name=test1,o=fint.no", firstName: "Ole", lastName: "Olsen", orgId: "test.no")
+        def contact2 = new Contact(dn: "name=test2,o=fint.no", firstName: "Ola", lastName: "Hansen", orgId: "test.no")
 
         when:
         def created1 = ldapService.createEntry(contact1)
@@ -35,8 +35,8 @@ class LdapServiceSpec extends Specification {
     }
 
     def "Update Entry"() {
-        def contact1 = new Contact(dn: "cn=test1,o=fint.no", firstName: "Ole", lastName: "Olsen", orgId: "test.no")
-        def contact2 = new Contact(dn: "cn=test2,o=fint.no", firstName: "Ola", lastName: "Hansen", orgId: "test.no")
+        def contact1 = new Contact(dn: "name=test1,o=fint.no", firstName: "Ole", lastName: "Olsen", orgId: "test.no")
+        def contact2 = new Contact(dn: "name=test2,o=fint.no", firstName: "Ola", lastName: "Hansen", orgId: "test.no")
 
         when:
         def updated1 = ldapService.updateEntry(contact1)

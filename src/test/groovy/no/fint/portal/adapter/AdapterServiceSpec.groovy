@@ -42,12 +42,12 @@ class AdapterServiceSpec extends Specification {
         def adapter = ObjectFactory.newAdapter()
 
         when:
-        def created = adapterService.addAdapter(adapter, new Organisation(orgId: "test.no", name: "cn"))
+        def created = adapterService.addAdapter(adapter, new Organisation(orgId: "test.no", name: "name"))
 
         then:
         created == true
         adapter.dn != null
-        adapter.cn != null
+        adapter.name != null
         1 * ldapService.createEntry(_ as Adapter) >> true
         1 * oauthService.addOAuthClient(_ as String) >> new OAuthClient()
     }
@@ -105,7 +105,7 @@ class AdapterServiceSpec extends Specification {
         given:
         def adapter = ObjectFactory.newAdapter()
         def component = ObjectFactory.newComponent()
-        adapter.setDn("cn=a1")
+        adapter.setDn("name=a1")
         component.setDn("ou=comp1")
 
         when:

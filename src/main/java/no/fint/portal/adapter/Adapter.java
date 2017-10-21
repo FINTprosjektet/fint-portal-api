@@ -25,7 +25,7 @@ public class Adapter implements BasicLdapEntry {
 
     @ApiModelProperty(value = "Username for the adapter. This is automatically set.")
     @Attribute(name = "cn")
-    private String cn;
+    private String name;
 
     @ApiModelProperty(value = "Short description of the adapter")
     @Attribute(name = "sn")
@@ -77,12 +77,12 @@ public class Adapter implements BasicLdapEntry {
     }
 
 
-    public String getCn() {
-        return cn;
+    public String getName() {
+        return name;
     }
 
-    public void setCn(String cn) {
-        this.cn = cn;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getShortDescription() {
