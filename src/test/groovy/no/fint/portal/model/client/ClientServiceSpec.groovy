@@ -43,7 +43,7 @@ class ClientServiceSpec extends Specification {
         def client = ObjectFactory.newClient()
 
         when:
-        def created = clientService.addClient(client, new Organisation(orgId: "test.no", name: "name"))
+        def created = clientService.addClient(client, new Organisation(name: "name"))
 
         then:
         created == true
@@ -55,7 +55,7 @@ class ClientServiceSpec extends Specification {
 
     def "Get Clients"() {
         when:
-        def clients = clientService.getClients(UUID.randomUUID().toString())
+        def clients = clientService.getClients("orgName")
 
         then:
         clients.size() == 2

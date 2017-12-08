@@ -33,10 +33,9 @@ class AdapterObjectServiceSpec extends Specification {
         def adapter = new Adapter(name: "TestAdapter")
 
         when:
-        adapterObjectService.setupAdapter(adapter, new Organisation(orgId: "test.no", name: "name"))
+        adapterObjectService.setupAdapter(adapter, new Organisation(name: "name"))
 
         then:
-        adapter.secret != null
         adapter.dn != null
         adapter.name != null
     }

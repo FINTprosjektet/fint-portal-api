@@ -1,6 +1,5 @@
 package no.fint.portal.model.asset;
 
-import no.fint.portal.ldap.Container;
 import no.fint.portal.ldap.LdapService;
 import no.fint.portal.model.adapter.Adapter;
 import no.fint.portal.model.client.Client;
@@ -9,6 +8,8 @@ import no.fint.portal.utilities.LdapConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AssetService {
@@ -20,9 +21,9 @@ public class AssetService {
         asset.setName(asset.getAssetId().replace(".", "_"));
         asset.setDn(
                 LdapNameBuilder.newInstance(organisation.getDn())
-                .add(LdapConstants.OU, LdapConstants.ASSET_CONTAINER_NAME)
-                .add(LdapConstants.OU, asset.getName())
-                .build()
+                        .add(LdapConstants.OU, LdapConstants.ASSET_CONTAINER_NAME)
+                        .add(LdapConstants.OU, asset.getName())
+                        .build()
         );
 
         return ldapService.createEntry(asset);
@@ -70,5 +71,13 @@ public class AssetService {
 
         ldapService.updateEntry(asset);
         ldapService.updateEntry(adapter);
+    }
+
+    public List<Asset> getAssets(Organisation organisation) {
+
+        return ldapService.getAll(LdapNameBuilder.newInstance(organisation.getDn())
+                        .add(LdapConstants.OU, LdapConstants.ASSET_CONTAINER_NAME)
+                        .build().toString(),
+                Asset.class);
     }
 }

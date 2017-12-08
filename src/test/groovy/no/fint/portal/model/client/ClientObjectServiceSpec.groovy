@@ -15,11 +15,11 @@ class ClientObjectServiceSpec extends Specification {
         def client = new Client(name: "TestClient")
 
         when:
-        clientObjectService.setupClient(client, new Organisation(orgId: "test.no", name: "orgUuid"))
+        clientObjectService.setupClient(client, new Organisation(name: "orgName"))
 
         then:
         client.password != null
-        client.dn.contains("orgUuid")
+        client.dn.contains("orgName")
         client.name != null
     }
 

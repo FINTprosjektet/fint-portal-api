@@ -104,7 +104,11 @@ public class OrganisationService {
             clients.forEach(client -> clientService.deleteClient(client));
         }
         // Remove all assets
-        // TODO: 08/12/2017
+        List<Asset> assets = assetService.getAssets(organisation);
+
+        if (assets != null) {
+            assets.forEach(assetService::removeAsset);
+        }
 
         // Remove adapter container
         Container adapterContainer = new Container();

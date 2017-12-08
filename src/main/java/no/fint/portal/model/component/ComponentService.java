@@ -126,7 +126,7 @@ public class ComponentService {
         component.removeAdapter(adapter.getDn());
         adapter.removeComponent(component.getDn());
 
-        ldapService.updateEntry(component);
+        ldapService.updateEntry(adapter);
         ldapService.updateEntry(component);
     }
 }

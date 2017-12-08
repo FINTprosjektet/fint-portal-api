@@ -14,7 +14,7 @@ class OrganisationObjectServiceSpec extends Specification {
 
     def "Setup Organisation"() {
         given:
-        def organisation = new Organisation(orgId: "test.no", name: "TestOrganisation")
+        def organisation = new Organisation(name: "TestOrganisation")
 
         when:
         organisationObjectService.setupOrganisation(organisation)

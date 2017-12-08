@@ -3,6 +3,7 @@ package no.fint.portal.model.organisation
 import no.fint.portal.model.adapter.Adapter
 import no.fint.portal.model.adapter.AdapterObjectService
 import no.fint.portal.model.adapter.AdapterService
+import no.fint.portal.model.asset.AssetService
 import no.fint.portal.model.client.Client
 import no.fint.portal.model.client.ClientObjectService
 import no.fint.portal.model.client.ClientService
@@ -27,11 +28,13 @@ class OrganisationServiceSpec extends Specification {
     private clientService
     private oauthService
     private componentService
+    private assetService
 
     def setup() {
         def organisationBase = "ou=org,o=fint"
         def componentBase = "ou=comp,o=fint"
-        def contactObjectService = new ContactObjectService(organisationBase: organisationBase)
+        def contactBase = "ou=contacts,o=fint"
+        def contactObjectService = new ContactObjectService(contactBase: contactBase)
         def clientObjectService = new ClientObjectService(organisationBase: organisationBase)
         def adapterObjectService = new AdapterObjectService(organisationBase: organisationBase)
 
@@ -39,6 +42,7 @@ class OrganisationServiceSpec extends Specification {
         oauthService = Mock(NamOAuthClientService)
         adapterService = new AdapterService(adapterObjectService: adapterObjectService, ldapService: ldapService, namOAuthClientService: oauthService)
         clientService = new ClientService(clientObjectService: clientObjectService, ldapService: ldapService, namOAuthClientService: oauthService)
+        assetService = new AssetService(ldapService: ldapService)
         contactService = new ContactService(contactObjectService: contactObjectService, ldapService: ldapService)
         organisationObjectService = new OrganisationObjectService(organisationBase: organisationBase, ldapService: ldapService)
         componentService = new ComponentService(
@@ -53,7 +57,8 @@ class OrganisationServiceSpec extends Specification {
                 contactService: contactService,
                 adapterService: adapterService,
                 clientService: clientService,
-                componentService: componentService
+                componentService: componentService,
+                assetService: assetService
         )
     }
 
@@ -89,18 +94,6 @@ class OrganisationServiceSpec extends Specification {
         1 * ldapService.getAll(_ as String, _ as Class) >> Arrays.asList(ObjectFactory.newOrganisation(), ObjectFactory.newOrganisation())
     }
 
-    def "Get Organisation By OrgId"() {
-        when:
-        def organisation1 = organisationService.getOrganisation("test1.no")
-        def organisation2 = organisationService.getOrganisation("test2.no")
-
-        then:
-        organisation1.isPresent()
-        organisation2.empty()
-        2 * ldapService.getStringDnByUniqueName(_ as String, _ as String, _ as Class) >> "o=fint" >> null
-        1 * ldapService.getEntry(_ as String, _ as Class) >> ObjectFactory.newOrganisation()
-    }
-
     def "Delete Organisation"() {
         given:
         def organisation = ObjectFactory.newOrganisation()
@@ -111,44 +104,17 @@ class OrganisationServiceSpec extends Specification {
         organisationService.deleteOrganisation(organisation)
 
         then:
-        2 * ldapService.deleteEntry(_ as Contact)
         1 * ldapService.deleteEntry(_ as Organisation)
         2 * ldapService.deleteEntry(_ as Client)
         2 * ldapService.deleteEntry(_ as Adapter)
-        2 * ldapService.deleteEntry(_ as Container)
+        3 * ldapService.deleteEntry(_ as Container)
         4 * oauthService.getOAuthClient(_ as String) >> ObjectFactory.newOAuthClient()
         3 * ldapService.getAll(_ as String, _ as Class) >>
-                Arrays.asList(ObjectFactory.newContact(), ObjectFactory.newContact()) >>
                 Arrays.asList(ObjectFactory.newAdapter(), ObjectFactory.newAdapter()) >>
-                Arrays.asList(ObjectFactory.newClient(), ObjectFactory.newClient())
+                Arrays.asList(ObjectFactory.newClient(), ObjectFactory.newClient()) >>
+                Arrays.asList(ObjectFactory.newAsset(), ObjectFactory.newAsset())
     }
 
-    def "Get Organisation By UUID"() {
-        when:
-        def organisation1 = organisationService.getOrganisationByUUID(UUID.randomUUID().toString())
-        def organisation2 = organisationService.getOrganisationByUUID(UUID.randomUUID().toString())
-
-        then:
-        organisation1.isPresent()
-        organisation2.empty()
-        2 * ldapService.getEntry(_ as String, _ as Class) >> ObjectFactory.newOrganisation() >> null
-    }
-
-    def "Get Organisation DN By UUID"() {
-        given:
-        def uuid = UUID.randomUUID().toString()
-
-        when:
-        def dn1 = organisationService.getOrganisationDnByUUID(uuid)
-        def dn2 = organisationService.getOrganisationDnByUUID(null)
-
-        then:
-        dn1 != null
-        dn1 == String.format("ou=%s,%s", uuid, organisationObjectService.getOrganisationBase())
-        dn1.contains(uuid) == true
-        dn2 == null
-
-    }
 
     def "Add component to organisation"() {
         given:

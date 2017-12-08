@@ -10,21 +10,19 @@ class ContactServiceSpec extends Specification {
 
     private contactService
     private ldapService
-    private organisationObjectService
     private contactObjectService
 
     def setup() {
-        def organisationBase = "ou=org,o=fint"
+        def contactBase = "ou=contacts,o=fint"
         ldapService = Mock(LdapService)
-        contactObjectService = new ContactObjectService(organisationBase: organisationBase)
-        organisationObjectService = new OrganisationObjectService(organisationBase: organisationBase, ldapService: ldapService)
+        contactObjectService = new ContactObjectService(contactBase: contactBase)
         contactService = new ContactService(contactObjectService: contactObjectService, ldapService: ldapService)
 
     }
 
     def "Get Contacts"() {
         when:
-        def contacts = contactService.getContacts(UUID.randomUUID().toString())
+        def contacts = contactService.getContacts()
 
         then:
         contacts.size() == 2
@@ -36,7 +34,7 @@ class ContactServiceSpec extends Specification {
         def contact = ObjectFactory.newContact()
 
         when:
-        def created = contactService.addContact(contact, new Organisation(orgId: "test", name: "name"))
+        def created = contactService.addContact(contact)
 
         then:
         created == true
@@ -46,8 +44,8 @@ class ContactServiceSpec extends Specification {
 
     def "Get Contact"() {
         when:
-        def contact1 = contactService.getContact(UUID.randomUUID().toString(), "11111111111")
-        def contact2 = contactService.getContact(UUID.randomUUID().toString(), "11111111111")
+        def contact1 = contactService.getContact("11111111111")
+        def contact2 = contactService.getContact("11111111111")
 
         then:
         contact1.isPresent()

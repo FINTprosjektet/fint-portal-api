@@ -42,7 +42,7 @@ class AdapterServiceSpec extends Specification {
         def adapter = ObjectFactory.newAdapter()
 
         when:
-        def created = adapterService.addAdapter(adapter, new Organisation(orgId: "test.no", name: "name"))
+        def created = adapterService.addAdapter(adapter, new Organisation(name: "name"))
 
         then:
         created == true
@@ -97,7 +97,6 @@ class AdapterServiceSpec extends Specification {
         adapterService.resetAdapterPassword(adapter)
 
         then:
-        adapter.secret != null
         1 * ldapService.updateEntry(_ as Adapter)
     }
 
@@ -129,11 +128,12 @@ class AdapterServiceSpec extends Specification {
         adapter.addComponent("ou=comp2,o=fint")
 
         when:
-        adapterService.unLinkComponent(adapter, comp1)
+        //adapterService.unLinkComponent(adapter, comp1)
+        componentService.unLinkAdapter(comp1, adapter)
 
         then:
         adapter.getComponents().size() == 1
-        adapter.getComponents().get(0).equals("ou=comp2,o=fint")
+        adapter.getComponents().get(0) == "ou=comp2,o=fint"
         1 * ldapService.updateEntry(_ as Adapter)
         1 * ldapService.updateEntry(_ as Component)
     }

@@ -41,8 +41,8 @@ public class ClientService {
         return ldapService.createEntry(client);
     }
 
-    public List<Client> getClients(String orgUuid) {
-        List<Client> clients = ldapService.getAll(clientObjectService.getClientBase(orgUuid).toString(), Client.class);
+    public List<Client> getClients(String orgName) {
+        List<Client> clients = ldapService.getAll(clientObjectService.getClientBase(orgName).toString(), Client.class);
 
         clients.forEach(client -> {
             OAuthClient oAuthClient = namOAuthClientService.getOAuthClient(client.getClientId());

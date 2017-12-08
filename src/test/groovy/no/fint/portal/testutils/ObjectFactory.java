@@ -1,6 +1,7 @@
 package no.fint.portal.testutils;
 
 import no.fint.portal.model.adapter.Adapter;
+import no.fint.portal.model.asset.Asset;
 import no.fint.portal.model.client.Client;
 import no.fint.portal.model.component.Component;
 import no.fint.portal.model.contact.Contact;
@@ -14,7 +15,6 @@ public enum ObjectFactory {
         Component component = new Component();
         //component.setDn("ou=comp1,ou=comp,o=fint");
         component.setName("compTest");
-        component.setDisplayName("Comp Test");
         component.setDescription("Created by test");
         return component;
     }
@@ -23,7 +23,6 @@ public enum ObjectFactory {
         Adapter adapter = new Adapter();
         adapter.setName("TestAdapter");
         adapter.setNote("Test adapter for test organisation");
-        adapter.setOrgId("test.no");
         adapter.setShortDescription("Test Adapter");
         adapter.setClientId("123");
         return adapter;
@@ -33,7 +32,6 @@ public enum ObjectFactory {
         Client client = new Client();
         client.setName("TestClient");
         client.setNote("Test client for test organisation");
-        client.setOrgId("test.no");
         client.setShortDescription("Test Client");
         client.setClientId("123");
         return client;
@@ -42,7 +40,6 @@ public enum ObjectFactory {
     public static Organisation newOrganisation() {
         Organisation organisation = new Organisation();
         organisation.setName("TestOrganisation");
-        organisation.setOrgId("test.no");
         organisation.setOrgNumber("1111111111");
         organisation.setDisplayName("Test organisation");
         return organisation;
@@ -52,6 +49,12 @@ public enum ObjectFactory {
         Contact contact = new Contact();
         contact.setNin("111111111");
         return contact;
+    }
+
+    public static Asset newAsset() {
+        Asset asset = new Asset();
+        asset.setName("assetName");
+        return asset;
     }
 
     public static OAuthClient newOAuthClient() {
