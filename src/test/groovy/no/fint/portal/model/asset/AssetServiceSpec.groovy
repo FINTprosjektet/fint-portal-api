@@ -1,9 +1,130 @@
 package no.fint.portal.model.asset
 
+import no.fint.portal.ldap.LdapService
+import no.fint.portal.model.adapter.Adapter
+import no.fint.portal.model.client.Client
+import no.fint.portal.model.organisation.Organisation
+import no.fint.portal.testutils.ObjectFactory
 import spock.lang.Specification
 
 class AssetServiceSpec extends Specification {
-    def "Add asset"() {
-        // TODO Create tests
+
+    private assetService
+    private ldapService
+
+    def setup() {
+        ldapService = Mock(LdapService)
+        assetService = new AssetService(ldapService: ldapService)
+
     }
+
+    def "Add Asset"() {
+        given:
+        def asset = ObjectFactory.newAsset()
+        asset.assetId = "test.no"
+
+        when:
+        def created = assetService.addAsset(asset, new Organisation(name: "name", dn: "ou=test,ou=org,o=fint"))
+
+        then:
+        created
+        asset.dn
+        asset.name
+        1 * ldapService.createEntry(_ as Asset) >> true
+    }
+
+    def "Get Assets"() {
+        given:
+        def organisation = ObjectFactory.newOrganisation()
+        organisation.dn = "ou=test,ou=org,o=fint"
+
+        when:
+        def assets = assetService.getAssets(organisation)
+
+        then:
+        assets.size() == 2
+        1 * ldapService.getAll(_ as String, _ as Class) >> Arrays.asList(ObjectFactory.newAsset(), ObjectFactory.newAsset())
+    }
+
+    def "Link Client to Asset"() {
+        given:
+        def asset = ObjectFactory.newAsset()
+        asset.assetId = "test.no"
+        def client = ObjectFactory.newClient()
+        client.dn = "cn=xyzzy,ou=clients,ou=test,ou=org,o=fint"
+
+        when:
+        assetService.linkClientToAsset(asset,client)
+
+        then:
+        asset.clients.any { it.contains('xyzzy')}
+        client.assetId == 'test.no'
+        1 * ldapService.updateEntry(_ as Asset) >> true
+        1 * ldapService.updateEntry(_ as Client) >> true
+    }
+
+    def "Unlink Client from Asset"() {
+        given:
+        def asset = ObjectFactory.newAsset()
+        asset.assetId = "test.no"
+        def client1 = ObjectFactory.newClient()
+        client1.dn = "cn=xyzzy,ou=clients,ou=test,ou=org,o=fint"
+        assetService.linkClientToAsset(asset,client1)
+        def client2 = ObjectFactory.newClient()
+        client2.dn = "cn=abcabc,ou=clients,ou=test,ou=org,o=fint"
+        assetService.linkClientToAsset(asset,client2)
+
+        when:
+        assetService.unlinkClientFromAsset(asset,client1)
+
+        then:
+        asset.clients.size() == 1
+        asset.clients.any { it.contains('abcabc')}
+        client2.assetId == 'test.no'
+        client1.assetId == null
+        1 * ldapService.updateEntry(_ as Asset) >> true
+        1 * ldapService.updateEntry(_ as Client) >> true
+
+    }
+
+
+    def "Link Adapter to Asset"() {
+        given:
+        def asset = ObjectFactory.newAsset()
+        asset.assetId = "test.no"
+        def adapter = ObjectFactory.newAdapter()
+        adapter.dn = "cn=xyzzy,ou=adapters,ou=test,ou=org,o=fint"
+
+        when:
+        assetService.linkAdapterToAsset(asset,adapter)
+
+        then:
+        asset.adapters.any { it.contains('xyzzy')}
+        adapter.assets.any { it == 'test.no' }
+        1 * ldapService.updateEntry(_ as Asset) >> true
+        1 * ldapService.updateEntry(_ as Adapter) >> true
+    }
+
+    def "Unlink Adapter from Asset"() {
+        def asset = ObjectFactory.newAsset()
+        asset.assetId = "test.no"
+        def adapter1 = ObjectFactory.newAdapter()
+        adapter1.dn = "cn=xyzzy,ou=adapters,ou=test,ou=org,o=fint"
+        assetService.linkAdapterToAsset(asset,adapter1)
+        def adapter2 = ObjectFactory.newAdapter()
+        adapter2.dn = "cn=abcabc,ou=adapters,ou=test,ou=org,o=fint"
+        assetService.linkAdapterToAsset(asset,adapter2)
+
+        when:
+        assetService.unlinkAdapterFromAsset(asset,adapter1)
+
+        then:
+        asset.adapters.size() == 1
+        asset.adapters.any { it.contains('abcabc')}
+        adapter1.assets.isEmpty()
+        adapter2.assets.any { it == 'test.no' }
+        1 * ldapService.updateEntry(_ as Asset) >> true
+        1 * ldapService.updateEntry(_ as Adapter) >> true
+    }
+
 }

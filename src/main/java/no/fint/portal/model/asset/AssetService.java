@@ -46,7 +46,7 @@ public class AssetService {
         ldapService.updateEntry(client);
     }
 
-    public void unLinkClientToAsset(Asset asset, Client client) {
+    public void unlinkClientFromAsset(Asset asset, Client client) {
 
         asset.removeClient(client.getDn());
         client.setAssetId(null);
@@ -64,7 +64,7 @@ public class AssetService {
         ldapService.updateEntry(adapter);
     }
 
-    public void unLinkAdapterToAsset(Asset asset, Adapter adapter) {
+    public void unlinkAdapterFromAsset(Asset asset, Adapter adapter) {
 
         asset.removeAdapter(adapter.getDn());
         adapter.removeAsset(asset.getAssetId());
