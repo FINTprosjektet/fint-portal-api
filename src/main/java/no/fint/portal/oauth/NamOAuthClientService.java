@@ -42,12 +42,10 @@ public class NamOAuthClientService {
         resourceDetails.setAccessTokenUri(String.format(NamOAuthConstants.ACCESS_TOKEN_URL_TEMPLATE, idpHostname));
         resourceDetails.setClientId(clientId);
         resourceDetails.setClientSecret(clientSecret);
-        resourceDetails.setGrantType(NamOAuthConstants.GRANT_TYPE);
+        resourceDetails.setGrantType(NamOAuthConstants.PASSWORD_GRANT_TYPE);
         resourceDetails.setScope(Arrays.asList(new String(NamOAuthConstants.SCOPE)));
 
         restTemplate = new OAuth2RestTemplate(resourceDetails);
-
-        //mapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
     }
 
     public OAuthClient addOAuthClient(String name) {
@@ -78,13 +76,10 @@ public class NamOAuthClientService {
     }
 
     public void removeOAuthClient(String clientId) {
-
         restTemplate.delete(String.format(NamOAuthConstants.CLIENT_URL_TEMPLATE, idpHostname, clientId));
-
     }
 
     public OAuthClient getOAuthClient(String clientId) {
-
         return restTemplate.getForObject(String.format(NamOAuthConstants.CLIENT_URL_TEMPLATE, idpHostname, clientId), OAuthClient.class);
     }
 }

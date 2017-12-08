@@ -34,12 +34,16 @@ public class OAuthClient {
     @JsonProperty("client_secret")
     private String clientSecret;
 
+    @JsonProperty("corsdomains")
+    private List<String> corsDomains;
+
     public OAuthClient(String name) {
         clientName = name;
 
-        grantTypes = Arrays.asList(NamOAuthConstants.GRANT_TYPE);
+        grantTypes = NamOAuthConstants.GRANT_TYPE;
         applicationType = NamOAuthConstants.APPLICATION_TYPE;
         redirectUris = Arrays.asList(NamOAuthConstants.DEFAULT_REDIRECT_URI);
         responseTypes = Arrays.asList(NamOAuthConstants.RESPONSE_TYPE);
+        corsDomains = NamOAuthConstants.CORS_DOMAINS;
     }
 }
