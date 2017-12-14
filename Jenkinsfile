@@ -37,7 +37,7 @@ pipeline {
             steps {
                 unstash 'libs'
                 archiveArtifacts 'build/libs/*.jar'
-                sh 'gradle --no-daemon -PbintrayUser=${BINTRAY_USR} -PbintrayKey=${BINTRAY_PSW} bintrayUpload'
+                sh "gradle --no-daemon -Pversion=${VERSION} -PbintrayUser=${BINTRAY_USR} -PbintrayKey=${BINTRAY_PSW} bintrayUpload"
             }
         }
     }
