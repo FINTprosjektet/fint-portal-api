@@ -4,8 +4,9 @@ pipeline {
         stage('Prepare') {
             agent { label 'master' }
             steps {
-                sh 'git log --oneline | nl -nln | perl -lne \'if (/^(\\d+).*Version (\\d+\\.\\d+\\.\\d+)/) { print "$2-$1"; exit; }\' > version.txt'
-                stash includes: 'version.txt', name: 'version'
+                script {
+                    VERSION = sh 'git log --oneline | nl -nln | perl -lne \'if (/^(\\d+).*Version (\\d+\\.\\d+\\.\\d+)/) { print "$2-$1"; exit; }\''
+                }
             }
         }
         stage('Build') {
@@ -16,9 +17,7 @@ pipeline {
                 }
             }
             steps {
-                unstash 'version'
-                sh 'cat version.txt'
-                sh 'gradle --no-daemon clean build'
+                sh "gradle -Pversion=${VERSION} --no-daemon clean build"
                 stash includes: 'build/libs/*.jar', name: 'libs'
             }
         }
