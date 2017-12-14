@@ -5,7 +5,7 @@ pipeline {
             agent { label 'master' }
             steps {
                 script {
-                    VERSION = sh 'git log --oneline | nl -nln | perl -lne \'if (/^(\\d+).*Version (\\d+\\.\\d+\\.\\d+)/) { print "$2-$1"; exit; }\''
+                    VERSION=sh script: 'git log --oneline | nl -nln | perl -ne \'if (/^(\\d+).*Version (\\d+\\.\\d+\\.\\d+)/) { print "$2-$1"; exit; }\'', returnStdout: true
                 }
             }
         }
