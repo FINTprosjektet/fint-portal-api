@@ -5,8 +5,8 @@ import no.fint.portal.model.asset.Asset;
 import no.fint.portal.model.client.Client;
 import no.fint.portal.model.component.Component;
 import no.fint.portal.model.contact.Contact;
-import no.fint.portal.oauth.OAuthClient;
 import no.fint.portal.model.organisation.Organisation;
+import no.fint.portal.oauth.OAuthClient;
 
 public enum ObjectFactory {
     ;
@@ -42,12 +42,14 @@ public enum ObjectFactory {
         organisation.setName("TestOrganisation");
         organisation.setOrgNumber("1111111111");
         organisation.setDisplayName("Test organisation");
+        organisation.setDn("ou=testOrg,ou=org,o=fint");
         return organisation;
     }
 
     public static Contact newContact() {
         Contact contact = new Contact();
         contact.setNin("111111111");
+        contact.setDn("cn=111111111,ou=contacts,o=fint");
         return contact;
     }
 

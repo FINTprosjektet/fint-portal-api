@@ -2,8 +2,6 @@ package no.fint.portal.model.adapter;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.portal.ldap.LdapService;
-import no.fint.portal.model.component.Component;
-import no.fint.portal.model.component.ComponentService;
 import no.fint.portal.model.organisation.Organisation;
 import no.fint.portal.oauth.NamOAuthClientService;
 import no.fint.portal.oauth.OAuthClient;
@@ -26,9 +24,6 @@ public class AdapterService {
 
     @Autowired
     NamOAuthClientService namOAuthClientService;
-
-    @Autowired
-    ComponentService componentService;
 
     public boolean addAdapter(Adapter adapter, Organisation organisation) {
         adapterObjectService.setupAdapter(adapter, organisation);
@@ -79,11 +74,4 @@ public class AdapterService {
         ldapService.updateEntry(adapter);
     }
 
-    public void linkComponent(Adapter adapter, Component component) {
-        componentService.linkAdapter(component, adapter);
-    }
-
-    public void unLinkComponent(Adapter adapter, Component component) {
-        componentService.unLinkAdapter(component, adapter);
-    }
 }

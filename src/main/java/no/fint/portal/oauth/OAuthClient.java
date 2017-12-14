@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -42,8 +42,8 @@ public class OAuthClient {
 
         grantTypes = NamOAuthConstants.GRANT_TYPE;
         applicationType = NamOAuthConstants.APPLICATION_TYPE;
-        redirectUris = Arrays.asList(NamOAuthConstants.DEFAULT_REDIRECT_URI);
-        responseTypes = Arrays.asList(NamOAuthConstants.RESPONSE_TYPE);
+        redirectUris = Collections.singletonList(NamOAuthConstants.DEFAULT_REDIRECT_URI);
+        responseTypes = Collections.singletonList(NamOAuthConstants.RESPONSE_TYPE);
         corsDomains = NamOAuthConstants.CORS_DOMAINS;
     }
 }

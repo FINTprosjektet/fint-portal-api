@@ -50,6 +50,7 @@ public final class Organisation implements BasicLdapEntry {
 
     public Organisation() {
         components = new ArrayList<>();
+        techicalContacts = new ArrayList<>();
     }
 
     public void addComponent(String componentDn) {
@@ -69,7 +70,7 @@ public final class Organisation implements BasicLdapEntry {
     }
 
     public void removeTechicalContact(String contactDn) {
-        components.removeIf(contact -> contact.equalsIgnoreCase(contactDn));
+        techicalContacts.removeIf(contact -> contact.equalsIgnoreCase(contactDn));
     }
 
     public void setName(String name) {

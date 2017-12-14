@@ -184,6 +184,7 @@ public class OrganisationService {
     }
 
     public void unLinkComponent(Organisation organisation, Component component) {
+        // TODO: Should this organisation's clients and adapters be unlinked from the component?
         organisation.removeComponent(component.getDn());
         component.removeOrganisation(organisation.getDn());
 
@@ -191,7 +192,7 @@ public class OrganisationService {
         ldapService.updateEntry(component);
     }
 
-    public List<Contact> getTechicalContacts(Organisation organisation) {
+    public List<Contact> getTechnicalContacts(Organisation organisation) {
         List<Contact> contacts = contactService.getContacts();
 
 

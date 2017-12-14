@@ -1,8 +1,6 @@
 package no.fint.portal.model.contact
 
 import no.fint.portal.ldap.LdapService
-import no.fint.portal.model.organisation.Organisation
-import no.fint.portal.model.organisation.OrganisationObjectService
 import no.fint.portal.testutils.ObjectFactory
 import spock.lang.Specification
 
@@ -20,7 +18,7 @@ class ContactServiceSpec extends Specification {
 
     }
 
-    def "Get Contacts"() {
+    def "Get All Contacts"() {
         when:
         def contacts = contactService.getContacts()
 

@@ -15,8 +15,8 @@ class AdapterObjectServiceSpec extends Specification {
         def dn = adapterObjectService.getAdapterBase("orgUuid")
 
         then:
-        dn != null
-        dn.toString().contains("orgUuid") == true
+        dn
+        dn.toString().contains("orgUuid")
     }
 
     def "Get Adapter Dn"() {

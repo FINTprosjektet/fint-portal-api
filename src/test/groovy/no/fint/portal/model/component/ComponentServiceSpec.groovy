@@ -85,43 +85,7 @@ class ComponentServiceSpec extends Specification {
 
     }
 
-    def "Add organisation to component"() {
-        given:
-        def organisation = ObjectFactory.newOrganisation()
-        def component = ObjectFactory.newComponent()
-
-        organisation.setDn("ou=org1")
-        component.setDn("ou=comp1")
-
-        when:
-        componentService.linkOrganisation(component, organisation)
-
-        then:
-        component.getOrganisations().size() == 1
-        1 * ldapService.updateEntry(_ as Component)
-    }
-
-    def "Remove organisation from component"() {
-        given:
-        def component = ObjectFactory.newComponent()
-        def org1 = ObjectFactory.newOrganisation()
-        def org2 = ObjectFactory.newOrganisation()
-
-        org1.setDn("ou=org1,o=fint")
-        org2.setDn("ou=org2,o=fint")
-        component.addOrganisation(org1.getDn())
-        component.addOrganisation(org2.getDn())
-
-        when:
-        componentService.unLinkOrganisation(component, org1)
-
-        then:
-        component.getOrganisations().size() == 1
-        component.getOrganisations().get(0).equals("ou=org2,o=fint")
-        1 * ldapService.updateEntry(_ as Component)
-    }
-
-    def "Add client to component"() {
+    def "Add Client to Component"() {
         given:
         def client = ObjectFactory.newClient()
         def component = ObjectFactory.newComponent()
@@ -137,7 +101,7 @@ class ComponentServiceSpec extends Specification {
         1 * ldapService.updateEntry(_ as Component)
     }
 
-    def "Remove client from component"() {
+    def "Remove Client from Component"() {
         given:
         def component = ObjectFactory.newComponent()
         def c1 = ObjectFactory.newClient()
@@ -157,7 +121,7 @@ class ComponentServiceSpec extends Specification {
         1 * ldapService.updateEntry(_ as Component)
     }
 
-    def "Add adapter to component"() {
+    def "Add Adapter to Component"() {
         given:
         def adapter = ObjectFactory.newAdapter()
         def component = ObjectFactory.newComponent()
@@ -173,7 +137,7 @@ class ComponentServiceSpec extends Specification {
         1 * ldapService.updateEntry(_ as Component)
     }
 
-    def "Remove adapter from component"() {
+    def "Remove Adapter from Component"() {
         given:
         def component = ObjectFactory.newComponent()
         def a1 = ObjectFactory.newAdapter()

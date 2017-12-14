@@ -29,7 +29,7 @@ public class Asset implements BasicLdapEntry {
     @Attribute(name = "description")
     private String description;
 
-    @Attribute(name = "fintAssetOrganisations")
+    @Attribute(name = "fintAssetOrganisation")
     private String organisation;
 
     @Attribute(name = "fintAssetClients")
@@ -55,7 +55,7 @@ public class Asset implements BasicLdapEntry {
     }
 
     public void addClient(String clientDn) {
-        if (!clients.stream().anyMatch(clientDn::equalsIgnoreCase)) {
+        if (clients.stream().noneMatch(clientDn::equalsIgnoreCase)) {
             clients.add(clientDn);
         }
     }
@@ -65,7 +65,7 @@ public class Asset implements BasicLdapEntry {
     }
 
     public void addAdapter(String adapterDn) {
-        if (!adapters.stream().anyMatch(adapterDn::equalsIgnoreCase)) {
+        if (adapters.stream().noneMatch(adapterDn::equalsIgnoreCase)) {
             adapters.add(adapterDn);
         }
     }

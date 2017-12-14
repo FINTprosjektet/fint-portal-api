@@ -74,22 +74,22 @@ public class Contact implements BasicLdapEntry {
     }
 
     public void addOrganisationTechnicalContact(String organisationDn) {
-        if (!technical.stream().anyMatch(organisationDn::equalsIgnoreCase)) {
+        if (technical.stream().noneMatch(organisationDn::equalsIgnoreCase)) {
             technical.add(organisationDn);
         }
     }
 
     public void removeOrganisationTechnicalContact(String organisationDn) {
-        technical.removeIf(organisation  -> organisation.equalsIgnoreCase(organisation));
+        technical.removeIf(organisationDn::equalsIgnoreCase);
     }
 
     public void addOrganisationLegalContact(String organisationDn) {
-        if (!legal.stream().anyMatch(organisationDn::equalsIgnoreCase)) {
-            technical.add(organisationDn);
+        if (legal.stream().noneMatch(organisationDn::equalsIgnoreCase)) {
+            legal.add(organisationDn);
         }
     }
 
     public void removeOrganisationLegalContact(String organisationDn) {
-        legal.removeIf(organisation  -> organisation.equalsIgnoreCase(organisation));
+        legal.removeIf(organisationDn::equalsIgnoreCase);
     }
 }

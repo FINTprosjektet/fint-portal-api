@@ -3,7 +3,6 @@ package no.fint.portal.model.asset
 import no.fint.portal.ldap.LdapService
 import no.fint.portal.model.adapter.Adapter
 import no.fint.portal.model.client.Client
-import no.fint.portal.model.organisation.Organisation
 import no.fint.portal.testutils.ObjectFactory
 import spock.lang.Specification
 
@@ -21,22 +20,47 @@ class AssetServiceSpec extends Specification {
     def "Add Asset"() {
         given:
         def asset = ObjectFactory.newAsset()
+        def organisation = ObjectFactory.newOrganisation()
         asset.assetId = "test.no"
 
         when:
-        def created = assetService.addAsset(asset, new Organisation(name: "name", dn: "ou=test,ou=org,o=fint"))
+        def created = assetService.addAsset(asset, organisation)
 
         then:
         created
         asset.dn
         asset.name
+        asset.organisation == organisation.dn
         1 * ldapService.createEntry(_ as Asset) >> true
+    }
+
+    def "Update Asset"() {
+        given:
+        def asset = ObjectFactory.newAsset()
+        asset.assetId = "test.no"
+
+        when:
+        def updated = assetService.updateAsset(asset)
+
+        then:
+        updated
+        1 * ldapService.updateEntry(_ as Asset) >> true
+    }
+
+    def "Remove Asset"() {
+        given:
+        def asset = ObjectFactory.newAsset()
+
+        when:
+        assetService.removeAsset(asset)
+
+        then:
+        1 * ldapService.deleteEntry(_ as Asset)
     }
 
     def "Get Assets"() {
         given:
         def organisation = ObjectFactory.newOrganisation()
-        organisation.dn = "ou=test,ou=org,o=fint"
 
         when:
         def assets = assetService.getAssets(organisation)

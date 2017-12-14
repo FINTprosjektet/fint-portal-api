@@ -1,12 +1,9 @@
 package no.fint.portal.model.client
 
-import no.fint.portal.model.component.Component
-import no.fint.portal.model.component.ComponentObjectService
-import no.fint.portal.model.component.ComponentService
 import no.fint.portal.ldap.LdapService
+import no.fint.portal.model.organisation.Organisation
 import no.fint.portal.oauth.NamOAuthClientService
 import no.fint.portal.oauth.OAuthClient
-import no.fint.portal.model.organisation.Organisation
 import no.fint.portal.testutils.ObjectFactory
 import spock.lang.Specification
 
@@ -16,25 +13,17 @@ class ClientServiceSpec extends Specification {
     private ldapService
     private clientObjectService
     private oauthService
-    private componentService
 
     def setup() {
         def organisationBase = "ou=org,o=fint"
-        def componentBase = "ou=comp,o=fint"
 
         ldapService = Mock(LdapService)
         oauthService = Mock(NamOAuthClientService)
         clientObjectService = new ClientObjectService(organisationBase: organisationBase)
-        componentService = new ComponentService(
-                componentBase: componentBase,
-                ldapService: ldapService,
-                componentObjectService: new ComponentObjectService(ldapService: ldapService),
-        )
         clientService = new ClientService(
                 clientObjectService: clientObjectService,
                 ldapService: ldapService,
-                namOAuthClientService: oauthService,
-                componentService: componentService
+                namOAuthClientService: oauthService
         )
     }
 
@@ -102,41 +91,4 @@ class ClientServiceSpec extends Specification {
         1 * ldapService.updateEntry(_ as Client)
     }
 
-    def "Add component to client"() {
-        given:
-        def client = ObjectFactory.newClient()
-        def component = ObjectFactory.newComponent()
-
-        client.setDn("name=c1")
-        component.setDn("ou=comp1")
-
-        when:
-        clientService.linkComponent(client, component)
-
-        then:
-        client.getComponents().size() == 1
-        1 * ldapService.updateEntry(_ as Client)
-        1 * ldapService.updateEntry(_ as Component)
-    }
-
-    def "Remove component from client"() {
-        given:
-        def client = ObjectFactory.newClient()
-        def comp1 = ObjectFactory.newComponent()
-        def comp2 = ObjectFactory.newComponent()
-
-        comp1.setDn("ou=comp1,o=fint")
-        comp2.setDn("ou=comp2,o=fint")
-        client.addComponent("ou=comp1,o=fint")
-        client.addComponent("ou=comp2,o=fint")
-
-        when:
-        clientService.unLinkComponent(client, comp1)
-
-        then:
-        client.getComponents().size() == 1
-        client.getComponents().get(0).equals("ou=comp2,o=fint")
-        1 * ldapService.updateEntry(_ as Client)
-        1 * ldapService.updateEntry(_ as Component)
-    }
 }

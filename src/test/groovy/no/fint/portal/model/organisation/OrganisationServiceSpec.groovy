@@ -1,5 +1,7 @@
 package no.fint.portal.model.organisation
 
+import no.fint.portal.ldap.Container
+import no.fint.portal.ldap.LdapService
 import no.fint.portal.model.adapter.Adapter
 import no.fint.portal.model.adapter.AdapterObjectService
 import no.fint.portal.model.adapter.AdapterService
@@ -11,13 +13,13 @@ import no.fint.portal.model.component.Component
 import no.fint.portal.model.component.ComponentObjectService
 import no.fint.portal.model.component.ComponentService
 import no.fint.portal.model.contact.Contact
-import no.fint.portal.model.contact.ContactObjectService
 import no.fint.portal.model.contact.ContactService
-import no.fint.portal.ldap.LdapService
-import no.fint.portal.ldap.Container
 import no.fint.portal.oauth.NamOAuthClientService
 import no.fint.portal.testutils.ObjectFactory
 import spock.lang.Specification
+
+import java.util.stream.Collectors
+import java.util.stream.IntStream
 
 class OrganisationServiceSpec extends Specification {
     private organisationService
@@ -33,17 +35,15 @@ class OrganisationServiceSpec extends Specification {
     def setup() {
         def organisationBase = "ou=org,o=fint"
         def componentBase = "ou=comp,o=fint"
-        def contactBase = "ou=contacts,o=fint"
-        def contactObjectService = new ContactObjectService(contactBase: contactBase)
         def clientObjectService = new ClientObjectService(organisationBase: organisationBase)
         def adapterObjectService = new AdapterObjectService(organisationBase: organisationBase)
 
         ldapService = Mock(LdapService)
         oauthService = Mock(NamOAuthClientService)
+        contactService = Mock(ContactService)
         adapterService = new AdapterService(adapterObjectService: adapterObjectService, ldapService: ldapService, namOAuthClientService: oauthService)
         clientService = new ClientService(clientObjectService: clientObjectService, ldapService: ldapService, namOAuthClientService: oauthService)
         assetService = new AssetService(ldapService: ldapService)
-        contactService = new ContactService(contactObjectService: contactObjectService, ldapService: ldapService)
         organisationObjectService = new OrganisationObjectService(organisationBase: organisationBase, ldapService: ldapService)
         componentService = new ComponentService(
                 componentBase: componentBase,
@@ -85,13 +85,22 @@ class OrganisationServiceSpec extends Specification {
         1 * ldapService.updateEntry(_ as Organisation) >> true
     }
 
-    def "Get Organisations"() {
+    def "Get All Organisations"() {
         when:
         def organisations = organisationService.getOrganisations()
 
         then:
         organisations.size() == 2
         1 * ldapService.getAll(_ as String, _ as Class) >> Arrays.asList(ObjectFactory.newOrganisation(), ObjectFactory.newOrganisation())
+    }
+
+    def "Get Organisation"() {
+        when:
+        def organisation = organisationService.getOrganisation("jalla")
+
+        then:
+        organisation.isPresent()
+        1 * ldapService.getEntry(_ as String, _ as Class) >> ObjectFactory.newOrganisation()
     }
 
     def "Delete Organisation"() {
@@ -149,8 +158,116 @@ class OrganisationServiceSpec extends Specification {
 
         then:
         organisation.getComponents().size() == 1
-        organisation.getComponents().get(0).equals("ou=comp2,o=fint")
+        organisation.getComponents().get(0) == "ou=comp2,o=fint"
         1 * ldapService.updateEntry(_ as Organisation)
         1 * ldapService.updateEntry(_ as Component)
     }
+
+    def "Link Legal Contact"() {
+        given:
+        def organisation = ObjectFactory.newOrganisation()
+        def contact = ObjectFactory.newContact()
+
+        when:
+        organisationService.linkLegalContact(organisation, contact)
+
+        then:
+        organisation.legalContact
+        contact.legal.any { it == organisation.dn }
+        1 * ldapService.updateEntry(_ as Organisation)
+        1 * ldapService.updateEntry(_ as Contact)
+    }
+
+    def "Unlink Legal Contact"() {
+        given:
+        def organisation = ObjectFactory.newOrganisation()
+        def contact = ObjectFactory.newContact()
+
+        when:
+        organisationService.linkLegalContact(organisation, contact)
+
+        then:
+        organisation.legalContact
+        contact.legal.any { it == organisation.dn }
+
+        when:
+        organisationService.unLinkLegalContact(organisation, contact)
+
+        then:
+        organisation.legalContact == null
+        contact.legal.isEmpty()
+        1 * ldapService.updateEntry(_ as Organisation)
+        1 * ldapService.updateEntry(_ as Contact)
+    }
+
+    def "Link Technical Contact"() {
+        given:
+        def organisation = ObjectFactory.newOrganisation()
+        def contact = ObjectFactory.newContact()
+
+        when:
+        organisationService.linkTechnicalContact(organisation, contact)
+
+        then:
+        organisation.techicalContacts.any { it == contact.dn }
+        contact.technical.any { it == organisation.dn }
+        1 * ldapService.updateEntry(_ as Organisation)
+        1 * ldapService.updateEntry(_ as Contact)
+    }
+
+    def "Unlink Technical Contact"() {
+        given:
+        def organisation = ObjectFactory.newOrganisation()
+        def contact1 = ObjectFactory.newContact()
+        def contact2 = ObjectFactory.newContact()
+        contact2.dn = "cn=22222222,ou=contacts,o=fint"
+
+        when:
+        organisationService.linkTechnicalContact(organisation, contact1)
+        organisationService.linkTechnicalContact(organisation, contact2)
+
+        then:
+        organisation.techicalContacts.any { it == contact1.dn }
+        contact1.technical.any { it == organisation.dn }
+        organisation.techicalContacts.any { it == contact2.dn }
+        contact2.technical.any { it == organisation.dn }
+
+        when:
+        organisationService.unLinkTechnicalContact(organisation, contact2)
+
+        then:
+        organisation.techicalContacts.any { it == contact1.dn }
+        organisation.techicalContacts.every { it != contact2.dn }
+        contact1.technical.any { it == organisation.dn }
+        contact2.technical.isEmpty()
+        1 * ldapService.updateEntry(_ as Organisation)
+        1 * ldapService.updateEntry(_ as Contact)
+    }
+
+    def "Get Legal Contact"() {
+        given:
+        def organisation = ObjectFactory.newOrganisation()
+        organisation.legalContact = "dn=11111111111,ou=contacts,o=fint"
+
+        when:
+        def contact = organisationService.getLegalContact(organisation)
+
+        then:
+        contact
+        1 * contactService.getContacts() >> IntStream.rangeClosed(1, 9).mapToObj(Integer.&toString).map{ def o = ObjectFactory.newContact(); o.nin = it * 11; o.dn = "dn="+o.nin+",ou=contacts,o=fint"; o}.collect(Collectors.toList())
+    }
+
+    def "Get Technical Contacts"() {
+        given:
+        def organisation = ObjectFactory.newOrganisation()
+        organisation.techicalContacts = [ "dn=33333333333,ou=contacts,o=fint", "dn=77777777777,ou=contacts,o=fint" ]
+
+        when:
+        def contacts = organisationService.getTechnicalContacts(organisation)
+
+        then:
+        contacts.size() == 2
+        1 * contactService.getContacts() >> IntStream.rangeClosed(1, 9).mapToObj(Integer.&toString).map{ def o = ObjectFactory.newContact(); o.nin = it * 11; o.dn = "dn="+o.nin+",ou=contacts,o=fint"; o}.collect(Collectors.toList())
+    }
+
 }

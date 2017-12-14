@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.portal.ldap.LdapService;
 import no.fint.portal.model.adapter.Adapter;
 import no.fint.portal.model.client.Client;
-import no.fint.portal.model.organisation.Organisation;
 import no.fint.portal.utilities.LdapConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,6 +47,7 @@ public class ComponentService {
     }
 
     // TODO: 17.01.2017 Refactor this method and add tests
+    // TODO: 14.12.2017 Remove?
     public List<Component> getComponentsByOrgUUID(String uuid) {
         List<Component> components = getComponents();
         List<Component> orgComponents = new ArrayList<>();
@@ -78,21 +78,6 @@ public class ComponentService {
                     .build().toString();
         }
         return null;
-    }
-
-    public void linkOrganisation(Component component, Organisation organisation) {
-
-
-        component.addOrganisation(organisation.getDn());
-
-        ldapService.updateEntry(component);
-    }
-
-    public void unLinkOrganisation(Component component, Organisation organisation) {
-
-        component.removeOrganisation(organisation.getDn());
-
-        ldapService.updateEntry(component);
     }
 
     public void linkClient(Component component, Client client) {

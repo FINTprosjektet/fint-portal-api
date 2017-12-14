@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 
 @Service
 public class NamOAuthClientService {
@@ -43,7 +43,7 @@ public class NamOAuthClientService {
         resourceDetails.setClientId(clientId);
         resourceDetails.setClientSecret(clientSecret);
         resourceDetails.setGrantType(NamOAuthConstants.PASSWORD_GRANT_TYPE);
-        resourceDetails.setScope(Arrays.asList(new String(NamOAuthConstants.SCOPE)));
+        resourceDetails.setScope(Collections.singletonList(NamOAuthConstants.SCOPE));
 
         restTemplate = new OAuth2RestTemplate(resourceDetails);
     }

@@ -25,6 +25,7 @@ public class AssetService {
                         .add(LdapConstants.OU, asset.getName())
                         .build()
         );
+        asset.setOrganisation(organisation.getDn());
 
         return ldapService.createEntry(asset);
     }
