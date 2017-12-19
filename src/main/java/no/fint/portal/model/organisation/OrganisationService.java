@@ -203,11 +203,12 @@ public class OrganisationService {
     }
 
     public Contact getLegalContact(Organisation organisation) {
+        if (organisation.getLegalContact() == null) return null;
 
         return contactService.getContacts()
                 .stream()
                 .filter(
-                        contact -> organisation.getLegalContact().equals(contact.getDn())
+                        contact -> contact.getDn().equals(organisation.getLegalContact())
                 ).findAny()
                 .orElse(null);
     }
