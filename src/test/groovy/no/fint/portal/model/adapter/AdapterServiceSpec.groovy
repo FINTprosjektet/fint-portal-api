@@ -84,7 +84,7 @@ class AdapterServiceSpec extends Specification {
         def adapter = ObjectFactory.newAdapter()
 
         when:
-        adapterService.resetAdapterPassword(adapter)
+        adapterService.resetAdapterPassword(adapter, "FIXME")
 
         then:
         1 * ldapService.updateEntry(_ as Adapter)

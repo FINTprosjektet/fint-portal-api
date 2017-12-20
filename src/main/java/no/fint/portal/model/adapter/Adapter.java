@@ -2,6 +2,7 @@ package no.fint.portal.model.adapter;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.ToString;
 import no.fint.portal.ldap.BasicLdapEntry;
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Entry;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @ApiModel
 //@Data
+@ToString(exclude = {"password", "clientSecret"})
 @Entry(objectClasses = {"fintAdapter", "inetOrgPerson", "organizationalPerson", "person", "top"})
 public class Adapter implements BasicLdapEntry {
 

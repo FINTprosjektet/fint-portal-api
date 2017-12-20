@@ -53,9 +53,10 @@ public class ClientService {
                 Client.class
         ));
 
-        OAuthClient oAuthClient = namOAuthClientService.getOAuthClient(client.get().getClientId());
-
-        client.get().setClientSecret(oAuthClient.getClientSecret());
+        client.ifPresent(client1 -> {
+            OAuthClient oAuthClient = namOAuthClientService.getOAuthClient(client1.getClientId());
+            client1.setClientSecret(oAuthClient.getClientSecret());
+        });
 
         return client;
     }
@@ -69,8 +70,8 @@ public class ClientService {
         ldapService.deleteEntry(client);
     }
 
-    public void resetClientPassword(Client client) {
-        client.setSecret(PasswordUtility.generateSecret());
+    public void resetClientPassword(Client client, String newPassword) {
+        client.setSecret(newPassword);
         ldapService.updateEntry(client);
     }
 

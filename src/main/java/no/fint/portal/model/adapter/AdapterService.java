@@ -53,9 +53,10 @@ public class AdapterService {
                 Adapter.class
         ));
 
-        OAuthClient oAuthClient = namOAuthClientService.getOAuthClient(adapter.get().getClientId());
-
-        adapter.get().setClientSecret(oAuthClient.getClientSecret());
+        adapter.ifPresent(a -> {
+            OAuthClient oAuthClient = namOAuthClientService.getOAuthClient(a.getClientId());
+            a.setClientSecret(oAuthClient.getClientSecret());
+        });
 
         return adapter;
     }
@@ -69,8 +70,8 @@ public class AdapterService {
         ldapService.deleteEntry(adapter);
     }
 
-    public void resetAdapterPassword(Adapter adapter) {
-        adapter.setSecret(PasswordUtility.generateSecret());
+    public void resetAdapterPassword(Adapter adapter, String newPassword) {
+        adapter.setSecret(newPassword);
         ldapService.updateEntry(adapter);
     }
 

@@ -84,7 +84,7 @@ class ClientServiceSpec extends Specification {
         def client = ObjectFactory.newClient()
 
         when:
-        clientService.resetClientPassword(client)
+        clientService.resetClientPassword(client, "FIXME")
 
         then:
         client.password != null
