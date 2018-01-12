@@ -36,6 +36,10 @@ public class Client implements BasicLdapEntry {
     @Attribute(name = "fintClientAssetId")
     private String assetId;
 
+    @ApiModelProperty(value = "DN of the organisation the client is connected to. This is automatically set.")
+    @Attribute(name = "fintClientAsset")
+    private String asset;
+
     @ApiModelProperty(value = "A note of the client.")
     @Attribute(name = "description")
     private String note;
@@ -94,6 +98,14 @@ public class Client implements BasicLdapEntry {
 
     public void setAssetId(String orgId) {
         this.assetId = orgId;
+    }
+
+    public String getAsset() {
+        return asset;
+    }
+
+    public void setAsset(String asset) {
+        this.asset = asset;
     }
 
     public String getNote() {

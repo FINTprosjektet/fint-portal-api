@@ -42,6 +42,7 @@ public class AssetService {
 
         asset.addClient(client.getDn());
         client.setAssetId(asset.getAssetId());
+        client.setAsset(asset.getDn());
 
         ldapService.updateEntry(asset);
         ldapService.updateEntry(client);
@@ -51,6 +52,7 @@ public class AssetService {
 
         asset.removeClient(client.getDn());
         client.setAssetId(null);
+        client.setAsset(null);
 
         ldapService.updateEntry(asset);
         ldapService.updateEntry(client);

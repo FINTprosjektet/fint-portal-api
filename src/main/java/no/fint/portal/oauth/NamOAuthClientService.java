@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.token.grant.password.ResourceOwnerPasswordResourceDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class NamOAuthClientService {
     @Value("${fint.nam.oauth.clientSecret}")
     private String clientSecret;
 
-    private OAuth2RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     @PostConstruct
     private void init() {
