@@ -22,7 +22,7 @@ repositories {
     }
 }
 
-apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.1.0/dependencies.gradle'
+apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.2.0/dependencies.gradle'
 dependencies {
 
     compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
@@ -44,5 +44,5 @@ task wrapper(type: Wrapper) {
 }
 
 if (project.hasProperty('bintrayUser') && project.hasProperty('bintrayKey')) {
-    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.1.0/bintray.gradle'
+    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.2.0/bintray.gradle'
 }

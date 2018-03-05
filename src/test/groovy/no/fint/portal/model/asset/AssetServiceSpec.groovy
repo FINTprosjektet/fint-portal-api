@@ -115,7 +115,7 @@ class AssetServiceSpec extends Specification {
     def "Link Adapter to Asset"() {
         given:
         def asset = ObjectFactory.newAsset()
-        asset.assetId = "test.no"
+        asset.dn = "cn=test_no,ou=assets,ou=test,ou=org,o=fint"
         def adapter = ObjectFactory.newAdapter()
         adapter.dn = "cn=xyzzy,ou=adapters,ou=test,ou=org,o=fint"
 
@@ -124,14 +124,14 @@ class AssetServiceSpec extends Specification {
 
         then:
         asset.adapters.any { it.contains('xyzzy')}
-        adapter.assets.any { it == 'test.no' }
+        adapter.assets.any { it =~ /test_no/ }
         1 * ldapService.updateEntry(_ as Asset) >> true
         1 * ldapService.updateEntry(_ as Adapter) >> true
     }
 
     def "Unlink Adapter from Asset"() {
         def asset = ObjectFactory.newAsset()
-        asset.assetId = "test.no"
+        asset.dn = "cn=test_no,ou=assets,ou=test,ou=org,o=fint"
         def adapter1 = ObjectFactory.newAdapter()
         adapter1.dn = "cn=xyzzy,ou=adapters,ou=test,ou=org,o=fint"
         assetService.linkAdapterToAsset(asset,adapter1)
@@ -146,7 +146,7 @@ class AssetServiceSpec extends Specification {
         asset.adapters.size() == 1
         asset.adapters.any { it.contains('abcabc')}
         adapter1.assets.isEmpty()
-        adapter2.assets.any { it == 'test.no' }
+        adapter2.assets.any { it =~ /test_no/ }
         1 * ldapService.updateEntry(_ as Asset) >> true
         1 * ldapService.updateEntry(_ as Adapter) >> true
     }

@@ -61,7 +61,7 @@ public class AssetService {
     public void linkAdapterToAsset(Asset asset, Adapter adapter) {
 
         asset.addAdapter(adapter.getDn());
-        adapter.addAsset(asset.getAssetId());
+        adapter.addAsset(asset.getDn());
 
         ldapService.updateEntry(asset);
         ldapService.updateEntry(adapter);
@@ -70,7 +70,7 @@ public class AssetService {
     public void unlinkAdapterFromAsset(Asset asset, Adapter adapter) {
 
         asset.removeAdapter(adapter.getDn());
-        adapter.removeAsset(asset.getAssetId());
+        adapter.removeAsset(asset.getDn());
 
         ldapService.updateEntry(asset);
         ldapService.updateEntry(adapter);
