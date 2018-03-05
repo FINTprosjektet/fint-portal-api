@@ -7,7 +7,7 @@ import java.util.List;
 public class NamOAuthConstants {
 
     public static final String SCOPE = "urn:netiq.com:nam:scope:oauth:registration:full";
-    public static final List<String> GRANT_TYPE = Lists.newArrayList("password", "refresh_token");
+    public static final List<String> GRANT_TYPE = Lists.newArrayList("password" /*, "refresh_token"*/);
     public static final String PASSWORD_GRANT_TYPE = "password";
     public static final String ACCESS_TOKEN_URL_TEMPLATE = "https://%s//nidp/oauth/nam/token";
     public static final String CLIENT_REGISTRATION_URL_TEMPLATE = "https://%s/nidp/oauth/nam/clients/";
