@@ -43,9 +43,11 @@ public class Adapter implements BasicLdapEntry {
     @Attribute(name = "fintOAuthClientId")
     private String clientId;
 
+    /*
     @ApiModelProperty(value = "OAuth client secret")
     @Transient
     private String clientSecret;
+    */
 
     @Attribute(name = "fintAdapterComponents")
     private List<String> components;
@@ -132,6 +134,7 @@ public class Adapter implements BasicLdapEntry {
         this.clientId = clientId;
     }
 
+    /*
     public String getClientSecret() {
         return clientSecret;
     }
@@ -139,6 +142,7 @@ public class Adapter implements BasicLdapEntry {
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
     }
+    */
 
     @Override
     public void setDn(Name dn) {

@@ -31,7 +31,7 @@ public class AdapterService {
         OAuthClient oAuthClient = namOAuthClientService.addOAuthClient(String.format("A_%s_%s", organisation.getName(), adapter.getName()));
 
         adapter.setClientId(oAuthClient.getClientId());
-        adapter.setClientSecret(oAuthClient.getClientSecret());
+        //adapter.setClientSecret(oAuthClient.getClientSecret());
 
         return ldapService.createEntry(adapter);
     }
@@ -39,10 +39,12 @@ public class AdapterService {
     public List<Adapter> getAdapters(String orgName) {
         List<Adapter> adapters = ldapService.getAll(adapterObjectService.getAdapterBase(orgName).toString(), Adapter.class);
 
+        /*
         adapters.forEach(adapter -> {
             OAuthClient oAuthClient = namOAuthClientService.getOAuthClient(adapter.getClientId());
             adapter.setClientSecret(oAuthClient.getClientSecret());
         });
+        */
 
         return adapters;
     }
@@ -52,13 +54,17 @@ public class AdapterService {
                 adapterObjectService.getAdapterDn(adapterName, orgName),
                 Adapter.class
         ));
-
+    /*
         adapter.ifPresent(a -> {
             OAuthClient oAuthClient = namOAuthClientService.getOAuthClient(a.getClientId());
             a.setClientSecret(oAuthClient.getClientSecret());
         });
-
+    */
         return adapter;
+    }
+
+    public String getAdapterSecret(Adapter adapter) {
+            return namOAuthClientService.getOAuthClient(adapter.getClientId()).getClientSecret();
     }
 
     public boolean updateAdapter(Adapter adapter) {
