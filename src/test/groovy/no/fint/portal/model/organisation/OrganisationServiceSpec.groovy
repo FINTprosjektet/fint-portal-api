@@ -117,7 +117,7 @@ class OrganisationServiceSpec extends Specification {
         2 * ldapService.deleteEntry(_ as Client)
         2 * ldapService.deleteEntry(_ as Adapter)
         3 * ldapService.deleteEntry(_ as Container)
-        4 * oauthService.getOAuthClient(_ as String) >> ObjectFactory.newOAuthClient()
+        //4 * oauthService.getOAuthClient(_ as String) >> ObjectFactory.newOAuthClient()
         3 * ldapService.getAll(_ as String, _ as Class) >>
                 Arrays.asList(ObjectFactory.newAdapter(), ObjectFactory.newAdapter()) >>
                 Arrays.asList(ObjectFactory.newClient(), ObjectFactory.newClient()) >>

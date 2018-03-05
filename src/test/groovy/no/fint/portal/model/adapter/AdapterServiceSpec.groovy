@@ -49,7 +49,7 @@ class AdapterServiceSpec extends Specification {
         then:
         adapters.size() == 2
         1 * ldapService.getAll(_ as String, _ as Class) >> Arrays.asList(ObjectFactory.newAdapter(), ObjectFactory.newAdapter())
-        2 * oauthService.getOAuthClient(_ as String) >> ObjectFactory.newOAuthClient()
+        //2 * oauthService.getOAuthClient(_ as String) >> ObjectFactory.newOAuthClient()
     }
 
     def "Get Adapter"() {
@@ -59,7 +59,7 @@ class AdapterServiceSpec extends Specification {
         then:
         adapter.isPresent()
         1 * ldapService.getEntry(_ as String, _ as Class) >> ObjectFactory.newAdapter()
-        1 * oauthService.getOAuthClient(_ as String) >> ObjectFactory.newOAuthClient()
+        //1 * oauthService.getOAuthClient(_ as String) >> ObjectFactory.newOAuthClient()
     }
 
     def "Update Adapter"() {
