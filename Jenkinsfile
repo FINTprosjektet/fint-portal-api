@@ -1,14 +1,6 @@
 pipeline {
     agent none
     stages {
-        stage('Prepare') {
-            agent { label 'master' }
-            steps {
-                script {
-                    VERSION=sh script: 'git log --oneline | nl -nln | perl -ne \'if (/^(\\d+).*Version (\\d+\\.\\d+\\.\\d+)/) { print "$2-$1"; exit; }\'', returnStdout: true
-                }
-            }
-        }
         stage('Build') {
             agent { 
                 docker {
@@ -17,7 +9,7 @@ pipeline {
                 }
             }
             steps {
-                sh "gradle -Pversion=${VERSION} --no-daemon clean build"
+                sh "gradle --no-daemon clean build"
                 stash includes: 'build/libs/*.jar', name: 'libs'
             }
         }
