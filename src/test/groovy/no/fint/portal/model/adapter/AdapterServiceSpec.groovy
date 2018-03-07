@@ -71,6 +71,17 @@ class AdapterServiceSpec extends Specification {
         1 * ldapService.updateEntry(_ as Adapter) >> true
     }
 
+    def "Get Adapter OpenID Secret"() {
+        when:
+        def adapter = adapterService.getAdapter(UUID.randomUUID().toString(), UUID.randomUUID().toString())
+        def secret = adapterService.getAdapterSecret(adapter.get())
+
+        then:
+        secret
+        1 * ldapService.getEntry(_ as String, _ as Class) >> ObjectFactory.newAdapter()
+        1 * oauthService.getOAuthClient(_ as String) >> ObjectFactory.newOAuthClient()
+    }
+
     def "Delete Adapter"() {
         when:
         adapterService.deleteAdapter(ObjectFactory.newAdapter())

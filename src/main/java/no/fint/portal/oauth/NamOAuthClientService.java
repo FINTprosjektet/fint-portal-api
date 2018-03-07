@@ -2,6 +2,7 @@ package no.fint.portal.oauth;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.util.Collections;
 
 @Service
+@Slf4j
 public class NamOAuthClientService {
 
     @Autowired
@@ -50,6 +52,7 @@ public class NamOAuthClientService {
     }
 
     public OAuthClient addOAuthClient(String name) {
+        log.info("Adding client {}...", name);
         OAuthClient oAuthClient = new OAuthClient(name);
         String jsonOAuthClient = null;
 
@@ -66,21 +69,32 @@ public class NamOAuthClientService {
         HttpEntity request = new HttpEntity(jsonOAuthClient, headers);
 
 
-        String response = restTemplate.postForObject(String.format(NamOAuthConstants.CLIENT_REGISTRATION_URL_TEMPLATE, idpHostname), request, String.class);
-
         try {
+            String response = restTemplate.postForObject(NamOAuthConstants.CLIENT_REGISTRATION_URL_TEMPLATE, request, String.class, idpHostname);
             return mapper.readValue(response, OAuthClient.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        } catch (Exception e) {
+            log.error("Unable to create client {}", name, e);
+            throw new RuntimeException(e);
         }
     }
 
     public void removeOAuthClient(String clientId) {
-        restTemplate.delete(String.format(NamOAuthConstants.CLIENT_URL_TEMPLATE, idpHostname, clientId));
+        log.info("Deleting client {}...", clientId);
+        try {
+            restTemplate.delete(NamOAuthConstants.CLIENT_URL_TEMPLATE, idpHostname, clientId);
+        } catch (Exception e) {
+            log.error("Unable to delete client {}", clientId, e);
+            throw e;
+        }
     }
 
     public OAuthClient getOAuthClient(String clientId) {
-        return restTemplate.getForObject(String.format(NamOAuthConstants.CLIENT_URL_TEMPLATE, idpHostname, clientId), OAuthClient.class);
+        log.info("Fetching client {}...", clientId);
+        try {
+            return restTemplate.getForObject(NamOAuthConstants.CLIENT_URL_TEMPLATE, OAuthClient.class, idpHostname, clientId);
+        } catch (Exception e) {
+            log.error("Unable to get client {}", clientId, e);
+            throw e;
+        }
     }
 }

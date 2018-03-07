@@ -62,6 +62,18 @@ class ClientServiceSpec extends Specification {
         //1 * oauthService.getOAuthClient(_ as String) >> ObjectFactory.newOAuthClient()
     }
 
+    def "Get Adapter OpenID Secret"() {
+        when:
+        def client = clientService.getClient(UUID.randomUUID().toString(), UUID.randomUUID().toString())
+        def secret = clientService.getClientSecret(client.get())
+
+        then:
+        secret
+        1 * ldapService.getEntry(_ as String, _ as Class) >> ObjectFactory.newClient()
+        1 * oauthService.getOAuthClient(_ as String) >> ObjectFactory.newOAuthClient()
+    }
+
+
     def "Update Client"() {
         when:
         def updated = clientService.updateClient(ObjectFactory.newClient())
