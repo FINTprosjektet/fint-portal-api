@@ -71,7 +71,9 @@ public class NamOAuthClientService {
 
         try {
             String response = restTemplate.postForObject(NamOAuthConstants.CLIENT_REGISTRATION_URL_TEMPLATE, request, String.class, idpHostname);
-            return mapper.readValue(response, OAuthClient.class);
+            OAuthClient client = mapper.readValue(response, OAuthClient.class);
+            log.info("Client ID {} created.", client.getClientId());
+            return client;
         } catch (Exception e) {
             log.error("Unable to create client {}", name, e);
             throw new RuntimeException(e);
