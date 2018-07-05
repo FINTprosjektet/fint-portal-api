@@ -17,7 +17,7 @@ import java.util.List;
 @SuppressWarnings("ALL")
 @ApiModel
 @Data
-@Entry(objectClasses = {"organizationalUnit", "top", "fintOrg"})
+@Entry(objectClasses = {"organizationalUnit", "top", "fintOrganisation"})
 public final class Organisation implements BasicLdapEntry {
 
     @Id
@@ -30,22 +30,22 @@ public final class Organisation implements BasicLdapEntry {
     private String name;
 
     @ApiModelProperty(value = "The organisation number from Enhetsregisteret (https://w2.brreg.no/enhet/sok/index.jsp)")
-    @Attribute(name = "fintOrgNumber")
+    @Attribute(name = "fintOrganisationNumber")
     private String orgNumber;
 
     @ApiModelProperty(
             value = "The official name of the organisation. See Enhetsregisteret (https://w2.brreg.no/enhet/sok/index.jsp)"
     )
-    @Attribute(name = "fintOrgDisplayName")
+    @Attribute(name = "fintOrganisationDisplayName")
     private String displayName;
 
     @Attribute(name = "fintOrganisationComponents")
     private List<String> components;
 
-    @Attribute(name = "fintOrgLegal")
+    @Attribute(name = "fintOrganisationLegal")
     private String legalContact;
 
-    @Attribute(name = "fintOrgTechnical")
+    @Attribute(name = "fintOrganisationTechnical")
     private List<String> techicalContacts;
 
     public Organisation() {
