@@ -229,6 +229,7 @@ public class OrganisationService {
     private void createPrimaryAsset(Organisation organisation) {
         Asset asset = new Asset();
         asset.setAssetId(organisation.getName().replace("_", "."));
+        asset.setDescription("Primær ressurs");
         assetService.addPrimaryAsset(asset, organisation);
     }
 
