@@ -64,6 +64,7 @@ public class OrganisationService {
         createClientContainer(organisation.getDn());
         createAdapterContainer(organisation.getDn());
         createAssetContainer(organisation.getDn());
+        createPrimaryAsset(organisation);
 
         return createdOrganisation;
     }
@@ -223,6 +224,12 @@ public class OrganisationService {
 
 
         ldapService.createEntry(assetContainer);
+    }
+
+    private void createPrimaryAsset(Organisation organisation) {
+        Asset asset = new Asset();
+        asset.setAssetId(organisation.getName());
+        assetService.addPrimaryAsset(asset, organisation);
     }
 
     private void createClientContainer(String organisationDn) {

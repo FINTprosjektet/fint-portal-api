@@ -1,5 +1,6 @@
 package no.fint.portal.model.asset;
 
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -40,6 +41,9 @@ public class Asset implements BasicLdapEntry {
 
     @Attribute(name = "fintAssetId")
     private String assetId;
+
+    @Attribute(name = "fintAssetPrimary")
+    private boolean primaryAsset;
 
     public Asset() {
         clients = new ArrayList<>();

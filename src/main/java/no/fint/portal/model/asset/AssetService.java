@@ -17,7 +17,7 @@ public class AssetService {
     @Autowired
     LdapService ldapService;
 
-    public boolean addAsset(Asset asset, Organisation organisation) {
+    private boolean createAsset(Asset asset, Organisation organisation, boolean primary) {
         asset.setName(asset.getAssetId().replace(".", "_"));
         asset.setDn(
                 LdapNameBuilder.newInstance(organisation.getDn())
@@ -26,8 +26,18 @@ public class AssetService {
                         .build()
         );
         asset.setOrganisation(organisation.getDn());
+        asset.setPrimaryAsset(primary);
+
 
         return ldapService.createEntry(asset);
+    }
+
+    public boolean addAsset(Asset asset, Organisation organisation) {
+        return createAsset(asset, organisation, false);
+    }
+
+    public boolean addPrimaryAsset(Asset asset, Organisation organisation) {
+        return createAsset(asset, organisation, true);
     }
 
     public void removeAsset(Asset asset) {

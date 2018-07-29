@@ -16,7 +16,7 @@ import java.util.List;
 
 @ApiModel
 //@Data
-@ToString(exclude = {"password", "clientSecret"})
+@ToString(exclude = {"password" /*, "clientSecret"*/})
 @Entry(objectClasses = {"fintAdapter", "inetOrgPerson", "organizationalPerson", "person", "top"})
 public class Adapter implements BasicLdapEntry {
 
