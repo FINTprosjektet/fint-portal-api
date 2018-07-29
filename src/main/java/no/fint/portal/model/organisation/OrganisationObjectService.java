@@ -24,7 +24,7 @@ public class OrganisationObjectService {
         Organisation organisationFromLdap = ldapService.getEntryByUniqueName(organisation.getName(), organisationBase, Organisation.class);
 
         if (organisationFromLdap == null) {
-            String name = organisation.getName();
+            String name = organisation.getName().replace(".", "_");
             Name dn = LdapNameBuilder.newInstance(organisationBase)
                     .add(LdapConstants.OU, name)
                     .build();
