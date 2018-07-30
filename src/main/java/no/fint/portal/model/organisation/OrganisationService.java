@@ -90,6 +90,10 @@ public class OrganisationService {
         );
     }
 
+    public Optional<Organisation> getOrganisationByDn(String dn) {
+        return Optional.ofNullable(ldapService.getEntry(dn, Organisation.class));
+    }
+
     public void deleteOrganisation(Organisation organisation) {
 
         // Remove all adapters
