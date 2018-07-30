@@ -5,6 +5,7 @@ import no.fint.portal.ldap.LdapService
 import no.fint.portal.model.adapter.Adapter
 import no.fint.portal.model.adapter.AdapterObjectService
 import no.fint.portal.model.adapter.AdapterService
+import no.fint.portal.model.asset.Asset
 import no.fint.portal.model.asset.AssetService
 import no.fint.portal.model.client.Client
 import no.fint.portal.model.client.ClientObjectService
@@ -92,6 +93,7 @@ class OrganisationServiceSpec extends Specification {
         then:
         organisations.size() == 2
         1 * ldapService.getAll(_ as String, _ as Class) >> Arrays.asList(ObjectFactory.newOrganisation(), ObjectFactory.newOrganisation())
+        2 * ldapService.getAll(_ as String, _ as Class) >> Arrays.asList(ObjectFactory.newAsset())
     }
 
     def "Get Organisation"() {
@@ -101,6 +103,8 @@ class OrganisationServiceSpec extends Specification {
         then:
         organisation.isPresent()
         1 * ldapService.getEntry(_ as String, _ as Class) >> ObjectFactory.newOrganisation()
+        1 * ldapService.getAll(_ as String, _ as Class) >> Arrays.asList(ObjectFactory.newAsset())
+
     }
 
     def "Delete Organisation"() {

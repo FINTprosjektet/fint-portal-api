@@ -48,6 +48,8 @@ public final class Organisation implements BasicLdapEntry {
     @Attribute(name = "fintOrganisationTechnical")
     private List<String> techicalContacts;
 
+    private String primaryAssetId;
+
     public Organisation() {
         components = new ArrayList<>();
         techicalContacts = new ArrayList<>();

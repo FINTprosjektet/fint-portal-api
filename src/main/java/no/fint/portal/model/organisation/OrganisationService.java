@@ -75,12 +75,18 @@ public class OrganisationService {
     }
 
     public List<Organisation> getOrganisations() {
-        return ldapService.getAll(organisationBase, Organisation.class);
+
+        List<Organisation> organisations = ldapService.getAll(organisationBase, Organisation.class);
+
+        organisations.forEach(organisation -> {
+            organisation.setPrimaryAssetId(assetService.getPrimaryAsset(organisation).getAssetId());
+        });
+        return organisations;
     }
 
     public Optional<Organisation> getOrganisation(String name) {
 
-        return Optional.ofNullable(ldapService.getEntry(
+        Optional<Organisation> oranisation = Optional.ofNullable(ldapService.getEntry(
                 LdapNameBuilder.newInstance(organisationBase)
                         .add(LdapConstants.OU, name)
                         .build()
@@ -88,6 +94,13 @@ public class OrganisationService {
                 Organisation.class
                 )
         );
+
+        if (oranisation.isPresent()) {
+            oranisation.get().setPrimaryAssetId(assetService.getPrimaryAsset(oranisation.get()).getAssetId());
+        }
+
+        return oranisation;
+
     }
 
     public Optional<Organisation> getOrganisationByDn(String dn) {

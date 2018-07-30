@@ -93,4 +93,8 @@ public class AssetService {
                         .build().toString(),
                 Asset.class);
     }
+
+    public Asset getPrimaryAsset(Organisation organisation) {
+        return getAssets(organisation).stream().filter(asset -> asset.isPrimaryAsset()).findFirst().orElse(new Asset());
+    }
 }

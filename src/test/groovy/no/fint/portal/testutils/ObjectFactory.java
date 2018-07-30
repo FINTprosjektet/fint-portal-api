@@ -56,6 +56,8 @@ public enum ObjectFactory {
     public static Asset newAsset() {
         Asset asset = new Asset();
         asset.setName("assetName");
+        asset.setAssetId("test.no");
+        asset.setPrimaryAsset(true);
         return asset;
     }
 
