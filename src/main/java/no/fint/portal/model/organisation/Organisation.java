@@ -7,6 +7,7 @@ import no.fint.portal.ldap.BasicLdapEntry;
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Entry;
 import org.springframework.ldap.odm.annotations.Id;
+import org.springframework.ldap.odm.annotations.Transient;
 import org.springframework.ldap.support.LdapNameBuilder;
 
 import javax.naming.Name;
@@ -48,6 +49,7 @@ public final class Organisation implements BasicLdapEntry {
     @Attribute(name = "fintOrganisationTechnical")
     private List<String> techicalContacts;
 
+    @Transient
     private String primaryAssetId;
 
     public Organisation() {
