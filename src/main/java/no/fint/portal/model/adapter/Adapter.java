@@ -7,7 +7,6 @@ import no.fint.portal.ldap.BasicLdapEntry;
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Entry;
 import org.springframework.ldap.odm.annotations.Id;
-import org.springframework.ldap.odm.annotations.Transient;
 import org.springframework.ldap.support.LdapNameBuilder;
 
 import javax.naming.Name;
@@ -15,10 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ApiModel
-//@Data
-@ToString(exclude = {"password" /*, "clientSecret"*/})
+@ToString(exclude = {"password"})
 @Entry(objectClasses = {"fintAdapter", "inetOrgPerson", "organizationalPerson", "person", "top"})
-public class Adapter implements BasicLdapEntry {
+public final class Adapter implements BasicLdapEntry {
 
     @ApiModelProperty(value = "DN of the adapter. This is automatically set.")
     @Id
@@ -42,12 +40,6 @@ public class Adapter implements BasicLdapEntry {
     @ApiModelProperty(value = "OAuth client id")
     @Attribute(name = "fintOAuthClientId")
     private String clientId;
-
-    /*
-    @ApiModelProperty(value = "OAuth client secret")
-    @Transient
-    private String clientSecret;
-    */
 
     @Attribute(name = "fintAdapterComponents")
     private List<String> components;
@@ -122,6 +114,11 @@ public class Adapter implements BasicLdapEntry {
     }
 
     @Override
+    public void setDn(Name dn) {
+        this.dn = dn;
+    }
+
+    @Override
     public void setDn(String dn) {
         this.dn = LdapNameBuilder.newInstance(dn).build();
     }
@@ -134,18 +131,8 @@ public class Adapter implements BasicLdapEntry {
         this.clientId = clientId;
     }
 
-    /*
-    public String getClientSecret() {
-        return clientSecret;
+    public List<String> getAssets() {
+        return assets;
     }
 
-    public void setClientSecret(String clientSecret) {
-        this.clientSecret = clientSecret;
-    }
-    */
-
-    @Override
-    public void setDn(Name dn) {
-        this.dn = dn;
-    }
 }

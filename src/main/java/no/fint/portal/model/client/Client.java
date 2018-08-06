@@ -7,7 +7,6 @@ import no.fint.portal.ldap.BasicLdapEntry;
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Entry;
 import org.springframework.ldap.odm.annotations.Id;
-import org.springframework.ldap.odm.annotations.Transient;
 import org.springframework.ldap.support.LdapNameBuilder;
 
 import javax.naming.Name;
@@ -15,10 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ApiModel
-//@Data
-@ToString(exclude = {"password", /*"clientSecret"*/})
+@ToString(exclude = {"password"})
 @Entry(objectClasses = {"fintClient", "inetOrgPerson", "organizationalPerson", "person", "top"})
-public class Client implements BasicLdapEntry {
+public final class Client implements BasicLdapEntry {
 
     @ApiModelProperty(value = "DN of the client. This is automatically set.")
     @Id
@@ -71,7 +69,7 @@ public class Client implements BasicLdapEntry {
     }
 
     public void removeComponent(String componentDn) {
-        components.removeIf(component  -> component.equalsIgnoreCase(componentDn));
+        components.removeIf(component -> component.equalsIgnoreCase(componentDn));
     }
 
     public List<String> getComponents() {
@@ -132,16 +130,17 @@ public class Client implements BasicLdapEntry {
     }
 
     @Override
+    public void setDn(String dn) {
+        this.dn = LdapNameBuilder.newInstance(dn).build();
+    }
+
+    @Override
     public void setDn(Name dn) {
         this.dn = dn;
     }
 
     public String getClientId() {
         return clientId;
-    }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
     }
 
     /*
@@ -154,8 +153,7 @@ public class Client implements BasicLdapEntry {
     }
     */
 
-    @Override
-    public void setDn(String dn) {
-        this.dn = LdapNameBuilder.newInstance(dn).build();
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 }

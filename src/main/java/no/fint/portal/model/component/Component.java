@@ -16,7 +16,7 @@ import java.util.List;
 @ApiModel
 @Data
 @Entry(objectClasses = {"organizationalUnit", "top", "fintComponent"})
-public class Component implements BasicLdapEntry {
+public final class Component implements BasicLdapEntry {
 
     @Id
     private Name dn;
@@ -100,14 +100,14 @@ public class Component implements BasicLdapEntry {
     }
 
     @Override
-    public void setDn(Name dn) {
-        this.dn = dn;
-
+    public void setDn(String dn) {
+        this.dn = LdapNameBuilder.newInstance(dn).build();
     }
 
     @Override
-    public void setDn(String dn) {
-        this.dn = LdapNameBuilder.newInstance(dn).build();
+    public void setDn(Name dn) {
+        this.dn = dn;
+
     }
 
     public String getName() {

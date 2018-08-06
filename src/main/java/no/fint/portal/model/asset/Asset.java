@@ -1,6 +1,5 @@
 package no.fint.portal.model.asset;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,7 +16,7 @@ import java.util.List;
 @ApiModel
 @Data
 @Entry(objectClasses = {"organizationalUnit", "top", "fintAsset"})
-public class Asset implements BasicLdapEntry {
+public final class Asset implements BasicLdapEntry {
 
     @Id
     private Name dn;
@@ -88,14 +87,14 @@ public class Asset implements BasicLdapEntry {
     }
 
     @Override
-    public void setDn(Name dn) {
-        this.dn = dn;
-
+    public void setDn(String dn) {
+        this.dn = LdapNameBuilder.newInstance(dn).build();
     }
 
     @Override
-    public void setDn(String dn) {
-        this.dn = LdapNameBuilder.newInstance(dn).build();
+    public void setDn(Name dn) {
+        this.dn = dn;
+
     }
 
     public String getName() {

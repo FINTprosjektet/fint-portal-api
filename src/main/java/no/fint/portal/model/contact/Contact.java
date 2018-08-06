@@ -16,7 +16,7 @@ import java.util.List;
 @ApiModel
 @Data
 @Entry(objectClasses = {"inetOrgPerson", "organizationalPerson", "person", "top", "fintContact"})
-public class Contact implements BasicLdapEntry {
+public final class Contact implements BasicLdapEntry {
 
     @ApiModelProperty(value = "DN of the contact. This is automatically set.")
     @Id
@@ -64,13 +64,13 @@ public class Contact implements BasicLdapEntry {
     }
 
     @Override
-    public void setDn(String dn) {
-        this.dn = LdapNameBuilder.newInstance(dn).build();
+    public void setDn(Name dn) {
+        this.dn = dn;
     }
 
     @Override
-    public void setDn(Name dn) {
-        this.dn = dn;
+    public void setDn(String dn) {
+        this.dn = LdapNameBuilder.newInstance(dn).build();
     }
 
     public void addOrganisationTechnicalContact(String organisationDn) {
