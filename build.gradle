@@ -26,7 +26,7 @@ apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.3.0
 dependencies {
 
     compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
-    compile('org.springframework.ldap:spring-ldap-core:2.2.1.RELEASE')
+    compile('org.springframework.ldap:spring-ldap-core:2.3.1.RELEASE')
     compile('org.springframework.security.oauth:spring-security-oauth2:2.2.0.RELEASE')
 
 
