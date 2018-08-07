@@ -10,6 +10,7 @@ import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AssetService {
@@ -92,6 +93,10 @@ public class AssetService {
                         .add(LdapConstants.OU, LdapConstants.ASSET_CONTAINER_NAME)
                         .build().toString(),
                 Asset.class);
+    }
+
+    public Optional<Asset> getAsset(String dn) {
+        return Optional.ofNullable(ldapService.getEntry(dn, Asset.class));
     }
 
     public Asset getPrimaryAsset(Organisation organisation) {

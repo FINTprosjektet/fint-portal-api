@@ -37,16 +37,8 @@ public class ClientService {
     }
 
     public List<Client> getClients(String orgName) {
-        List<Client> clients = ldapService.getAll(clientObjectService.getClientBase(orgName).toString(), Client.class);
 
-        /*
-        clients.forEach(client -> {
-            OAuthClient oAuthClient = namOAuthClientService.getOAuthClient(client.getClientId());
-            client.setClientSecret(oAuthClient.getClientSecret());
-        });
-        */
-
-        return clients;
+        return ldapService.getAll(clientObjectService.getClientBase(orgName).toString(), Client.class);
     }
 
     public String getClientSecret(Client client) {
@@ -54,19 +46,10 @@ public class ClientService {
     }
 
     public Optional<Client> getClient(String clientUuid, String orgUuid) {
-        Optional<Client> client = Optional.ofNullable(ldapService.getEntry(
+        return Optional.ofNullable(ldapService.getEntry(
                 clientObjectService.getClientDn(clientUuid, orgUuid),
                 Client.class
         ));
-
-        /*
-        client.ifPresent(client1 -> {
-            OAuthClient oAuthClient = namOAuthClientService.getOAuthClient(client1.getClientId());
-            client1.setClientSecret(oAuthClient.getClientSecret());
-        });
-        */
-
-        return client;
     }
 
     public boolean updateClient(Client client) {

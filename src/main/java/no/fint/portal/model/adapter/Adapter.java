@@ -7,6 +7,7 @@ import no.fint.portal.ldap.BasicLdapEntry;
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Entry;
 import org.springframework.ldap.odm.annotations.Id;
+import org.springframework.ldap.odm.annotations.Transient;
 import org.springframework.ldap.support.LdapNameBuilder;
 
 import javax.naming.Name;
@@ -47,10 +48,31 @@ public final class Adapter implements BasicLdapEntry {
     @Attribute(name = "fintAdapterAssets")
     private List<String> assets;
 
+
+    @Transient
+    private List<String> assetIds;
+
+
     public Adapter() {
         components = new ArrayList<>();
         assets = new ArrayList<>();
+        assetIds = new ArrayList<>();
     }
+
+    public List<String> getAssetIds() {
+        return assetIds;
+    }
+
+    public void addAssetId(String assetId) {
+        if (!assetIds.stream().anyMatch(assetId::equalsIgnoreCase)) {
+            assetIds.add(assetId);
+        }
+    }
+
+    public void removeAssetId(String assetId) {
+        assetIds.removeIf(asset -> asset.equalsIgnoreCase(assetId));
+    }
+
 
     public void addComponent(String componentDn) {
         if (!components.stream().anyMatch(componentDn::equalsIgnoreCase)) {
@@ -134,5 +156,6 @@ public final class Adapter implements BasicLdapEntry {
     public List<String> getAssets() {
         return assets;
     }
+
 
 }

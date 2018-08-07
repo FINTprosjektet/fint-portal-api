@@ -2,10 +2,10 @@ package no.fint.portal.model.adapter;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.portal.ldap.LdapService;
+import no.fint.portal.model.asset.AssetService;
 import no.fint.portal.model.organisation.Organisation;
 import no.fint.portal.oauth.NamOAuthClientService;
 import no.fint.portal.oauth.OAuthClient;
-import no.fint.portal.utilities.PasswordUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +17,16 @@ import java.util.Optional;
 public class AdapterService {
 
     @Autowired
-    AdapterObjectService adapterObjectService;
+    private AdapterObjectService adapterObjectService;
 
     @Autowired
-    LdapService ldapService;
+    private LdapService ldapService;
 
     @Autowired
-    NamOAuthClientService namOAuthClientService;
+    private NamOAuthClientService namOAuthClientService;
+
+    @Autowired
+    private AssetService assetService;
 
     public boolean addAdapter(Adapter adapter, Organisation organisation) {
         adapterObjectService.setupAdapter(adapter, organisation);
@@ -39,12 +42,9 @@ public class AdapterService {
     public List<Adapter> getAdapters(String orgName) {
         List<Adapter> adapters = ldapService.getAll(adapterObjectService.getAdapterBase(orgName).toString(), Adapter.class);
 
-        /*
-        adapters.forEach(adapter -> {
-            OAuthClient oAuthClient = namOAuthClientService.getOAuthClient(adapter.getClientId());
-            adapter.setClientSecret(oAuthClient.getClientSecret());
-        });
-        */
+        adapters.forEach(adapter -> adapter.getAssets().forEach(asset -> {
+            assetService.getAsset(asset).ifPresent(a -> adapter.addAssetId(a.getAssetId()));
+        }));
 
         return adapters;
     }
@@ -54,17 +54,16 @@ public class AdapterService {
                 adapterObjectService.getAdapterDn(adapterName, orgName),
                 Adapter.class
         ));
-    /*
-        adapter.ifPresent(a -> {
-            OAuthClient oAuthClient = namOAuthClientService.getOAuthClient(a.getClientId());
-            a.setClientSecret(oAuthClient.getClientSecret());
-        });
-    */
+
+        adapter.ifPresent(a -> a.getAssets().forEach(asset -> {
+            assetService.getAsset(asset).ifPresent(aa -> a.addAssetId(aa.getAssetId()));
+        }));
+
         return adapter;
     }
 
     public String getAdapterSecret(Adapter adapter) {
-            return namOAuthClientService.getOAuthClient(adapter.getClientId()).getClientSecret();
+        return namOAuthClientService.getOAuthClient(adapter.getClientId()).getClientSecret();
     }
 
     public boolean updateAdapter(Adapter adapter) {
