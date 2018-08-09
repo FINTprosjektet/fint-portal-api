@@ -34,7 +34,6 @@ public class AdapterService {
         OAuthClient oAuthClient = namOAuthClientService.addOAuthClient(String.format("A_%s_%s", organisation.getName(), adapter.getName()));
 
         adapter.setClientId(oAuthClient.getClientId());
-        //adapter.setClientSecret(oAuthClient.getClientSecret());
 
         return ldapService.createEntry(adapter);
     }

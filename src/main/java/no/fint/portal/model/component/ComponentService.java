@@ -62,8 +62,10 @@ public class ComponentService {
     }
 
     public Optional<Component> getComponentByName(String name) {
-        String dn = getComponentDnByName(name);
+        return getComponetByDn(getComponentDnByName(name));
+    }
 
+    public Optional<Component> getComponetByDn(String dn) {
         return Optional.ofNullable(ldapService.getEntry(dn, Component.class));
     }
 
