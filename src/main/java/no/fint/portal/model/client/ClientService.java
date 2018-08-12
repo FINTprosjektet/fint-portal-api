@@ -46,10 +46,18 @@ public class ClientService {
     }
 
     public Optional<Client> getClient(String clientUuid, String orgUuid) {
+
+        return getClientByDn(clientObjectService.getClientDn(clientUuid, orgUuid));
+        /*
         return Optional.ofNullable(ldapService.getEntry(
                 clientObjectService.getClientDn(clientUuid, orgUuid),
                 Client.class
         ));
+        */
+    }
+
+    public Optional<Client> getClientByDn(String dn) {
+        return Optional.ofNullable(ldapService.getEntry(dn, Client.class));
     }
 
     public boolean updateClient(Client client) {
