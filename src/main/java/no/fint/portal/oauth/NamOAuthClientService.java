@@ -22,7 +22,7 @@ import java.util.Collections;
 public class NamOAuthClientService {
 
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
     @Value("${fint.nam.oauth.username}")
     private String username;
     @Value("${fint.nam.oauth.password}")
@@ -65,9 +65,7 @@ public class NamOAuthClientService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-
         HttpEntity request = new HttpEntity(jsonOAuthClient, headers);
-
 
         try {
             String response = restTemplate.postForObject(NamOAuthConstants.CLIENT_REGISTRATION_URL_TEMPLATE, request, String.class, idpHostname);

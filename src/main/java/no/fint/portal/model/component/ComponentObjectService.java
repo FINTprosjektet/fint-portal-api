@@ -14,7 +14,8 @@ import javax.naming.Name;
 public class ComponentObjectService {
 
     @Autowired
-    LdapService ldapService;
+    private LdapService ldapService;
+    
     @Getter
     @Value("${fint.ldap.component-base}")
     private String componentBase;

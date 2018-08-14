@@ -3,7 +3,6 @@ package no.fint.portal.ldap;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import no.fint.portal.ldap.BasicLdapEntry;
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Entry;
 import org.springframework.ldap.odm.annotations.Id;
@@ -35,7 +34,6 @@ public class Container implements BasicLdapEntry {
     @Override
     public void setDn(Name dn) {
         this.dn = dn;
-
     }
 
     @Override

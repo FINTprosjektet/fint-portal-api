@@ -91,12 +91,12 @@ public final class Organisation implements BasicLdapEntry {
     }
 
     @Override
-    public void setDn(String dn) {
-        this.dn = LdapNameBuilder.newInstance(dn).build();
+    public void setDn(Name dn) {
+        this.dn = dn;
     }
 
     @Override
-    public void setDn(Name dn) {
-        this.dn = dn;
+    public void setDn(String dn) {
+        this.dn = LdapNameBuilder.newInstance(dn).build();
     }
 }

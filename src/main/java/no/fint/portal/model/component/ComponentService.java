@@ -48,6 +48,7 @@ public class ComponentService {
 
     // TODO: 17.01.2017 Refactor this method and add tests
     // TODO: 14.12.2017 Remove?
+    /*
     public List<Component> getComponentsByOrgUUID(String uuid) {
         List<Component> components = getComponents();
         List<Component> orgComponents = new ArrayList<>();
@@ -60,6 +61,7 @@ public class ComponentService {
         });
         return orgComponents;
     }
+    */
 
     public Optional<Component> getComponentByName(String name) {
         return getComponetByDn(getComponentDnByName(name));

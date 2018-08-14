@@ -202,9 +202,17 @@ public class OrganisationService {
     }
 
     public void unLinkComponent(Organisation organisation, Component component) {
-        // TODO: Should this organisation's clients and adapters be unlinked from the component?
+        // TODO: FIXED! Should this organisation's clients and adapters be unlinked from the component?
+        // TODO: Add tests for this.
+        List<Client> clients = clientService.getClients(organisation.getName());
+        List<Adapter> adapters = adapterService.getAdapters(organisation.getName());
+
+        clients.forEach(client -> componentService.unLinkClient(component, client));
+        adapters.forEach(adapter -> componentService.unLinkAdapter(component, adapter));
+
         organisation.removeComponent(component.getDn());
         component.removeOrganisation(organisation.getDn());
+
 
         ldapService.updateEntry(organisation);
         ldapService.updateEntry(component);

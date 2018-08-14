@@ -2,10 +2,11 @@ package no.fint.portal.model.client;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.portal.ldap.LdapService;
+import no.fint.portal.model.asset.Asset;
+import no.fint.portal.model.asset.AssetService;
 import no.fint.portal.model.organisation.Organisation;
 import no.fint.portal.oauth.NamOAuthClientService;
 import no.fint.portal.oauth.OAuthClient;
-import no.fint.portal.utilities.PasswordUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +18,16 @@ import java.util.Optional;
 public class ClientService {
 
     @Autowired
-    ClientObjectService clientObjectService;
+    private ClientObjectService clientObjectService;
 
     @Autowired
-    LdapService ldapService;
+    private LdapService ldapService;
 
     @Autowired
-    NamOAuthClientService namOAuthClientService;
+    private AssetService assetService;
+
+    @Autowired
+    private NamOAuthClientService namOAuthClientService;
 
     public boolean addClient(Client client, Organisation organisation) {
         clientObjectService.setupClient(client, organisation);
@@ -31,9 +35,14 @@ public class ClientService {
         OAuthClient oAuthClient = namOAuthClientService.addOAuthClient(String.format("C_%s_%s", organisation.getName(), client.getName()));
 
         client.setClientId(oAuthClient.getClientId());
-        //client.setClientSecret(oAuthClient.getClientSecret());
 
-        return ldapService.createEntry(client);
+        boolean created = ldapService.createEntry(client);
+        if (created) {
+            Asset primaryAsset = assetService.getPrimaryAsset(organisation);
+            assetService.linkClientToAsset(primaryAsset, client);
+        }
+
+        return created;
     }
 
     public List<Client> getClients(String orgName) {
@@ -46,14 +55,7 @@ public class ClientService {
     }
 
     public Optional<Client> getClient(String clientUuid, String orgUuid) {
-
         return getClientByDn(clientObjectService.getClientDn(clientUuid, orgUuid));
-        /*
-        return Optional.ofNullable(ldapService.getEntry(
-                clientObjectService.getClientDn(clientUuid, orgUuid),
-                Client.class
-        ));
-        */
     }
 
     public Optional<Client> getClientByDn(String dn) {

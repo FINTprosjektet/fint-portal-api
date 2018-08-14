@@ -1,6 +1,7 @@
 package no.fint.portal.model.client
 
 import no.fint.portal.ldap.LdapService
+import no.fint.portal.model.asset.AssetService
 import no.fint.portal.model.organisation.Organisation
 import no.fint.portal.oauth.NamOAuthClientService
 import no.fint.portal.oauth.OAuthClient
@@ -13,17 +14,20 @@ class ClientServiceSpec extends Specification {
     private ldapService
     private clientObjectService
     private oauthService
+    private assetService
 
     def setup() {
         def organisationBase = "ou=org,o=fint"
 
         ldapService = Mock(LdapService)
         oauthService = Mock(NamOAuthClientService)
+        assetService = Mock(AssetService)
         clientObjectService = new ClientObjectService(organisationBase: organisationBase)
         clientService = new ClientService(
                 clientObjectService: clientObjectService,
                 ldapService: ldapService,
-                namOAuthClientService: oauthService
+                namOAuthClientService: oauthService,
+                assetService: assetService
         )
     }
 

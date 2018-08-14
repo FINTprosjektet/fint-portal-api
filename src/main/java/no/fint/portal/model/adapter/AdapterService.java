@@ -2,6 +2,7 @@ package no.fint.portal.model.adapter;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.portal.ldap.LdapService;
+import no.fint.portal.model.asset.Asset;
 import no.fint.portal.model.asset.AssetService;
 import no.fint.portal.model.organisation.Organisation;
 import no.fint.portal.oauth.NamOAuthClientService;
@@ -35,7 +36,12 @@ public class AdapterService {
 
         adapter.setClientId(oAuthClient.getClientId());
 
-        return ldapService.createEntry(adapter);
+        boolean created = ldapService.createEntry(adapter);
+        if (created) {
+            Asset primaryAsset = assetService.getPrimaryAsset(organisation);
+            assetService.linkAdapterToAsset(primaryAsset, adapter);
+        }
+        return created;
     }
 
     public List<Adapter> getAdapters(String orgName) {

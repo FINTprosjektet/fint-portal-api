@@ -16,7 +16,7 @@ import java.util.Optional;
 public class AssetService {
 
     @Autowired
-    LdapService ldapService;
+    private LdapService ldapService;
 
     private boolean createAsset(Asset asset, Organisation organisation, boolean primary) {
         asset.setName(asset.getAssetId().replace(".", "_"));

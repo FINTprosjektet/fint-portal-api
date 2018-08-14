@@ -41,10 +41,20 @@ class OrganisationServiceSpec extends Specification {
 
         ldapService = Mock(LdapService)
         oauthService = Mock(NamOAuthClientService)
-        contactService = Mock(ContactService)
-        adapterService = new AdapterService(adapterObjectService: adapterObjectService, ldapService: ldapService, namOAuthClientService: oauthService)
-        clientService = new ClientService(clientObjectService: clientObjectService, ldapService: ldapService, namOAuthClientService: oauthService)
         assetService = new AssetService(ldapService: ldapService)
+        contactService = Mock(ContactService)
+        adapterService = new AdapterService(
+                adapterObjectService: adapterObjectService,
+                ldapService: ldapService,
+                namOAuthClientService: oauthService,
+                assetService: assetService
+        )
+        clientService = new ClientService(
+                clientObjectService: clientObjectService,
+                ldapService: ldapService,
+                namOAuthClientService: oauthService,
+                assetService: assetService
+        )
         organisationObjectService = new OrganisationObjectService(organisationBase: organisationBase, ldapService: ldapService)
         componentService = new ComponentService(
                 componentBase: componentBase,
@@ -163,8 +173,12 @@ class OrganisationServiceSpec extends Specification {
         then:
         organisation.getComponents().size() == 1
         organisation.getComponents().get(0) == "ou=comp2,o=fint"
+        1 * ldapService.getAll(_ as String, _ as Class<List<Client>>) >> Arrays.asList(ObjectFactory.newClient())
+        1 * ldapService.getAll(_ as String, _ as Class<List<Adapter>>) >> Arrays.asList(ObjectFactory.newAdapter())
         1 * ldapService.updateEntry(_ as Organisation)
-        1 * ldapService.updateEntry(_ as Component)
+        3 * ldapService.updateEntry(_ as Component)
+
+
     }
 
     def "Link Legal Contact"() {

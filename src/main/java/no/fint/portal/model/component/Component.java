@@ -107,7 +107,6 @@ public final class Component implements BasicLdapEntry {
     @Override
     public void setDn(Name dn) {
         this.dn = dn;
-
     }
 
     public String getName() {

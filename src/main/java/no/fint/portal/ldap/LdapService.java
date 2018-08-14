@@ -54,7 +54,7 @@ public class LdapService {
     }
 
     public <T> String getStringDnByUniqueName(String name, String base, Class<T> type) {
-        BasicLdapEntry entry =  ((BasicLdapEntry) getEntryByUniqueName(name, base, type));
+        BasicLdapEntry entry = ((BasicLdapEntry) getEntryByUniqueName(name, base, type));
 
         if (entry != null) {
             return entry.getDn();
