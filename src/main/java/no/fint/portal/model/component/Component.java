@@ -41,6 +41,12 @@ public final class Component implements BasicLdapEntry {
     @Attribute(name = "fintComponentBasePath")
     private String basePath;
 
+    @Attribute(name = "fintComponentOpenData")
+    private boolean openData;
+
+    @Attribute(name = "fintComponentCommon")
+    private boolean common;
+
     public Component() {
 
         organisations = new ArrayList<>();
