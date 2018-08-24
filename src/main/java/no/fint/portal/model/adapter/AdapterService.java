@@ -50,26 +50,35 @@ public class AdapterService {
     }
 
     public List<Adapter> getAdapters(String orgName) {
-        List<Adapter> adapters = ldapService.getAll(adapterObjectService.getAdapterBase(orgName).toString(), Adapter.class);
+        //List<Adapter> adapters =
 
+        return ldapService.getAll(adapterObjectService.getAdapterBase(orgName).toString(), Adapter.class);
+
+                /*
         adapters.forEach(adapter -> adapter.getAssets().forEach(asset -> {
             assetService.getAsset(asset).ifPresent(a -> adapter.addAssetId(a.getAssetId()));
         }));
 
         return adapters;
+        */
     }
 
     public Optional<Adapter> getAdapter(String adapterName, String orgName) {
-        Optional<Adapter> adapter = Optional.ofNullable(ldapService.getEntry(
+
+        //Optional<Adapter> adapter =
+
+        return Optional.ofNullable(ldapService.getEntry(
                 adapterObjectService.getAdapterDn(adapterName, orgName),
                 Adapter.class
         ));
 
+        /*
         adapter.ifPresent(a -> a.getAssets().forEach(asset -> {
             assetService.getAsset(asset).ifPresent(aa -> a.addAssetId(aa.getAssetId()));
         }));
+        */
 
-        return adapter;
+        //return adapter;
     }
 
     public String getAdapterSecret(Adapter adapter) {

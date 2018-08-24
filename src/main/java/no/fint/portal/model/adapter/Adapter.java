@@ -49,7 +49,7 @@ public final class Adapter implements BasicLdapEntry {
     private List<String> assets;
 
 
-    @Transient
+    @Attribute(name = "fintAdapterAssetIds")
     private List<String> assetIds;
 
 

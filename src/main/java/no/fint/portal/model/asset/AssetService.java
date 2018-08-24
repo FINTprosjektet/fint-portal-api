@@ -73,6 +73,7 @@ public class AssetService {
 
         asset.addAdapter(adapter.getDn());
         adapter.addAsset(asset.getDn());
+        adapter.addAssetId(asset.getAssetId());
 
         ldapService.updateEntry(asset);
         ldapService.updateEntry(adapter);
@@ -82,6 +83,7 @@ public class AssetService {
 
         asset.removeAdapter(adapter.getDn());
         adapter.removeAsset(asset.getDn());
+        adapter.removeAssetId(asset.getAssetId());
 
         ldapService.updateEntry(asset);
         ldapService.updateEntry(adapter);
