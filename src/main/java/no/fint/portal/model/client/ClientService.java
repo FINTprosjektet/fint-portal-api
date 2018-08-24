@@ -32,7 +32,12 @@ public class ClientService {
     public boolean addClient(Client client, Organisation organisation) {
         clientObjectService.setupClient(client, organisation);
 
-        OAuthClient oAuthClient = namOAuthClientService.addOAuthClient(String.format("C_%s_%s", organisation.getName(), client.getName()));
+        OAuthClient oAuthClient = namOAuthClientService.addOAuthClient(
+                String.format("c_%s", client.getName()
+                        .replace("@", "_")
+                        .replace(".", "_")
+                )
+        );
 
         client.setClientId(oAuthClient.getClientId());
 
