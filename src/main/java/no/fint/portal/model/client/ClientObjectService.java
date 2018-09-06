@@ -16,7 +16,7 @@ public class ClientObjectService {
     private String organisationBase;
 
     public void setupClient(Client client, Organisation organisation) {
-        client.setName(String.format("%s@%s", client.getName(), organisation.getPrimaryAssetId()));
+        client.setName(String.format("%s@client.%s", client.getName(), organisation.getPrimaryAssetId()));
         client.setDn(
                 LdapNameBuilder.newInstance(getClientBase(organisation.getName()))
                         .add(LdapConstants.CN, client.getName())

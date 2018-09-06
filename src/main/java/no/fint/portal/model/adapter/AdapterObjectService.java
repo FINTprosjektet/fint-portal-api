@@ -16,7 +16,7 @@ public class AdapterObjectService {
     private String organisationBase;
 
     public void setupAdapter(Adapter adapter, Organisation organisation) {
-        adapter.setName(String.format("%s@%s", adapter.getName(), organisation.getPrimaryAssetId()));
+        adapter.setName(String.format("%s@adapter.%s", adapter.getName(), organisation.getPrimaryAssetId()));
         adapter.setDn(
                 LdapNameBuilder.newInstance(getAdapterBase(organisation.getName()))
                         .add(LdapConstants.CN, adapter.getName())
