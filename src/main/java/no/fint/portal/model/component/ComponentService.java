@@ -3,7 +3,11 @@ package no.fint.portal.model.component;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.portal.ldap.LdapService;
 import no.fint.portal.model.adapter.Adapter;
+import no.fint.portal.model.asset.Asset;
+import no.fint.portal.model.asset.AssetService;
 import no.fint.portal.model.client.Client;
+import no.fint.portal.model.organisation.Organisation;
+import no.fint.portal.model.organisation.OrganisationService;
 import no.fint.portal.utilities.LdapConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +27,12 @@ public class ComponentService {
 
     @Autowired
     private ComponentObjectService componentObjectService;
+
+    @Autowired
+    private OrganisationService organisationService;
+
+    @Autowired
+    private AssetService assetService;
 
     @Value("${fint.ldap.component-base}")
     private String componentBase;
@@ -62,7 +72,6 @@ public class ComponentService {
         return orgComponents;
     }
     */
-
     public Optional<Component> getComponentByName(String name) {
         return getComponetByDn(getComponentDnByName(name));
     }
@@ -117,5 +126,20 @@ public class ComponentService {
 
         ldapService.updateEntry(adapter);
         ldapService.updateEntry(component);
+    }
+
+    public List<Asset> getActiveAssetsForComponent(Component component) {
+
+        List<Asset> assets = new ArrayList<>();
+
+        List<String> organisations = component.getOrganisations();
+
+        for (String organisationDn : organisations) {
+            Optional<Organisation> organisation = organisationService.getOrganisationByDn(organisationDn);
+            Organisation o = organisation.get();
+            assets.addAll(assetService.getAssets(o));
+        }
+
+        return assets;
     }
 }
