@@ -1,6 +1,8 @@
 package no.fint.portal.model.component
 
 import no.fint.portal.ldap.LdapService
+import no.fint.portal.model.asset.AssetService
+import no.fint.portal.model.organisation.OrganisationService
 import no.fint.portal.testutils.ObjectFactory
 import spock.lang.Specification
 
@@ -8,15 +10,21 @@ class ComponentServiceSpec extends Specification {
     private componentService
     private componentObjectService
     private ldapService
+    private organisationService
+    private assetService
 
     def setup() {
         def componentBase = "ou=comp,o=fint"
         ldapService = Mock(LdapService)
+        organisationService = Mock(OrganisationService)
+        assetService = Mock(AssetService)
         componentObjectService = new ComponentObjectService(ldapService: ldapService, componentBase: componentBase)
         componentService = new ComponentService(
                 ldapService: ldapService,
                 componentBase: componentBase,
                 componentObjectService: componentObjectService,
+                organisationService: organisationService,
+                assetService: assetService,
         )
     }
 
@@ -155,6 +163,23 @@ class ComponentServiceSpec extends Specification {
         component.getAdapters().size() == 1
         component.getAdapters().get(0) == "name=a2,o=fint"
         1 * ldapService.updateEntry(_ as Component)
+    }
+
+    def "Get Active Assets for Component"() {
+        given:
+        def component = ObjectFactory.newComponent()
+        def org = ObjectFactory.newOrganisation()
+        def ass = ObjectFactory.newAsset()
+        component.organisations = [ 'ou=testOrg,ou=org,o=fint' ]
+
+        when:
+        def assets = componentService.getActiveAssetsForComponent(component)
+        println(assets)
+
+        then:
+        assets.size == 1
+        1 * organisationService.getOrganisationByDn('ou=testOrg,ou=org,o=fint') >> Optional.of(org)
+        1 * assetService.getAssets(org) >> [ ass ]
     }
 
 }

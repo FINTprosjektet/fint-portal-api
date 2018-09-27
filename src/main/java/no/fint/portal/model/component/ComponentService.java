@@ -6,7 +6,6 @@ import no.fint.portal.model.adapter.Adapter;
 import no.fint.portal.model.asset.Asset;
 import no.fint.portal.model.asset.AssetService;
 import no.fint.portal.model.client.Client;
-import no.fint.portal.model.organisation.Organisation;
 import no.fint.portal.model.organisation.OrganisationService;
 import no.fint.portal.utilities.LdapConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +13,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -129,17 +128,14 @@ public class ComponentService {
     }
 
     public List<Asset> getActiveAssetsForComponent(Component component) {
-
-        List<Asset> assets = new ArrayList<>();
-
-        List<String> organisations = component.getOrganisations();
-
-        for (String organisationDn : organisations) {
-            Optional<Organisation> organisation = organisationService.getOrganisationByDn(organisationDn);
-            Organisation o = organisation.get();
-            assets.addAll(assetService.getAssets(o));
-        }
-
-        return assets;
+        return component
+                .getOrganisations()
+                .stream()
+                .map(organisationService::getOrganisationByDn)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(assetService::getAssets)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 }
