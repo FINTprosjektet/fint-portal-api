@@ -50,6 +50,12 @@ public final class Component implements BasicLdapEntry {
     @Attribute(name = "fintComponentCommon")
     private boolean common;
 
+    @Attribute(name = "fintComponentIsInProduction")
+    private boolean isInProduction;
+
+    @Attribute(name = "fintComponentIsInBeta")
+    private boolean isInBeta;
+
     public Component() {
 
         organisations = new ArrayList<>();
