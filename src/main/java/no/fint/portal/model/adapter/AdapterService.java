@@ -81,6 +81,10 @@ public class AdapterService {
         //return adapter;
     }
 
+    public Optional<Adapter> getAdapterByDn(String dn) {
+        return Optional.ofNullable(ldapService.getEntry(dn, Adapter.class));
+    }
+
     public String getAdapterSecret(Adapter adapter) {
         return namOAuthClientService.getOAuthClient(adapter.getClientId()).getClientSecret();
     }
