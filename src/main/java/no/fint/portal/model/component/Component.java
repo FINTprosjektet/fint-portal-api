@@ -41,6 +41,7 @@ public final class Component implements BasicLdapEntry {
     @Attribute(name = "fintComponentBasePath")
     private String basePath;
 
+    @Deprecated
     @Attribute(name = "fintComponentPort")
     private Integer port;
 
@@ -55,6 +56,9 @@ public final class Component implements BasicLdapEntry {
 
     @Attribute(name = "fintComponentIsInBeta")
     private boolean isInBeta;
+
+    @Attribute(name = "fintComponentIsInPlayWithFint")
+    private boolean isInPlayWithFint;
 
     public Component() {
 
