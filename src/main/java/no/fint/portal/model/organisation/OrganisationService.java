@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -162,11 +163,19 @@ public class OrganisationService {
     }
 
     public void linkLegalContact(Organisation organisation, Contact contact) {
+        String previousLegalContactDn = organisation.getLegalContact();
+        if (!StringUtils.isEmpty(previousLegalContactDn)) {
+            contactService.getContact(previousLegalContactDn).ifPresent(previousLegalContact -> {
+                previousLegalContact.removeOrganisationLegalContact(organisation.getDn());
+                contactService.updateContact(previousLegalContact);
+            });
+        }
+
         organisation.setLegalContact(contact.getDn());
         contact.addOrganisationLegalContact(organisation.getDn());
 
-        ldapService.updateEntry(contact);
-        ldapService.updateEntry(organisation);
+        contactService.updateContact(contact);
+        updateOrganisation(organisation);
     }
 
     public void unLinkLegalContact(Organisation organisation, Contact contact) {
@@ -202,7 +211,6 @@ public class OrganisationService {
     }
 
     public void unLinkComponent(Organisation organisation, Component component) {
-        // TODO: FIXED! Should this organisation's clients and adapters be unlinked from the component?
         // TODO: Add tests for this.
         List<Client> clients = clientService.getClients(organisation.getName());
         List<Adapter> adapters = adapterService.getAdapters(organisation.getName());
