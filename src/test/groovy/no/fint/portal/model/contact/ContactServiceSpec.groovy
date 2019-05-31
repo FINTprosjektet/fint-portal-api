@@ -24,12 +24,12 @@ class ContactServiceSpec extends Specification {
 
         then:
         contacts.size() == 2
-        1 * ldapService.getAll(_ as String, _ as Class) >> Arrays.asList(ObjectFactory.newContact(), ObjectFactory.newContact())
+        1 * ldapService.getAll(_ as String, _ as Class) >> Arrays.asList(ObjectFactory.newContact("11111111111"), ObjectFactory.newContact("22222222222"))
     }
 
     def "Add Contact"() {
         given:
-        def contact = ObjectFactory.newContact()
+        def contact = ObjectFactory.newContact("11111111111")
 
         when:
         def created = contactService.addContact(contact)
@@ -43,17 +43,17 @@ class ContactServiceSpec extends Specification {
     def "Get Contact"() {
         when:
         def contact1 = contactService.getContact("11111111111")
-        def contact2 = contactService.getContact("11111111111")
+        def contact2 = contactService.getContact("22222222222")
 
         then:
         contact1.isPresent()
         contact2.empty()
-        2 * ldapService.getEntry(_ as String, _ as Class) >> ObjectFactory.newContact() >> null
+        2 * ldapService.getEntry(_ as String, _ as Class) >> ObjectFactory.newContact("11111111111") >> null
     }
 
     def "Update Contact"() {
         when:
-        def updated = contactService.updateContact(ObjectFactory.newContact())
+        def updated = contactService.updateContact(ObjectFactory.newContact("11111111111"))
 
         then:
         updated == true
@@ -62,7 +62,7 @@ class ContactServiceSpec extends Specification {
 
     def "Delete Contact"() {
         when:
-        contactService.deleteContact(ObjectFactory.newContact())
+        contactService.deleteContact(ObjectFactory.newContact("11111111111"))
 
         then:
         1 * ldapService.deleteEntry(_ as Contact)

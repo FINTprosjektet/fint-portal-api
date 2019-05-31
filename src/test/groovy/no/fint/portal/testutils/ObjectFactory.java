@@ -46,10 +46,10 @@ public enum ObjectFactory {
         return organisation;
     }
 
-    public static Contact newContact() {
+    public static Contact newContact(String nin) {
         Contact contact = new Contact();
-        contact.setNin("111111111");
-        contact.setDn("cn=111111111,ou=contacts,o=fint");
+        contact.setNin(nin);
+        contact.setDn("cn="+nin+",ou=contacts,o=fint");
         return contact;
     }
 

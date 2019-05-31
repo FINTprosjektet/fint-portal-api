@@ -64,7 +64,7 @@ public final class Organisation implements BasicLdapEntry {
     }
 
     public void removeComponent(String componentDn) {
-        components.removeIf(component -> component.equalsIgnoreCase(componentDn));
+        components.removeIf(componentDn::equalsIgnoreCase);
     }
 
     public void addTechnicalContact(String contactDn) {
@@ -74,7 +74,7 @@ public final class Organisation implements BasicLdapEntry {
     }
 
     public void removeTechicalContact(String contactDn) {
-        techicalContacts.removeIf(contact -> contact.equalsIgnoreCase(contactDn));
+        techicalContacts.removeIf(contactDn::equalsIgnoreCase);
     }
 
     public void setName(String name) {

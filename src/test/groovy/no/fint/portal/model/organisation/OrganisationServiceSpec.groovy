@@ -5,7 +5,6 @@ import no.fint.portal.ldap.LdapService
 import no.fint.portal.model.adapter.Adapter
 import no.fint.portal.model.adapter.AdapterObjectService
 import no.fint.portal.model.adapter.AdapterService
-import no.fint.portal.model.asset.Asset
 import no.fint.portal.model.asset.AssetService
 import no.fint.portal.model.client.Client
 import no.fint.portal.model.client.ClientObjectService
@@ -184,22 +183,34 @@ class OrganisationServiceSpec extends Specification {
     def "Link Legal Contact"() {
         given:
         def organisation = ObjectFactory.newOrganisation()
-        def contact = ObjectFactory.newContact()
+        def contact1 = ObjectFactory.newContact("11111111111")
+        def contact2 = ObjectFactory.newContact("22222222222")
 
         when:
-        organisationService.linkLegalContact(organisation, contact)
+        organisationService.linkLegalContact(organisation, contact1)
 
         then:
         organisation.legalContact
-        contact.legal.any { it == organisation.dn }
+        contact1.legal.any { it == organisation.dn }
         1 * ldapService.updateEntry(_ as Organisation)
-        1 * ldapService.updateEntry(_ as Contact)
+        1 * contactService.updateContact(_ as Contact)
+
+        when:
+        organisationService.linkLegalContact(organisation, contact2)
+
+        then:
+        organisation.legalContact == contact2.dn
+        !contact1.legal.any { it == organisation.dn }
+        contact2.legal.any { it == organisation.dn }
+        1 * ldapService.updateEntry(_ as Organisation)
+        2 * contactService.updateContact(_ as Contact)
+        1 * contactService.getContact(_) >> Optional.of(contact1)
     }
 
     def "Unlink Legal Contact"() {
         given:
         def organisation = ObjectFactory.newOrganisation()
-        def contact = ObjectFactory.newContact()
+        def contact = ObjectFactory.newContact("11111111111")
 
         when:
         organisationService.linkLegalContact(organisation, contact)
@@ -221,7 +232,7 @@ class OrganisationServiceSpec extends Specification {
     def "Link Technical Contact"() {
         given:
         def organisation = ObjectFactory.newOrganisation()
-        def contact = ObjectFactory.newContact()
+        def contact = ObjectFactory.newContact("11111111111")
 
         when:
         organisationService.linkTechnicalContact(organisation, contact)
@@ -236,8 +247,8 @@ class OrganisationServiceSpec extends Specification {
     def "Unlink Technical Contact"() {
         given:
         def organisation = ObjectFactory.newOrganisation()
-        def contact1 = ObjectFactory.newContact()
-        def contact2 = ObjectFactory.newContact()
+        def contact1 = ObjectFactory.newContact("11111111111")
+        def contact2 = ObjectFactory.newContact("11111111111")
         contact2.dn = "cn=22222222,ou=contacts,o=fint"
 
         when:
@@ -272,7 +283,7 @@ class OrganisationServiceSpec extends Specification {
 
         then:
         contact
-        1 * contactService.getContacts() >> IntStream.rangeClosed(1, 9).mapToObj(Integer.&toString).map{ def o = ObjectFactory.newContact(); o.nin = it * 11; o.dn = "dn="+o.nin+",ou=contacts,o=fint"; o}.collect(Collectors.toList())
+        1 * contactService.getContacts() >> IntStream.rangeClosed(1, 9).mapToObj(Integer.&toString).map{ def o = ObjectFactory.newContact("11111111111"); o.nin = it * 11; o.dn = "dn="+o.nin+",ou=contacts,o=fint"; o}.collect(Collectors.toList())
     }
 
     def "Get Technical Contacts"() {
@@ -285,7 +296,7 @@ class OrganisationServiceSpec extends Specification {
 
         then:
         contacts.size() == 2
-        1 * contactService.getContacts() >> IntStream.rangeClosed(1, 9).mapToObj(Integer.&toString).map{ def o = ObjectFactory.newContact(); o.nin = it * 11; o.dn = "dn="+o.nin+",ou=contacts,o=fint"; o}.collect(Collectors.toList())
+        1 * contactService.getContacts() >> IntStream.rangeClosed(1, 9).mapToObj(Integer.&toString).map{ def o = ObjectFactory.newContact("11111111111"); o.nin = it * 11; o.dn = "dn="+o.nin+",ou=contacts,o=fint"; o}.collect(Collectors.toList())
     }
 
 }
