@@ -30,8 +30,12 @@ public class ContactService {
     }
 
     public Optional<Contact> getContact(String nin) {
+        return getContactByDn(contactObjectService.getContactDn(nin));
+    }
 
-        return Optional.ofNullable(ldapService.getEntry(contactObjectService.getContactDn(nin), Contact.class));
+    public Optional<Contact> getContactByDn(String dn) {
+
+        return Optional.ofNullable(ldapService.getEntry(dn, Contact.class));
     }
 
     public boolean updateContact(Contact contact) {

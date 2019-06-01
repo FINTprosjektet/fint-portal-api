@@ -204,7 +204,7 @@ class OrganisationServiceSpec extends Specification {
         contact2.legal.any { it == organisation.dn }
         1 * ldapService.updateEntry(_ as Organisation)
         2 * contactService.updateContact(_ as Contact)
-        1 * contactService.getContact(_) >> Optional.of(contact1)
+        1 * contactService.getContactByDn(_) >> Optional.of(contact1)
     }
 
     def "Unlink Legal Contact"() {
