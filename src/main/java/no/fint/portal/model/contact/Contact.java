@@ -50,6 +50,10 @@ public final class Contact implements BasicLdapEntry {
     @Attribute(name = "fintContactLegal")
     private List<String> legal;
 
+    @ApiModelProperty(value = "Contacts id in the support system.")
+    @Attribute(name = "fintContactSupportId")
+    private String supportId;
+
     public Contact() {
         technical = new ArrayList<>();
         legal = new ArrayList<>();
