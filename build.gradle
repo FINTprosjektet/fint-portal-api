@@ -3,6 +3,7 @@ plugins {
     id "com.jfrog.bintray" version "1.8.0"
 }
 
+
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'groovy'
@@ -35,7 +36,7 @@ dependencies {
 
     compileOnly("org.projectlombok:lombok:${lombokVersion}")
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
-    testCompile("org.spockframework:spock-spring:${spockSpringVersion}")
+    testCompile("org.spockframework:spock-spring:1.2-groovy-2.5")
     testCompile("cglib:cglib-nodep:${cglibVersion}")
 }
 
