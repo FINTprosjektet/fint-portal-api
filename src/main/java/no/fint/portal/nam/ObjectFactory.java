@@ -155,4 +155,21 @@ public final class ObjectFactory {
                         .build())
                 .build();
     }
+
+    public static PolicyEnforcementPointRef createPolicyEnforcementPointRefAuthorization() {
+        return PolicyEnforcementPointRef.builder()
+                .elementRefType(EXTERNAL_WITH_ID_REF)
+                .externalElementRef(XPEML_PEP_AG_AUTHORIZATION)
+                .build();
+    }
+
+    public static Policy createAuthorizationPolicy(String name, String scope) {
+        return Policy.builder()
+                .enable(true)
+                .policyName(name)
+                .description("Automatically created by the admin portal")
+                .policyEnforcementPointRef(createPolicyEnforcementPointRefAuthorization())
+                .rule(Arrays.asList(ObjectFactory.createScopeRuleItem(scope)))
+                .build();
+    }
 }
