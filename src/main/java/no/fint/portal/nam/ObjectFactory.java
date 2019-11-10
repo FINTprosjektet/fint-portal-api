@@ -39,7 +39,7 @@ public final class ObjectFactory {
                 .build();
     }
 
-    private static RhsOperand createRhsOperandContextDataElementSlectedOauthScope(String scope) {
+    private static RhsOperand createRhsOperandContextDataElementSelectedOauthScope(String scope) {
         return RhsOperand.builder()
                 .contextDataElementRef(ObjectFactory.createContextDataElementRef(XPEML_CONTEXT_DATA_ELEMENT_SELECTED_OAUTH_SCOPE))
                 .value(ResourceServer.builder().resourceServer("fint-api").scope(scope).build().toEncodeString())
@@ -116,7 +116,7 @@ public final class ObjectFactory {
                 .conditionRef(ObjectFactory.createConditionRefString())
                 .operatorRef(ObjectFactory.createOperationRefStringEquals())
                 .lhsOperand(ObjectFactory.createLhsOperandContextDataElementOauthScope())
-                .rhsOperand(ObjectFactory.createRhsOperandContextDataElementSlectedOauthScope(scope))
+                .rhsOperand(ObjectFactory.createRhsOperandContextDataElementSelectedOauthScope(scope))
                 .instanceParameterList(
                         InstanceParameterList.builder()
                                 .parameter(ObjectFactory.createParameterItemFlagsCaseSensitive())
