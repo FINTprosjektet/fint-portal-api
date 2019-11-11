@@ -6,7 +6,7 @@ import lombok.Data;
 import javax.annotation.Generated;
 
 @Data
-public class PolicyResponse{
+public class PolicyCreateResponse {
 
 	@JsonProperty("response")
 	private Response response;
