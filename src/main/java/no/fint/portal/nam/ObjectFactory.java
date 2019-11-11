@@ -2,6 +2,8 @@ package no.fint.portal.nam;
 
 import no.fint.portal.nam.model.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -34,16 +36,33 @@ public final class ObjectFactory {
 
     private static LhsOperand createLhsOperandContextDataElementOauthScope() {
         return LhsOperand.builder()
-                .contextDataElementRef(ObjectFactory.createContextDataElementRef(XPEML_CONTEXT_DATA_ELEMENT_OAUTH_SCOPE))
+                .contextDataElementRef(createContextDataElementRef(XPEML_CONTEXT_DATA_ELEMENT_OAUTH_SCOPE))
                 .value("")
+                .build();
+    }
+
+    private static LhsOperand createLhsOperandContextDataElementLdapAttribute(String attributeName) {
+        return LhsOperand.builder()
+                .contextDataElementRef(createContextDataElementRef(XPEML_CONTEXT_DATA_ELEMENT_LDAP_ATTRIBUTE))
+                .value(attributeName)
                 .build();
     }
 
     private static RhsOperand createRhsOperandContextDataElementSelectedOauthScope(String scope) {
         return RhsOperand.builder()
-                .contextDataElementRef(ObjectFactory.createContextDataElementRef(XPEML_CONTEXT_DATA_ELEMENT_SELECTED_OAUTH_SCOPE))
+                .contextDataElementRef(createContextDataElementRef(XPEML_CONTEXT_DATA_ELEMENT_SELECTED_OAUTH_SCOPE))
                 .value(ResourceServer.builder().resourceServer("fint-api").scope(scope).build().toEncodeString())
                 .build();
+    }
+
+    private static RhsOperand createRhsOperandContextDataElementDataEntryField(String data) {
+        try {
+            return RhsOperand.builder()
+                    .value(URLEncoder.encode(data,"UTF-8"))
+                    .build();
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static List<ParameterItem> createParameterItemFlagsCaseSensitive() {
@@ -54,7 +73,29 @@ public final class ObjectFactory {
                 .build());
     }
 
-    private static List<ActionItem> createActionItemDeny(String value, int order) {
+    private static List<ParameterItem> createParameterItemFlagsCaseInSensitive() {
+        return Collections.singletonList(ParameterItem.builder()
+                .name("flags")
+                .value("case-insensitive")
+                .enumerativeValue(1)
+                .build());
+    }
+
+    private static List<ActionItem> createActionItemPermit() {
+        return Collections.singletonList(
+                ActionItem.builder()
+                        .actionRef(createActionRef(XPEML_ACTION_PERMIT))
+                        .instanceParameterList(
+                                InstanceParameterList.builder()
+                                        .parameterGroup(Collections.emptyList())
+                                        .parameter(Collections.emptyList())
+                                        .build()
+                        ).order(1)
+                        .build()
+        );
+    }
+
+    private static List<ActionItem> createActionItemDenyWithMessage(String message, int order) {
         return Collections.singletonList(ActionItem.builder()
                 .actionRef(createActionRef(XPEML_ACTION_DENY))
                 .instanceParameterList(InstanceParameterList.builder().parameterGroup(
@@ -65,7 +106,7 @@ public final class ObjectFactory {
                                                 .parameter(Collections.singletonList(
                                                         ParameterItem.builder()
                                                                 .name("Message")
-                                                                .value(value)
+                                                                .value(message)
                                                                 .enumerativeValue(20).build()
                                                 ))
                                                 .choiceName("SendBlockMessage")
@@ -113,13 +154,30 @@ public final class ObjectFactory {
 
     private static List<ConditionItem> createConditionItemScopeRule(String scope) {
         return Collections.singletonList(ConditionItem.builder()
-                .conditionRef(ObjectFactory.createConditionRefString())
-                .operatorRef(ObjectFactory.createOperationRefStringEquals())
-                .lhsOperand(ObjectFactory.createLhsOperandContextDataElementOauthScope())
-                .rhsOperand(ObjectFactory.createRhsOperandContextDataElementSelectedOauthScope(scope))
+                .conditionRef(createConditionRefString())
+                .operatorRef(createOperationRefStringEquals())
+                .lhsOperand(createLhsOperandContextDataElementOauthScope())
+                .rhsOperand(createRhsOperandContextDataElementSelectedOauthScope(scope))
                 .instanceParameterList(
                         InstanceParameterList.builder()
-                                .parameter(ObjectFactory.createParameterItemFlagsCaseSensitive())
+                                .parameter(createParameterItemFlagsCaseSensitive())
+                                .build()
+                )
+                .not(true)
+                .enable(true)
+                .order(1)
+                .build());
+    }
+
+    private static List<ConditionItem> createConditionItemComponentRule(String component, String attributeName) {
+        return Collections.singletonList(ConditionItem.builder()
+                .conditionRef(createConditionRefString())
+                .operatorRef(createOperationRefStringEquals())
+                .lhsOperand(createLhsOperandContextDataElementLdapAttribute(attributeName))
+                .rhsOperand(createRhsOperandContextDataElementDataEntryField(component))
+                .instanceParameterList(
+                        InstanceParameterList.builder()
+                                .parameter(createParameterItemFlagsCaseInSensitive())
                                 .build()
                 )
                 .not(true)
@@ -131,7 +189,17 @@ public final class ObjectFactory {
 
     private static List<ConditionSetItem> createConditionSetItemScopeRule(String scope) {
         return Collections.singletonList(ConditionSetItem.builder()
-                .condition(ObjectFactory.createConditionItemScopeRule(scope))
+                .condition(createConditionItemScopeRule(scope))
+                .enable(true)
+                .not(false)
+                .order(1)
+                .setOrder(1)
+                .build());
+    }
+
+    private static List<ConditionSetItem> createConditionSetItemComponentRule(String component, String attributeName) {
+        return Collections.singletonList(ConditionSetItem.builder()
+                .condition(createConditionItemComponentRule(component, attributeName))
                 .enable(true)
                 .not(false)
                 .order(1)
@@ -145,13 +213,42 @@ public final class ObjectFactory {
                 .ruleOrder(1)
                 .description("Deny if scope is missing")
                 .conditionList(ConditionList.builder()
-                        .conditionSet(ObjectFactory.createConditionSetItemScopeRule(scope))
+                        .conditionSet(createConditionSetItemScopeRule(scope))
                         .build())
                 .actionList(ActionList.builder()
-                        .action(ObjectFactory.createActionItemDeny(
+                        .action(createActionItemDenyWithMessage(
                                 String.format("Missing '%s' scope. You need to acquire '%s' scope.", scope, scope),
                                 1)
                         )
+                        .build())
+                .build();
+    }
+
+    public static RuleItem createComponentRuleItem(String componentDn, String attributeName) {
+        return RuleItem.builder()
+                .conditionCombiningAlgorithm(DNF)
+                .ruleOrder(1)
+                .description(String.format(" Allow access if %s is available", componentDn))
+                .actionList(
+                        ActionList.builder()
+                                .action(createActionItemPermit())
+                                .build()
+                )
+                .conditionList(
+                        ConditionList.builder()
+                                .conditionSet(createConditionSetItemComponentRule(componentDn, attributeName))
+                                .build()
+                )
+                .build();
+    }
+
+    public static RuleItem createDenyCleanupRuleItem() {
+        return RuleItem.builder()
+                .conditionCombiningAlgorithm(DNF)
+                .ruleOrder(1)
+                .description("Deny all")
+                .actionList(ActionList.builder()
+                        .action(createActionItemDenyWithMessage("Deny access", 1))
                         .build())
                 .build();
     }
@@ -163,13 +260,14 @@ public final class ObjectFactory {
                 .build();
     }
 
-    public static Policy createAuthorizationPolicy(String name, String scope) {
+    public static Policy createAuthorizationPolicy(String name, String scope, String component, String attributeName) {
         return Policy.builder()
                 .enable(true)
                 .policyName(name)
                 .description("Automatically created by the admin portal")
                 .policyEnforcementPointRef(createPolicyEnforcementPointRefAuthorization())
-                .rule(Arrays.asList(ObjectFactory.createScopeRuleItem(scope)))
+                .rule(Arrays.asList(createScopeRuleItem(scope), createComponentRuleItem(component, attributeName), createDenyCleanupRuleItem()))
                 .build();
     }
+
 }
