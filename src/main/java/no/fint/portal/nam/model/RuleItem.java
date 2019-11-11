@@ -6,32 +6,32 @@ import lombok.Data;
 
 @Data
 @Builder
-public class RuleItem{
+public class RuleItem {
 
-	@JsonProperty("conditionList")
-	private ConditionList conditionList;
+    @JsonProperty("conditionList")
+    private ConditionList conditionList;
 
-	@JsonProperty("enable")
-	private boolean enable;
+    @JsonProperty("enable")
+    private boolean enable;
 
-	@JsonProperty("userInterfaceID")
-	private String userInterfaceID;
+    @JsonProperty("userInterfaceID")
+    private String userInterfaceID;
 
-	@JsonProperty("actionList")
-	private ActionList actionList;
+    @JsonProperty("actionList")
+    private ActionList actionList;
 
-	@JsonProperty("description")
-	private String description;
+    @JsonProperty("description")
+    private String description;
 
-	@JsonProperty("ruleOrder")
-	private int ruleOrder;
+    @JsonProperty("ruleOrder")
+    private int ruleOrder;
 
-	@JsonProperty("conditionCombiningAlgorithm")
-	private String conditionCombiningAlgorithm;
+    @JsonProperty("conditionCombiningAlgorithm")
+    private String conditionCombiningAlgorithm;
 
-	@JsonProperty("ruleID")
-	private String ruleID;
+    @JsonProperty("ruleID")
+    private String ruleID;
 
-	@JsonProperty("priority")
-	private int priority;
+    @JsonProperty("priority")
+    private int priority;
 }

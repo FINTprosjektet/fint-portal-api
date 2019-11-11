@@ -1,14 +1,15 @@
 package no.fint.portal.nam.model;
 
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Builder
-public class ActionList{
+public class ActionList {
 
-	@JsonProperty("action")
-	private List<ActionItem> action;
+    @JsonProperty("action")
+    private List<ActionItem> action;
 }

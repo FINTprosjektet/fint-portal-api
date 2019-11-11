@@ -6,17 +6,17 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ActionItem{
+public class ActionItem {
 
-	@JsonProperty("userInterfaceID")
-	private String userInterfaceID;
+    @JsonProperty("userInterfaceID")
+    private String userInterfaceID;
 
-	@JsonProperty("actionRef")
-	private ActionRef actionRef;
+    @JsonProperty("actionRef")
+    private ActionRef actionRef;
 
-	@JsonProperty("instanceParameterList")
-	private InstanceParameterList instanceParameterList;
+    @JsonProperty("instanceParameterList")
+    private InstanceParameterList instanceParameterList;
 
-	@JsonProperty("order")
-	private int order;
+    @JsonProperty("order")
+    private int order;
 }

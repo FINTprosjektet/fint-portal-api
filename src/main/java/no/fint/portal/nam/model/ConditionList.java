@@ -1,14 +1,15 @@
 package no.fint.portal.nam.model;
 
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Builder
-public class ConditionList{
+public class ConditionList {
 
-	@JsonProperty("conditionSet")
-	private List<ConditionSetItem> conditionSet;
+    @JsonProperty("conditionSet")
+    private List<ConditionSetItem> conditionSet;
 }

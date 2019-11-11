@@ -6,11 +6,11 @@ import lombok.Data;
 
 @Data
 @Builder
-public class LhsOperand{
+public class LhsOperand {
 
-	@JsonProperty("value")
-	private String value;
+    @JsonProperty("value")
+    private String value;
 
-	@JsonProperty("contextDataElementRef")
-	private ContextDataElementRef contextDataElementRef;
+    @JsonProperty("contextDataElementRef")
+    private ContextDataElementRef contextDataElementRef;
 }

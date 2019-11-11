@@ -4,21 +4,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.annotation.Generated;
-
 @Data
 @Builder
-public class ParameterItem{
+public class ParameterItem {
 
-	@JsonProperty("enumerativeValue")
-	private int enumerativeValue;
+    @JsonProperty("enumerativeValue")
+    private int enumerativeValue;
 
-	@JsonProperty("userInterfaceID")
-	private String userInterfaceID;
+    @JsonProperty("userInterfaceID")
+    private String userInterfaceID;
 
-	@JsonProperty("name")
-	private String name;
+    @JsonProperty("name")
+    private String name;
 
-	@JsonProperty("value")
-	private String value;
+    @JsonProperty("value")
+    private String value;
 }
