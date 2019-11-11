@@ -1,6 +1,7 @@
 package no.fint.portal.nam
 
-
+import groovy.json.JsonGenerator
+import spock.lang.Ignore
 import spock.lang.Specification
 
 class AuthorizationPolicyServiceSpec extends Specification {
@@ -16,6 +17,20 @@ class AuthorizationPolicyServiceSpec extends Specification {
         )
     }
 
+    @Ignore
+    def "Print JSON for policy for test purposes"() {
+        given:
+        def clientPolicy = authorizationPolicyService.createClientPolicy("test", "ou=utdanning_elev,ou=components,o=fint")
+
+        when:
+        def jsonDefaultOutput = new JsonGenerator.Options().excludeNulls().build()
+        def json = jsonDefaultOutput.toJson(clientPolicy)
+        println json
+
+        then:
+        true
+    }
+
     def "Creating a client policy should return a client policy"() {
         when:
         def clientPolicy = authorizationPolicyService.createClientPolicy("test", "ou=utdanning_elev,ou=components,o=fint")
@@ -25,11 +40,6 @@ class AuthorizationPolicyServiceSpec extends Specification {
         clientPolicy.rule.size() == 3
         clientPolicy.rule[0].actionList.action.size() == 1
         clientPolicy.rule[0].conditionList.conditionSet.size() == 1
-
-        //def jsonDefaultOutput = new JsonGenerator.Options().excludeNulls().build()
-        //def json = jsonDefaultOutput.toJson(clientPolicy)
-        //println json
-
     }
 
     def "Creating a adapter policy should return a adapter policy"() {
