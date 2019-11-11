@@ -47,7 +47,7 @@ class ContactServiceSpec extends Specification {
 
         then:
         contact1.isPresent()
-        contact2.empty()
+        !contact2.isPresent()
         2 * ldapService.getEntry(_ as String, _ as Class) >> ObjectFactory.newContact("11111111111") >> null
     }
 
