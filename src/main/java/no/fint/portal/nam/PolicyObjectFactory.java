@@ -10,8 +10,17 @@ import java.util.List;
 
 import static no.fint.portal.nam.Constants.*;
 
-public final class ObjectFactory {
+public final class PolicyObjectFactory {
 
+    public static Policy createAuthorizationPolicy(String name, String scope, String component, String attributeName) {
+        return Policy.builder()
+                .enable(true)
+                .policyName(name)
+                .description("Automatically created by the admin portal")
+                .policyEnforcementPointRef(createPolicyEnforcementPointRefAuthorization())
+                .rule(Arrays.asList(createScopeRuleItem(scope), createComponentRuleItem(component, attributeName), createDenyCleanupRuleItem()))
+                .build();
+    }
 
     private static ContextDataElementRef createContextDataElementRef(String externalElementRef) {
         return ContextDataElementRef.builder()
@@ -58,7 +67,7 @@ public final class ObjectFactory {
     private static RhsOperand createRhsOperandContextDataElementDataEntryField(String data) {
         try {
             return RhsOperand.builder()
-                    .value(URLEncoder.encode(data,"UTF-8"))
+                    .value(URLEncoder.encode(data, "UTF-8"))
                     .build();
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
@@ -207,7 +216,7 @@ public final class ObjectFactory {
                 .build());
     }
 
-    public static RuleItem createScopeRuleItem(String scope) {
+    private static RuleItem createScopeRuleItem(String scope) {
         return RuleItem.builder()
                 .conditionCombiningAlgorithm(DNF)
                 .ruleOrder(1)
@@ -224,7 +233,7 @@ public final class ObjectFactory {
                 .build();
     }
 
-    public static RuleItem createComponentRuleItem(String componentDn, String attributeName) {
+    private static RuleItem createComponentRuleItem(String componentDn, String attributeName) {
         return RuleItem.builder()
                 .conditionCombiningAlgorithm(DNF)
                 .ruleOrder(1)
@@ -242,7 +251,7 @@ public final class ObjectFactory {
                 .build();
     }
 
-    public static RuleItem createDenyCleanupRuleItem() {
+    private static RuleItem createDenyCleanupRuleItem() {
         return RuleItem.builder()
                 .conditionCombiningAlgorithm(DNF)
                 .ruleOrder(1)
@@ -253,20 +262,10 @@ public final class ObjectFactory {
                 .build();
     }
 
-    public static PolicyEnforcementPointRef createPolicyEnforcementPointRefAuthorization() {
+    private static PolicyEnforcementPointRef createPolicyEnforcementPointRefAuthorization() {
         return PolicyEnforcementPointRef.builder()
                 .elementRefType(EXTERNAL_WITH_ID_REF)
                 .externalElementRef(XPEML_PEP_AG_AUTHORIZATION)
-                .build();
-    }
-
-    public static Policy createAuthorizationPolicy(String name, String scope, String component, String attributeName) {
-        return Policy.builder()
-                .enable(true)
-                .policyName(name)
-                .description("Automatically created by the admin portal")
-                .policyEnforcementPointRef(createPolicyEnforcementPointRefAuthorization())
-                .rule(Arrays.asList(createScopeRuleItem(scope), createComponentRuleItem(component, attributeName), createDenyCleanupRuleItem()))
                 .build();
     }
 
