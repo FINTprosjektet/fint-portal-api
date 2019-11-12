@@ -15,11 +15,23 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    mavenLocal()
     jcenter()
     repositories {
         maven {
             url "http://dl.bintray.com/rfkikt/maven"
         }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        mavenLocal()
     }
 }
 
