@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static no.fint.portal.nam.Constants.*;
+import static no.fint.portal.nam.NamPolicyConstants.*;
 
 public final class PolicyObjectFactory {
 

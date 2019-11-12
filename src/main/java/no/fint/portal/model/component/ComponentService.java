@@ -7,6 +7,7 @@ import no.fint.portal.model.asset.Asset;
 import no.fint.portal.model.asset.AssetService;
 import no.fint.portal.model.client.Client;
 import no.fint.portal.model.organisation.OrganisationService;
+import no.fint.portal.nam.AuthorizationPolicyService;
 import no.fint.portal.utilities.LdapConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +34,9 @@ public class ComponentService {
     @Autowired
     private AssetService assetService;
 
+    @Autowired
+    private AuthorizationPolicyService authorizationPolicyService;
+
     @Value("${fint.ldap.component-base}")
     private String componentBase;
 
@@ -42,6 +46,12 @@ public class ComponentService {
         if (component.getDn() == null) {
             componentObjectService.setupComponent(component);
         }
+
+        String adapterPolicyId = authorizationPolicyService.createAdapterPolicy(component.getName(), component.getDn());
+        component.setAdapterAuthorizationPolicyId(adapterPolicyId);
+        String clientPolicyId = authorizationPolicyService.createClientPolicy(component.getName(), component.getDn());
+        component.setClientAuthorizationPolicyId(clientPolicyId);
+
         return ldapService.createEntry(component);
     }
 
@@ -80,6 +90,8 @@ public class ComponentService {
     }
 
     public void deleteComponent(Component component) {
+        authorizationPolicyService.removePolicy(component.getAdapterAuthorizationPolicyId());
+        authorizationPolicyService.removePolicy(component.getClientAuthorizationPolicyId());
         ldapService.deleteEntry(component);
     }
 

@@ -1,6 +1,6 @@
 package no.fint.portal.nam;
 
-public final class Constants {
+public final class NamPolicyConstants {
 
     public static final String XPEML_CONTEXT_DATA_ELEMENT_OAUTH_SCOPE = "xpemlContextDataElement_OAuthScope";
     public static final String XPEML_CONTEXT_DATA_ELEMENT_SELECTED_OAUTH_SCOPE = "xpemlContextDataElement_SelectedOAuthScope";
@@ -17,4 +17,9 @@ public final class Constants {
 
     public static final String CASE_SENSITIVE = "case-sensitive";
     public static final String CASE_INSENSITIVE = "case-insensitive";
+
+
+    public static final String POLICY_URL_TEMPLATE = "https://{adminConsoleHostname}/amsvc/v1/policycontainers/{policyContainerId}/policies/{policyId}";
+    public static final String POLICY_CONTAINER_URL_TEMPLATE = "https://{adminConsoleHostname}/amsvc/v1/policycontainers/{policyContainerId}/policies";
+
 }

@@ -60,6 +60,12 @@ public final class Component implements BasicLdapEntry {
     @Attribute(name = "fintComponentIsInPlayWithFint")
     private boolean isInPlayWithFint;
 
+    @Attribute(name = "fintComponentAdapterAuthorizationPolicyId")
+    private String adapterAuthorizationPolicyId;
+
+    @Attribute(name = "fintComponentClientAuthorizationPolicyId")
+    private String clientAuthorizationPolicyId;
+
     public Component() {
 
         organisations = new ArrayList<>();
@@ -134,6 +140,22 @@ public final class Component implements BasicLdapEntry {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAdapterAuthorizationPolicyId() {
+        return adapterAuthorizationPolicyId;
+    }
+
+    public void setAdapterAuthorizationPolicyId(String adapterAuthorizationPolicyId) {
+        this.adapterAuthorizationPolicyId = adapterAuthorizationPolicyId;
+    }
+
+    public String getClientAuthorizationPolicyId() {
+        return clientAuthorizationPolicyId;
+    }
+
+    public void setClientAuthorizationPolicyId(String clientAuthorizationPolicyId) {
+        this.clientAuthorizationPolicyId = clientAuthorizationPolicyId;
     }
 }
 

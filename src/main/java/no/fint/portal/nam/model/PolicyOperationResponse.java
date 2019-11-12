@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class PolicyCreateResponse {
+public class PolicyOperationResponse {
 
     @JsonProperty("response")
     private Response response;

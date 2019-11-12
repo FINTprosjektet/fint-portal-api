@@ -4,13 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.portal.nam.model.Policy;
 import no.fint.portal.nam.model.PolicyContainerReponse;
-import no.fint.portal.nam.model.PolicyCreateResponse;
+import no.fint.portal.nam.model.PolicyOperationResponse;
 import no.fint.portal.utilities.HeaderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -32,8 +33,11 @@ public class AuthorizationPolicyService {
     @Value(("${fint.nam.adapter.attribute:fintAdapterComponents}"))
     private String adapterAttribute;
 
-    @Value("${fint.nam.oauth.admin-console-hostname:https://localhost:8443/amsvc/v1/policycontainers/8thk0xs6bn8wp3v/policies}")
+    @Value("${fint.nam.oauth.admin-console-hostname:localhost:8443}")
     private String adminConsoleHostname;
+
+    @Value("${fint.nam.authorization-policy-container-id}")
+    private String authorizationPolicyContainerId;
 
     @Autowired
     private ObjectMapper mapper;
@@ -60,13 +64,32 @@ public class AuthorizationPolicyService {
         return restTemplate.getForObject(adminConsoleHostname, Policy.class);
     }
 
+    public void removePolicy(String policyId) {
+        try {
+            restTemplate.delete(
+                    NamPolicyConstants.POLICY_CONTAINER_URL_TEMPLATE,
+                    adminConsoleHostname,
+                    authorizationPolicyContainerId,
+                    policyId
+            );
+        } catch (RestClientException e) {
+            log.info("Unable to delete policy {}", policyId, e);
+        }
+    }
+
     private String addPolicy(Policy policy) {
         try {
             String policyJson = mapper.writeValueAsString(policy);
             HttpEntity<String> request = new HttpEntity<>(policyJson, HeaderUtils.createHeaders());
-            String response = restTemplate.postForObject(adminConsoleHostname, request, String.class);
-            PolicyCreateResponse policyCreateResponse = mapper.readValue(response, PolicyCreateResponse.class);
-            log.info("Policy created {}: ", policyCreateResponse.getResponse().getCode());
+            String response = restTemplate.postForObject(
+                    NamPolicyConstants.POLICY_CONTAINER_URL_TEMPLATE,
+                    request,
+                    String.class,
+                    adminConsoleHostname,
+                    authorizationPolicyContainerId
+            );
+            PolicyOperationResponse policyOperationResponse = mapper.readValue(response, PolicyOperationResponse.class);
+            log.info("Policy created {}: ", policyOperationResponse.getResponse().getCode());
 
             return getAuthorizationPolicyId(policy.getPolicyName());
         } catch (Exception e) {
