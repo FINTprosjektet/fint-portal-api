@@ -77,7 +77,7 @@ public final class PolicyObjectFactory {
     private static List<ParameterItem> createParameterItemFlagsCaseSensitive() {
         return Collections.singletonList(ParameterItem.builder()
                 .name("flags")
-                .value("case-sensitive")
+                .value(CASE_SENSITIVE)
                 .enumerativeValue(1)
                 .build());
     }
@@ -85,7 +85,7 @@ public final class PolicyObjectFactory {
     private static List<ParameterItem> createParameterItemFlagsCaseInSensitive() {
         return Collections.singletonList(ParameterItem.builder()
                 .name("flags")
-                .value("case-insensitive")
+                .value(CASE_INSENSITIVE)
                 .enumerativeValue(1)
                 .build());
     }

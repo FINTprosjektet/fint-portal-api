@@ -15,4 +15,6 @@ public final class Constants {
     public static final String DNF = "DNF";
 
 
+    public static final String CASE_SENSITIVE = "case-sensitive";
+    public static final String CASE_INSENSITIVE = "case-insensitive";
 }
