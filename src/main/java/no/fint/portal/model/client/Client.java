@@ -52,6 +52,17 @@ public final class Client implements BasicLdapEntry {
     @Attribute(name = "fintClientComponents")
     private List<String> components;
 
+    @Attribute(name = "fintClientAuthorizationPolicyId")
+    private String fintClientAuthorizationPolicyId;
+
+    public String getFintClientAuthorizationPolicyId() {
+        return fintClientAuthorizationPolicyId;
+    }
+
+    public void setFintClientAuthorizationPolicyId(String fintClientAuthorizationPolicyId) {
+        this.fintClientAuthorizationPolicyId = fintClientAuthorizationPolicyId;
+    }
+
     public Client() {
         components = new ArrayList<>();
     }

@@ -51,6 +51,9 @@ public final class Adapter implements BasicLdapEntry {
     @Attribute(name = "fintAdapterAssetIds")
     private List<String> assetIds;
 
+    @Attribute(name = "fintAdapterAuthorizationPolicyId")
+    private String fintAdapterAuthorizationPolicyId;
+
 
     public Adapter() {
         components = new ArrayList<>();
@@ -156,4 +159,11 @@ public final class Adapter implements BasicLdapEntry {
         return assets;
     }
 
+    public String getFintAdapterAuthorizationPolicyId() {
+        return fintAdapterAuthorizationPolicyId;
+    }
+
+    public void setFintAdapterAuthorizationPolicyId(String fintAdapterAuthorizationPolicyId) {
+        this.fintAdapterAuthorizationPolicyId = fintAdapterAuthorizationPolicyId;
+    }
 }
