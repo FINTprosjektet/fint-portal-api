@@ -3,6 +3,7 @@ package no.fint.portal.model.component
 import no.fint.portal.ldap.LdapService
 import no.fint.portal.model.asset.AssetService
 import no.fint.portal.model.organisation.OrganisationService
+import no.fint.portal.nam.AuthorizationPolicyService
 import no.fint.portal.testutils.ObjectFactory
 import spock.lang.Specification
 
@@ -12,12 +13,14 @@ class ComponentServiceSpec extends Specification {
     private ldapService
     private organisationService
     private assetService
+    private authorizationPolicyService
 
     def setup() {
         def componentBase = "ou=comp,o=fint"
         ldapService = Mock(LdapService)
         organisationService = Mock(OrganisationService)
         assetService = Mock(AssetService)
+        authorizationPolicyService = Mock(AuthorizationPolicyService)
         componentObjectService = new ComponentObjectService(ldapService: ldapService, componentBase: componentBase)
         componentService = new ComponentService(
                 ldapService: ldapService,
@@ -25,6 +28,7 @@ class ComponentServiceSpec extends Specification {
                 componentObjectService: componentObjectService,
                 organisationService: organisationService,
                 assetService: assetService,
+                authorizationPolicyService: authorizationPolicyService
         )
     }
 
@@ -40,6 +44,8 @@ class ComponentServiceSpec extends Specification {
         component.name != null
         created == true
         1 * ldapService.createEntry(_ as Component) >> true
+        1 * authorizationPolicyService.createClientPolicy(_ as String, _ as String)
+        1 * authorizationPolicyService.createAdapterPolicy(_ as String, _ as String)
     }
 
     def "Update Component"() {
@@ -75,6 +81,7 @@ class ComponentServiceSpec extends Specification {
 
         then:
         1 * ldapService.deleteEntry(_ as Component)
+        2 * authorizationPolicyService.removePolicy(_ as String)
     }
 
     def "Get Component DN By UUID"() {

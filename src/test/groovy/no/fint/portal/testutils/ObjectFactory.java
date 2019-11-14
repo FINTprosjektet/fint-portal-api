@@ -16,6 +16,8 @@ public enum ObjectFactory {
         //component.setDn("ou=comp1,ou=comp,o=fint");
         component.setName("compTest");
         component.setDescription("Created by test");
+        component.setAdapterAuthorizationPolicyId("test");
+        component.setClientAuthorizationPolicyId("test");
         return component;
     }
 
