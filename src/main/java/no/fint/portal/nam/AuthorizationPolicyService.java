@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.portal.nam.model.Policy;
 import no.fint.portal.nam.model.PolicyContainerReponse;
 import no.fint.portal.nam.model.PolicyOperationResponse;
+import no.fint.portal.nam.model.PolicyResponse;
 import no.fint.portal.utilities.HeaderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,10 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
+import javax.net.ssl.*;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 
 @Slf4j
 @Service
@@ -33,11 +38,18 @@ public class AuthorizationPolicyService {
     @Value(("${fint.nam.adapter.attribute:fintAdapterComponents}"))
     private String adapterAttribute;
 
-    @Value("${fint.nam.oauth.admin-console-hostname:localhost:8443}")
+    @Value("${fint.nam.admin-console-hostname:localhost:8443}")
     private String adminConsoleHostname;
 
     @Value("${fint.nam.authorization-policy-container-id}")
     private String authorizationPolicyContainerId;
+
+    @Value("${fint.nam.username}")
+    private String username;
+
+    @Value("${fint.nam.password}")
+    private String password;
+
 
     @Autowired
     private ObjectMapper mapper;
@@ -45,9 +57,33 @@ public class AuthorizationPolicyService {
     private RestTemplate restTemplate;
 
     @PostConstruct
-    private void init() {
+    private void init() throws NoSuchAlgorithmException, KeyManagementException {
+        disableSslVerification();
         RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
-        restTemplate = restTemplateBuilder.basicAuthorization("", "").build();
+        this.restTemplate = restTemplateBuilder.basicAuthorization(username, password).build();
+    }
+
+    private void disableSslVerification() throws KeyManagementException, NoSuchAlgorithmException {
+        TrustManager[] trustAllCerts = new TrustManager[]{
+                new X509TrustManager() {
+                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
+
+                    public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                    }
+
+                    public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                    }
+                }
+        };
+
+        SSLContext sc = SSLContext.getInstance("SSL");
+        sc.init(null, trustAllCerts, new java.security.SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+        HostnameVerifier allHostsValid = (hostname, session) -> true;
+        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
     }
 
     public String createClientPolicy(String name, String componentOU) {
@@ -61,16 +97,21 @@ public class AuthorizationPolicyService {
     }
 
     public Policy getPolicy(String policyId) {
-        return restTemplate.getForObject(adminConsoleHostname, Policy.class);
+        PolicyResponse policyResponse = restTemplate.getForObject(String.format(NamPolicyConstants.POLICY_URL_TEMPLATE,
+                adminConsoleHostname,
+                authorizationPolicyContainerId,
+                policyId), PolicyResponse.class);
+
+        return policyResponse != null ? policyResponse.getPolicy() : null;
     }
 
     public void removePolicy(String policyId) {
         try {
             restTemplate.delete(
-                    NamPolicyConstants.POLICY_CONTAINER_URL_TEMPLATE,
-                    adminConsoleHostname,
-                    authorizationPolicyContainerId,
-                    policyId
+                    String.format(NamPolicyConstants.POLICY_URL_TEMPLATE,
+                            adminConsoleHostname,
+                            authorizationPolicyContainerId,
+                            policyId)
             );
         } catch (RestClientException e) {
             log.info("Unable to delete policy {}", policyId, e);
@@ -82,11 +123,9 @@ public class AuthorizationPolicyService {
             String policyJson = mapper.writeValueAsString(policy);
             HttpEntity<String> request = new HttpEntity<>(policyJson, HeaderUtils.createHeaders());
             String response = restTemplate.postForObject(
-                    NamPolicyConstants.POLICY_CONTAINER_URL_TEMPLATE,
+                    String.format(NamPolicyConstants.POLICY_CONTAINER_URL_TEMPLATE, adminConsoleHostname, authorizationPolicyContainerId),
                     request,
-                    String.class,
-                    adminConsoleHostname,
-                    authorizationPolicyContainerId
+                    String.class
             );
             PolicyOperationResponse policyOperationResponse = mapper.readValue(response, PolicyOperationResponse.class);
             log.info("Policy created {}: ", policyOperationResponse.getResponse().getCode());
@@ -98,9 +137,16 @@ public class AuthorizationPolicyService {
         }
     }
 
-    private String getAuthorizationPolicyId(String policyName) {
+    public String getAuthorizationPolicyId(String policyName) {
         log.info("Fetching policy {}...", policyName);
-        PolicyContainerReponse policyContainerReponse = restTemplate.getForObject(adminConsoleHostname, PolicyContainerReponse.class);
+        PolicyContainerReponse policyContainerReponse =
+                restTemplate.getForObject(
+                        String.format(
+                                NamPolicyConstants.POLICY_CONTAINER_URL_TEMPLATE,
+                                adminConsoleHostname,
+                                authorizationPolicyContainerId),
+                        PolicyContainerReponse.class
+                );
         try {
             if (policyContainerReponse != null) {
                 return policyContainerReponse.getPolicyList()

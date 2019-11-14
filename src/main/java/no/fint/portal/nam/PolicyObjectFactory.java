@@ -12,11 +12,11 @@ import static no.fint.portal.nam.NamPolicyConstants.*;
 
 public final class PolicyObjectFactory {
 
-    public static Policy createAuthorizationPolicy(String name, String scope, String component, String attributeName) {
+    public static Policy createAuthorizationPolicy(String name, String component, String scope, String attributeName) {
         return Policy.builder()
                 .enable(true)
                 .policyName(name)
-                .description("Automatically created by the admin portal")
+                .description("Automatically created by the admin portal. Do not modify this policy manually.")
                 .policyEnforcementPointRef(createPolicyEnforcementPointRefAuthorization())
                 .rule(Arrays.asList(createScopeRuleItem(scope), createComponentRuleItem(component, attributeName), createDenyCleanupRuleItem()))
                 .build();
@@ -76,7 +76,7 @@ public final class PolicyObjectFactory {
 
     private static List<ParameterItem> createParameterItemFlagsCaseSensitive() {
         return Collections.singletonList(ParameterItem.builder()
-                .name("flags")
+                .name(PARAMETER_NAME_FLAGS)
                 .value(CASE_SENSITIVE)
                 .enumerativeValue(1)
                 .build());
@@ -84,7 +84,7 @@ public final class PolicyObjectFactory {
 
     private static List<ParameterItem> createParameterItemFlagsCaseInSensitive() {
         return Collections.singletonList(ParameterItem.builder()
-                .name("flags")
+                .name(PARAMETER_NAME_FLAGS)
                 .value(CASE_INSENSITIVE)
                 .enumerativeValue(1)
                 .build());
@@ -114,18 +114,18 @@ public final class PolicyObjectFactory {
                                         ChoiceItem.builder()
                                                 .parameter(Collections.singletonList(
                                                         ParameterItem.builder()
-                                                                .name("Message")
+                                                                .name(DENY_CHOICE_PARAMETER_MESSAGE)
                                                                 .value(message)
                                                                 .enumerativeValue(20).build()
                                                 ))
-                                                .choiceName("SendBlockMessage")
+                                                .choiceName(DENY_CHOICE_SEND_BLOCK_MESSAGE)
                                                 .order(2)
                                                 .enabled(true)
                                                 .enumerativeValue(20)
                                                 .build(),
                                         ChoiceItem.builder()
                                                 .parameter(Collections.emptyList())
-                                                .choiceName("DefaultBlockPage")
+                                                .choiceName(DENY_CHOICE_DEFAULT_BLOCK_PAGE)
                                                 .order(1)
                                                 .enabled(false)
                                                 .enumerativeValue(10)
@@ -133,19 +133,19 @@ public final class PolicyObjectFactory {
                                         ChoiceItem.builder()
                                                 .parameter(Collections.singletonList(
                                                         ParameterItem.builder()
-                                                                .name("Redirect")
+                                                                .name(DENY_CHOICE_PARAMETER_REDIRECT)
                                                                 .value("")
                                                                 .enumerativeValue(1)
                                                                 .build()
                                                 ))
-                                                .choiceName("RedirectToLocation")
+                                                .choiceName(DENY_CHOICE_REDIRECT_TO_LOCATION)
                                                 .order(3)
                                                 .enumerativeValue(30)
                                                 .enabled(false)
                                                 .build()
                                         )
                                 )
-                                .groupName("DenyParameters")
+                                .groupName(DENY_PARAMETERS)
                                 .build()
                         ))
                         .parameter(Collections.emptyList())
@@ -230,6 +230,7 @@ public final class PolicyObjectFactory {
                                 1)
                         )
                         .build())
+                .priority(0)
                 .build();
     }
 
@@ -237,12 +238,13 @@ public final class PolicyObjectFactory {
         return RuleItem.builder()
                 .conditionCombiningAlgorithm(DNF)
                 .ruleOrder(1)
-                .description(String.format(" Allow access if %s is available", componentDn))
+                .description(String.format("Allow access if %s is available", componentDn))
                 .actionList(
                         ActionList.builder()
                                 .action(createActionItemPermit())
                                 .build()
                 )
+                .priority(1)
                 .conditionList(
                         ConditionList.builder()
                                 .conditionSet(createConditionSetItemComponentRule(componentDn, attributeName))
@@ -259,6 +261,7 @@ public final class PolicyObjectFactory {
                 .actionList(ActionList.builder()
                         .action(createActionItemDenyWithMessage("Deny access", 1))
                         .build())
+                .priority(9)
                 .build();
     }
 

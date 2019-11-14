@@ -60,10 +60,10 @@ public final class Component implements BasicLdapEntry {
     @Attribute(name = "fintComponentIsInPlayWithFint")
     private boolean isInPlayWithFint;
 
-    @Attribute(name = "fintComponentAdapterAuthorizationPolicyId")
+    @Attribute(name = "fintComponentAdapterAPId")
     private String adapterAuthorizationPolicyId;
 
-    @Attribute(name = "fintComponentClientAuthorizationPolicyId")
+    @Attribute(name = "fintComponentClientAPId")
     private String clientAuthorizationPolicyId;
 
     public Component() {
