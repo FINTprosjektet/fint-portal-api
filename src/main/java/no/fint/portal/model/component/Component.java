@@ -45,8 +45,8 @@ public final class Component implements BasicLdapEntry {
     @Attribute(name = "fintComponentPort")
     private Integer port;
 
-    @Attribute(name = "fintComponentIsCore")
-    private boolean isCore;
+    @Attribute(name = "fintComponentCore")
+    private boolean core;
 
     @Attribute(name = "fintComponentOpenData")
     private boolean openData;
