@@ -52,18 +52,31 @@ public final class Client implements BasicLdapEntry {
     @Attribute(name = "fintClientComponents")
     private List<String> components;
 
+    @Attribute(name = "fintClientAccessPackages")
+    private List<String> accessPackages;
+
     public Client() {
         components = new ArrayList<>();
+        accessPackages = new ArrayList<>();
     }
 
     public void addComponent(String componentDn) {
-        if (!components.stream().anyMatch(componentDn::equalsIgnoreCase)) {
+        if (components.stream().noneMatch(componentDn::equalsIgnoreCase)) {
             components.add(componentDn);
         }
     }
 
     public void removeComponent(String componentDn) {
         components.removeIf(component -> component.equalsIgnoreCase(componentDn));
+    }
+
+    public void setAccessPackage(String accessPackageDn) {
+        accessPackages.clear();
+        accessPackages.add(accessPackageDn);
+    }
+
+    public List<String> getAccessPackages() {
+        return accessPackages;
     }
 
     public List<String> getComponents() {
