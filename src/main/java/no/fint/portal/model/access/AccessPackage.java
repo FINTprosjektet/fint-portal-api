@@ -15,7 +15,7 @@ import java.util.List;
 @ApiModel
 @Data
 @Entry(objectClasses = {"organizationalUnit", "top", "fintAccess"})
-public class AccessPackage implements BasicLdapEntry {
+public final class AccessPackage implements BasicLdapEntry {
     @Id
     private Name dn;
 
@@ -35,6 +35,12 @@ public class AccessPackage implements BasicLdapEntry {
     @Attribute(name = "fintAccessClients")
     private List<String> clients;
 
+    @Attribute(name = "fintAccessComponents")
+    private List<String> components;
+
+    @Attribute(name = "description")
+    private String description;
+
     public void removeClient(String clientDn) {
         clients.removeIf(adapter -> adapter.equalsIgnoreCase(clientDn));
     }
@@ -42,6 +48,16 @@ public class AccessPackage implements BasicLdapEntry {
     public void addClient(String clientDn) {
         if (clients.stream().noneMatch(clientDn::equalsIgnoreCase)) {
             clients.add(clientDn);
+        }
+    }
+
+    public void removeComponent(String componentDn) {
+        components.removeIf(adapter -> adapter.equalsIgnoreCase(componentDn));
+    }
+
+    public void addComponent(String clientDn) {
+        if (components.stream().noneMatch(clientDn::equalsIgnoreCase)) {
+            components.add(clientDn);
         }
     }
 
