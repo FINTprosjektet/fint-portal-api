@@ -44,8 +44,10 @@ class AccessServiceSpec extends Specification {
         accessService.unlinkOldClients(new AccessPackage(clients: ["a", "c"]), ["a", "b", "d"])
 
         then:
-        ldapService.getEntry(_ as String, Client.class) >> new Client() >> new Client()
+        ldapService.getEntry(_ as String, Client.class) >> new Client() >> new Client() >> new Client(accessPackages: ["q"])
+        ldapService.getEntry(_ as String, AccessPackage.class) >> new AccessPackage(clients: Collections.singletonList("h"))
         2 * ldapService.updateEntry(_ as Client)
+        1 * ldapService.updateEntry(_ as AccessPackage)
     }
 
     def "Link new clients"() {
