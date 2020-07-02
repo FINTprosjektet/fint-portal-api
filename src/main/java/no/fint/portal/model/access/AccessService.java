@@ -39,9 +39,9 @@ public class AccessService {
         return ldapService.createEntry(accessPackage);
     }
 
-    public boolean updateAccess(AccessPackage accessPackage) {
+    public boolean updateAccess(String orgName, AccessPackage accessPackage) {
 
-        unlinkOldClients(accessPackage, getAccessByDn(accessPackage.getDn()).getClients());
+        unlinkOldClients(accessPackage, getAccess(accessPackage.getName(), orgName).getClients());
         linkNewClients(accessPackage);
 
         return ldapService.updateEntry(accessPackage);
