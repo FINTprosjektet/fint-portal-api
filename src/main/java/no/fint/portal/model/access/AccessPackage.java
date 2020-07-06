@@ -19,6 +19,9 @@ public final class AccessPackage implements BasicLdapEntry {
     @Id
     private Name dn;
 
+    @Attribute(name = "fintSelf")
+    private String self;
+
     @ApiModelProperty(value = "Technical name of the access.")
     @Attribute(name = "ou")
     private String name;
@@ -73,12 +76,12 @@ public final class AccessPackage implements BasicLdapEntry {
     @Override
     public void setDn(Name dn) {
         this.dn = dn;
-
+        self = dn.toString();
     }
 
     @Override
     public void setDn(String dn) {
-        this.dn = LdapNameBuilder.newInstance(dn).build();
+        setDn(LdapNameBuilder.newInstance(dn).build());
     }
 
 }
