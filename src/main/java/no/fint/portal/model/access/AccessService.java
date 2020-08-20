@@ -8,6 +8,7 @@ import no.fint.portal.utilities.LdapConstants;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.stereotype.Service;
 
+import javax.naming.ldap.LdapName;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,14 +30,15 @@ public class AccessService {
     }
 
     public boolean addAccess(AccessPackage accessPackage, Organisation organisation) {
-        accessPackage.setDn(
-                LdapNameBuilder.newInstance(Objects.requireNonNull(organisation.getDn()))
-                        .add(LdapConstants.OU, "access")
-                        .add(LdapConstants.OU, accessPackage.getName())
-                        .build()
-        );
+        LdapName dn = LdapNameBuilder.newInstance(Objects.requireNonNull(organisation.getDn()))
+                .add(LdapConstants.OU, "access")
+                .add(LdapConstants.OU, accessPackage.getName())
+                .build();
+        accessPackage.setDn(dn);
+        ldapService.createEntry(accessPackage);
 
-        return ldapService.createEntry(accessPackage);
+        accessPackage.setSelf(dn);
+        return ldapService.updateEntry(accessPackage);
     }
 
     public boolean updateAccess(AccessPackage accessPackage) {

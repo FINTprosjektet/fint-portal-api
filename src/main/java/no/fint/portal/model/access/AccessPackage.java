@@ -1,5 +1,6 @@
 package no.fint.portal.model.access;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,6 +19,9 @@ import java.util.List;
 public final class AccessPackage implements BasicLdapEntry {
     @Id
     private Name dn;
+
+    @Attribute(name = "fintSelf")
+    private Name self;
 
     @ApiModelProperty(value = "Technical name of the access.")
     @Attribute(name = "ou")
@@ -61,6 +65,23 @@ public final class AccessPackage implements BasicLdapEntry {
         }
     }
 
+    public String getSelf() {
+        if (self != null) {
+            return self.toString();
+        }
+        else {
+            return null;
+        }
+    }
+
+    public void setSelf(Name self) {
+        this.self = self;
+    }
+
+    public void setSelf(String self) {
+        setSelf(LdapNameBuilder.newInstance(self).build());
+    }
+
     @Override
     public String getDn() {
         if (dn != null) {
@@ -73,12 +94,11 @@ public final class AccessPackage implements BasicLdapEntry {
     @Override
     public void setDn(Name dn) {
         this.dn = dn;
-
     }
 
     @Override
     public void setDn(String dn) {
-        this.dn = LdapNameBuilder.newInstance(dn).build();
+        setDn(LdapNameBuilder.newInstance(dn).build());
     }
 
 }
