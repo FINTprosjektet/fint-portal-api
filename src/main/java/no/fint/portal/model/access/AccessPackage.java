@@ -20,7 +20,6 @@ public final class AccessPackage implements BasicLdapEntry {
     @Id
     private Name dn;
 
-    @JsonIgnore
     @Attribute(name = "fintSelf")
     private Name self;
 
@@ -66,6 +65,23 @@ public final class AccessPackage implements BasicLdapEntry {
         }
     }
 
+    public String getSelf() {
+        if (self != null) {
+            return self.toString();
+        }
+        else {
+            return null;
+        }
+    }
+
+    public void setSelf(Name self) {
+        this.self = self;
+    }
+
+    public void setSelf(String self) {
+        setSelf(LdapNameBuilder.newInstance(self).build());
+    }
+
     @Override
     public String getDn() {
         if (dn != null) {
@@ -78,7 +94,6 @@ public final class AccessPackage implements BasicLdapEntry {
     @Override
     public void setDn(Name dn) {
         this.dn = dn;
-        self = dn;
     }
 
     @Override
