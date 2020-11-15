@@ -28,7 +28,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
     compile('org.springframework.ldap:spring-ldap-core:2.3.2.RELEASE')
     compile('org.springframework.security.oauth:spring-security-oauth2:2.2.6.RELEASE')
-    implementation "org.springframework.boot:spring-boot-starter-data-mongodb:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-data-mongodb:2.3.4.RELEASE"
 
 
 

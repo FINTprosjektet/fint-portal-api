@@ -108,13 +108,13 @@ public class OrganisationService {
         return Optional.ofNullable(ldapService.getEntry(dn, Organisation.class));
     }
 
-    public void deleteOrganisation(Organisation organisation) {
+    public void deleteOrganisation(Organisation organisation, String nin) {
 
         // Remove all adapters
         List<Adapter> adapters = adapterService.getAdapters(organisation.getName());
 
         if (adapters != null) {
-            adapters.forEach(adapter -> adapterService.deleteAdapter(adapter));
+            adapters.forEach(adapter -> adapterService.deleteAdapter(adapter, nin));
         }
         // Remove all clients
         List<Client> clients = clientService.getClients(organisation.getName());

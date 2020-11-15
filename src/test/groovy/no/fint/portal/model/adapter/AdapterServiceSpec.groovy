@@ -1,7 +1,9 @@
 package no.fint.portal.model.adapter
 
+import no.fint.portal.audit.UserEventAuditService
 import no.fint.portal.ldap.LdapService
 import no.fint.portal.model.asset.AssetService
+import no.fint.portal.model.contact.Contact
 import no.fint.portal.model.organisation.Organisation
 import no.fint.portal.oauth.NamOAuthClientService
 import no.fint.portal.oauth.OAuthClient
@@ -15,6 +17,7 @@ class AdapterServiceSpec extends Specification {
     private adapterObjectService
     private oauthService
     private assetService
+    private userEventAuditService
 
     def setup() {
         def organisationBase = "ou=org,o=fint"
@@ -22,11 +25,13 @@ class AdapterServiceSpec extends Specification {
         assetService = Mock(AssetService)
         adapterObjectService = new AdapterObjectService(organisationBase: organisationBase)
         oauthService = Mock(NamOAuthClientService)
+        userEventAuditService = Mock(UserEventAuditService)
         adapterService = new AdapterService(
                 adapterObjectService: adapterObjectService,
                 ldapService: ldapService,
                 namOAuthClientService: oauthService,
-                assetService: assetService
+                assetService: assetService,
+                userEventAuditService: userEventAuditService
         )
 
     }
@@ -36,7 +41,7 @@ class AdapterServiceSpec extends Specification {
         def adapter = ObjectFactory.newAdapter()
 
         when:
-        def created = adapterService.addAdapter(adapter, new Organisation(name: "name"))
+        def created = adapterService.addAdapter(adapter, new Organisation(name: "name"), new Contact())
 
         then:
         created == true
@@ -48,12 +53,11 @@ class AdapterServiceSpec extends Specification {
 
     def "Get Adapters"() {
         when:
-        def adapters = adapterService.getAdapters(UUID.randomUUID().toString())
+        def adapters = adapterService.getAdapters(UUID.randomUUID().toString(), UUID.randomUUID().toString())
 
         then:
         adapters.size() == 2
         1 * ldapService.getAll(_ as String, _ as Class) >> Arrays.asList(ObjectFactory.newAdapter(), ObjectFactory.newAdapter())
-        //2 * oauthService.getOAuthClient(_ as String) >> ObjectFactory.newOAuthClient()
     }
 
     def "Get Adapter"() {
@@ -63,7 +67,6 @@ class AdapterServiceSpec extends Specification {
         then:
         adapter.isPresent()
         1 * ldapService.getEntry(_ as String, _ as Class) >> ObjectFactory.newAdapter()
-        //1 * oauthService.getOAuthClient(_ as String) >> ObjectFactory.newOAuthClient()
     }
 
     def "Update Adapter"() {

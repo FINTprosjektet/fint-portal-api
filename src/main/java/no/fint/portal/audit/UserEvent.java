@@ -11,7 +11,6 @@ import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
-import java.lang.annotation.Documented;
 import java.time.LocalDateTime;
 
 @Data
@@ -31,8 +30,9 @@ public class UserEvent {
     @CreatedDate
     private LocalDateTime createdDate;
 
-    private String operation;
-    private String object;
+    private UserEventOperation operation;
+    private Object object;
     private Contact user;
     private Organisation organisation;
+    private String type;
 }

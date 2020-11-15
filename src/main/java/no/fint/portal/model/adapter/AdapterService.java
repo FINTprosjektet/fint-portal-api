@@ -1,6 +1,8 @@
 package no.fint.portal.model.adapter;
 
 import lombok.extern.slf4j.Slf4j;
+import no.fint.portal.audit.UserEventAuditService;
+import no.fint.portal.audit.UserEventOperation;
 import no.fint.portal.ldap.LdapService;
 import no.fint.portal.model.asset.Asset;
 import no.fint.portal.model.asset.AssetService;
@@ -29,7 +31,10 @@ public class AdapterService {
     @Autowired
     private AssetService assetService;
 
-    public boolean addAdapter(Adapter adapter, Organisation organisation) {
+    @Autowired
+    private UserEventAuditService userEventAuditService;
+
+    public boolean addAdapter(Adapter adapter, Organisation organisation, String nin) {
         adapterObjectService.setupAdapter(adapter, organisation);
 
         OAuthClient oAuthClient = namOAuthClientService.addOAuthClient(
@@ -46,59 +51,50 @@ public class AdapterService {
             Asset primaryAsset = assetService.getPrimaryAsset(organisation);
             assetService.linkAdapterToAsset(primaryAsset, adapter);
         }
+
+        userEventAuditService.audit(organisation, nin, UserEventOperation.ADD, adapter);
+
         return created;
     }
 
     public List<Adapter> getAdapters(String orgName) {
-        //List<Adapter> adapters =
-
         return ldapService.getAll(adapterObjectService.getAdapterBase(orgName).toString(), Adapter.class);
-
-                /*
-        adapters.forEach(adapter -> adapter.getAssets().forEach(asset -> {
-            assetService.getAsset(asset).ifPresent(a -> adapter.addAssetId(a.getAssetId()));
-        }));
-
-        return adapters;
-        */
     }
 
     public Optional<Adapter> getAdapter(String adapterName, String orgName) {
-
-        //Optional<Adapter> adapter =
 
         return Optional.ofNullable(ldapService.getEntry(
                 adapterObjectService.getAdapterDn(adapterName, orgName),
                 Adapter.class
         ));
 
-        /*
-        adapter.ifPresent(a -> a.getAssets().forEach(asset -> {
-            assetService.getAsset(asset).ifPresent(aa -> a.addAssetId(aa.getAssetId()));
-        }));
-        */
-
-        //return adapter;
     }
 
     public Optional<Adapter> getAdapterByDn(String dn) {
         return Optional.ofNullable(ldapService.getEntry(dn, Adapter.class));
     }
 
-    public String getAdapterSecret(Adapter adapter) {
+    public String getAdapterSecret(Adapter adapter, String nin) {
+        userEventAuditService.audit(nin, UserEventOperation.GET_SECRET, adapter);
+
         return namOAuthClientService.getOAuthClient(adapter.getClientId()).getClientSecret();
     }
 
-    public boolean updateAdapter(Adapter adapter) {
+    public boolean updateAdapter(Adapter adapter, String nin) {
+        userEventAuditService.audit(nin, UserEventOperation.UPDATE, adapter);
+
         return ldapService.updateEntry(adapter);
     }
 
-    public void deleteAdapter(Adapter adapter) {
+    public void deleteAdapter(Adapter adapter, String nin) {
+        userEventAuditService.audit(nin, UserEventOperation.DELETE, adapter);
         namOAuthClientService.removeOAuthClient(adapter.getClientId());
         ldapService.deleteEntry(adapter);
+
     }
 
-    public void resetAdapterPassword(Adapter adapter, String newPassword) {
+    public void resetAdapterPassword(Adapter adapter, String newPassword, String nin) {
+        userEventAuditService.audit(nin, UserEventOperation.RESET_PASSWORD, adapter);
         adapter.setSecret(newPassword);
         ldapService.updateEntry(adapter);
     }
