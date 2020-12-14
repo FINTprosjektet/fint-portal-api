@@ -7,16 +7,16 @@ import org.springframework.ldap.support.LdapNameBuilder;
 import javax.naming.Name;
 
 public class AccessPackageTemplateObjectService {
-    private final String accessTemplateOrganisationBase;
+    private final String accessTemplateBase;
 
     public AccessPackageTemplateObjectService(
-            @Value("${fint.ldap.access.template.organisation-base}") String accessTemplateOrganisationBase
+            @Value("${fint.ldap.access.template-base}") String accessTemplateOrganisationBase
     ) {
-        this.accessTemplateOrganisationBase = accessTemplateOrganisationBase;
+        this.accessTemplateBase = accessTemplateOrganisationBase;
     }
 
     public Name getAccessBase() {
-        return LdapNameBuilder.newInstance(accessTemplateOrganisationBase)
+        return LdapNameBuilder.newInstance(accessTemplateBase)
                 .build();
     }
 

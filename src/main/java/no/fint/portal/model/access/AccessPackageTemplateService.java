@@ -25,8 +25,7 @@ public class AccessPackageTemplateService {
 
     //TODO: Add organisation instead of hard code "fint".
     public boolean addAccessPackageTemplate(AccessPackage template) {
-        LdapName dn = LdapNameBuilder.newInstance("fint")
-                .add(LdapConstants.OU, "access")
+        LdapName dn = LdapNameBuilder.newInstance(accessPackageTemplateObjectService.getAccessBase())
                 .add(LdapConstants.OU, template.getName())
                 .build();
         template.setDn(dn);
