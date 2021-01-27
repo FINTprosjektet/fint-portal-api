@@ -23,7 +23,6 @@ public class AccessPackageTemplateService {
         return ldapService.getAll(accessPackageTemplateObjectService.getAccessBase().toString(), AccessPackage.class);
     }
 
-    //TODO: Add organisation instead of hard code "fint".
     public boolean addAccessPackageTemplate(AccessPackage template) {
         LdapName dn = LdapNameBuilder.newInstance(accessPackageTemplateObjectService.getAccessBase())
                 .add(LdapConstants.OU, template.getName())

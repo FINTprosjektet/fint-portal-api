@@ -1,6 +1,5 @@
 package no.fint.portal.model.access;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -23,7 +22,7 @@ public final class AccessPackage implements BasicLdapEntry {
     @Attribute(name = "fintSelf")
     private Name self;
 
-    @ApiModelProperty(value = "Technical name of the access.")
+    @ApiModelProperty(value = "Technical name of the access package.")
     @Attribute(name = "ou")
     private String name;
 
@@ -68,8 +67,7 @@ public final class AccessPackage implements BasicLdapEntry {
     public String getSelf() {
         if (self != null) {
             return self.toString();
-        }
-        else {
+        } else {
             return null;
         }
     }
