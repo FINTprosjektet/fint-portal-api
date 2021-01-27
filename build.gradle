@@ -33,7 +33,10 @@ dependencies {
     compile("com.github.springfox.loader:springfox-loader:${springfoxLoaderVersion}")
     compile('no.rogfk:spring-hateoas-hal-extension:0.0.6')
 
-    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    //compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    compileOnly 'org.projectlombok:lombok:1.18.16'
+    annotationProcessor 'org.projectlombok:lombok:1.18.16'
+
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
     testCompile("org.spockframework:spock-spring:${spockSpringVersion}")
     testCompile("cglib:cglib-nodep:${cglibVersion}")
