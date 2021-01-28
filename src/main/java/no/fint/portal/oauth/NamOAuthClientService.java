@@ -65,7 +65,7 @@ public class NamOAuthClientService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity request = new HttpEntity(jsonOAuthClient, headers);
+        HttpEntity<String> request = new HttpEntity<>(jsonOAuthClient, headers);
 
         try {
             String response = restTemplate.postForObject(NamOAuthConstants.CLIENT_REGISTRATION_URL_TEMPLATE, request, String.class, idpHostname);
