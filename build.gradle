@@ -46,9 +46,9 @@ if (project.hasProperty('bintrayUser') && project.hasProperty('bintrayKey')) {
         pkg {
             repo = 'maven'
             userOrg = 'fint'
-            name = project.archivesBaseName
+            name = 'fint-portal-api'
             licenses = ['Apache-2.0']
-            vcsUrl = "https://github.com/FINTLabs/${project.archivesBaseName}"
+            vcsUrl = "https://github.com/FINTLabs/fint-portal-api"
             version {
                 name = project.version
             }
