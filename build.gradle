@@ -31,6 +31,25 @@ dependencies {
     testImplementation "cglib:cglib-nodep:3.3.0"
 }
 
-if (project.hasProperty('bintrayUser') && project.hasProperty('bintrayKey')) {
-    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.8.0/bintray.gradle'
+group 'no.fint'
+
+bintrayUpload {
+    dependsOn assemble
+}
+
+bintray {
+    user = bintrayUser
+    key = bintrayKey
+    publish = true
+    configurations = ['archives']
+    pkg {
+        repo = 'maven'
+        userOrg = 'fint'
+        name = project.archivesBaseName
+        licenses = ['Apache-2.0']
+        vcsUrl = "https://github.com/FINTLabs/${project.archivesBaseName}"
+        version {
+            name = project.version
+        }
+    }
 }
