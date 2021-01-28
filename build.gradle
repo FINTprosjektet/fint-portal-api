@@ -37,19 +37,21 @@ bintrayUpload {
     dependsOn assemble
 }
 
-bintray {
-    user = bintrayUser
-    key = bintrayKey
-    publish = true
-    configurations = ['archives']
-    pkg {
-        repo = 'maven'
-        userOrg = 'fint'
-        name = project.archivesBaseName
-        licenses = ['Apache-2.0']
-        vcsUrl = "https://github.com/FINTLabs/${project.archivesBaseName}"
-        version {
-            name = project.version
+if (project.hasProperty('bintrayUser') && project.hasProperty('bintrayKey')) {
+    bintray {
+        user = bintrayUser
+        key = bintrayKey
+        publish = true
+        configurations = ['archives']
+        pkg {
+            repo = 'maven'
+            userOrg = 'fint'
+            name = project.archivesBaseName
+            licenses = ['Apache-2.0']
+            vcsUrl = "https://github.com/FINTLabs/${project.archivesBaseName}"
+            version {
+                name = project.version
+            }
         }
     }
 }
