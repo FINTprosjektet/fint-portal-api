@@ -7,6 +7,8 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'groovy'
 apply plugin: 'java-library'
+apply plugin: 'maven-publish'
+
 
 sourceCompatibility = 11
 
@@ -35,6 +37,17 @@ group 'no.fint'
 
 bintrayUpload {
     dependsOn assemble
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            afterEvaluate {
+                artifactId = project.archivesBaseName
+            }
+        }
+    }
 }
 
 if (project.hasProperty('bintrayUser') && project.hasProperty('bintrayKey')) {
