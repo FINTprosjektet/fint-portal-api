@@ -1,6 +1,8 @@
 package no.fint.portal.model.contact;
 
 import lombok.extern.slf4j.Slf4j;
+import no.fint.portal.exceptions.EntityNotFoundException;
+import no.fint.portal.exceptions.UpdateEntityException;
 import no.fint.portal.ldap.LdapService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,11 +14,15 @@ import java.util.Optional;
 @Service
 public class ContactService {
 
-    @Autowired
-    private LdapService ldapService;
+    public static final String ADMIN_ROLE_NAME = "ROLE_ADMIN";
 
-    @Autowired
-    private ContactObjectService contactObjectService;
+    private final LdapService ldapService;
+    private final ContactObjectService contactObjectService;
+
+    public ContactService(LdapService ldapService, ContactObjectService contactObjectService) {
+        this.ldapService = ldapService;
+        this.contactObjectService = contactObjectService;
+    }
 
     public List<Contact> getContacts() {
         return ldapService.getAll(contactObjectService.getContactBase().toString(), Contact.class);
@@ -44,6 +50,30 @@ public class ContactService {
 
     public void deleteContact(Contact contact) {
         ldapService.deleteEntry(contact);
+    }
+
+    public Contact addRoles(String nin, List<String> roles) {
+        Contact contact = getContact(nin).orElseThrow(EntityNotFoundException::new);
+
+        if (roles.contains(ADMIN_ROLE_NAME)) {
+            contact.getRoles().clear();
+        } else {
+            contact.removeRole(ADMIN_ROLE_NAME);
+        }
+        roles.forEach(contact::addRole);
+
+        if (!updateContact(contact)) {
+            throw new UpdateEntityException("Unable to add roles: " + roles.toString());
+        }
+
+        return contact;
+    }
+
+    public boolean removeRoles(String nin, List<String> roles) {
+        Contact contact = getContact(nin).orElseThrow(EntityNotFoundException::new);
+        roles.forEach(contact::removeRole);
+
+        return updateContact(contact);
     }
 
 }
