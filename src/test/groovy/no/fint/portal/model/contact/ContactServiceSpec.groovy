@@ -67,4 +67,15 @@ class ContactServiceSpec extends Specification {
         then:
         1 * ldapService.deleteEntry(_ as Contact)
     }
+
+    def "When adding admin role, all other roles should be removed"() {
+        when:
+        def contact = contactService.addRoles("12345678987", ["ROLE_ADMIN"])
+
+        then:
+        1 * ldapService.getEntry(_ as String, _ as Class) >> ObjectFactory.newContact("12345678987")
+        1 * ldapService.updateEntry(_ as Contact) >> true
+        contact.getRoles().size() == 1
+
+    }
 }

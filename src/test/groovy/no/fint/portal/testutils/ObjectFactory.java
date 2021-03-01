@@ -50,6 +50,7 @@ public enum ObjectFactory {
         Contact contact = new Contact();
         contact.setNin(nin);
         contact.setDn("cn="+nin+",ou=contacts,o=fint");
+        contact.addRole("ROLE_ADAPTER");
         return contact;
     }
 

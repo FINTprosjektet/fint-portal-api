@@ -54,9 +54,14 @@ public final class Contact implements BasicLdapEntry {
     @Attribute(name = "fintContactSupportId")
     private String supportId;
 
+    @ApiModelProperty(value = "Roles for the contact.")
+    @Attribute(name = "fintContactRoles")
+    private List<String> roles;
+
     public Contact() {
         technical = new ArrayList<>();
         legal = new ArrayList<>();
+        roles = new ArrayList<>();
     }
 
     public String getDn() {
@@ -95,5 +100,15 @@ public final class Contact implements BasicLdapEntry {
 
     public void removeOrganisationLegalContact(String organisationDn) {
         legal.removeIf(organisationDn::equalsIgnoreCase);
+    }
+
+    public void addRole(String role) {
+        if (roles.stream().noneMatch(role::equalsIgnoreCase)) {
+            roles.add(role);
+        }
+    }
+
+    public void removeRole(String role) {
+        roles.removeIf(role::equalsIgnoreCase);
     }
 }
