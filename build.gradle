@@ -23,6 +23,8 @@ dependencies {
 
     implementation 'com.google.guava:guava:30.1-jre'
 
+    implementation 'org.apache.commons:commons-pool2:2.9.0'
+
     compileOnly 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
 
