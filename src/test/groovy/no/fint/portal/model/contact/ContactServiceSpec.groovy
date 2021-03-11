@@ -14,7 +14,7 @@ class ContactServiceSpec extends Specification {
         def contactBase = "ou=contacts,o=fint"
         ldapService = Mock(LdapService)
         contactObjectService = new ContactObjectService(contactBase: contactBase)
-        contactService = new ContactService(contactObjectService: contactObjectService, ldapService: ldapService)
+        contactService = new ContactService(ldapService, contactObjectService)
 
     }
 
@@ -68,14 +68,4 @@ class ContactServiceSpec extends Specification {
         1 * ldapService.deleteEntry(_ as Contact)
     }
 
-    def "When adding admin role, all other roles should be removed"() {
-        when:
-        def contact = contactService.addRoles("12345678987", ["ROLE_ADMIN"])
-
-        then:
-        1 * ldapService.getEntry(_ as String, _ as Class) >> ObjectFactory.newContact("12345678987")
-        1 * ldapService.updateEntry(_ as Contact) >> true
-        contact.getRoles().size() == 1
-
-    }
 }
