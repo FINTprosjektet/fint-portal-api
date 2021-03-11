@@ -303,7 +303,7 @@ class OrganisationServiceSpec extends Specification {
         given:
         def organisation = ObjectFactory.newOrganisation()
         def contact = ObjectFactory.newContact("11111111111")
-        contact.setRoles(['ROLE_MONKEY@test.org', 'ROLE_STUPID@test.org'])
+        contact.setRoles(['ROLE_MONKEY@TestOrganisation', 'ROLE_STUPID@TestOrganisation'])
 
         when:
         organisationService.addRoles(organisation, contact, ["ROLE_ADMIN"])
@@ -311,7 +311,7 @@ class OrganisationServiceSpec extends Specification {
         then:
         1 * contactService.updateContact(_ as Contact) >> true
         contact.getRoles().size() == 1
-        contact.roles.every {it == 'ROLE_ADMIN@test.org'}
+        contact.roles.every {it == 'ROLE_ADMIN@TestOrganisation'}
 
     }
 
@@ -319,7 +319,7 @@ class OrganisationServiceSpec extends Specification {
         given:
         def organisation = ObjectFactory.newOrganisation()
         def contact = ObjectFactory.newContact("11111111111")
-        contact.setRoles(['ROLE_MONKEY@bar.org', 'ROLE_STUPID@foo.org', 'ROLE_COCKY@test.org'])
+        contact.setRoles(['ROLE_MONKEY@bar.org', 'ROLE_STUPID@foo.org', 'ROLE_COCKY@TestOrganisation'])
 
         when:
         organisationService.addRoles(organisation, contact, ["ROLE_ADMIN"])
@@ -327,7 +327,7 @@ class OrganisationServiceSpec extends Specification {
         then:
         1 * contactService.updateContact(_ as Contact) >> true
         contact.getRoles().size() == 3
-        contact.roles.any {it == 'ROLE_ADMIN@test.org'}
+        contact.roles.any {it == 'ROLE_ADMIN@TestOrganisation'}
 
     }
 
@@ -335,7 +335,7 @@ class OrganisationServiceSpec extends Specification {
         given:
         def organisation = ObjectFactory.newOrganisation()
         def contact = ObjectFactory.newContact("11111111111")
-        contact.setRoles(['ROLE_MONKEY@bar.org', 'ROLE_STUPID@foo.org', 'ROLE_ADMIN@test.org'])
+        contact.setRoles(['ROLE_MONKEY@bar.org', 'ROLE_STUPID@foo.org', 'ROLE_ADMIN@TestOrganisation'])
 
         when:
         organisationService.addRoles(organisation, contact, ["ROLE_PESANT"])
@@ -343,7 +343,7 @@ class OrganisationServiceSpec extends Specification {
         then:
         1 * contactService.updateContact(_ as Contact) >> true
         contact.getRoles().size() == 3
-        !contact.roles.any {it == 'ROLE_ADMIN@test.org'}
+        !contact.roles.any {it == 'ROLE_ADMIN@TestOrganisation'}
 
     }
 

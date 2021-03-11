@@ -43,7 +43,6 @@ public enum ObjectFactory {
         organisation.setOrgNumber("1111111111");
         organisation.setDisplayName("Test organisation");
         organisation.setDn("ou=testOrg,ou=org,o=fint");
-        organisation.setPrimaryAssetId("test.org");
         return organisation;
     }
 

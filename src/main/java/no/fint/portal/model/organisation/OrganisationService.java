@@ -255,7 +255,7 @@ public class OrganisationService {
     public void addRoles(Organisation organisation, Contact contact, List<String> roles) {
 
         if (roles.contains(ADMIN_ROLE_NAME)) {
-            contact.getRoles().removeIf(role -> role.endsWith("@" + organisation.getPrimaryAssetId()));
+            contact.getRoles().removeIf(role -> role.endsWith("@" + organisation.getName()));
         } else {
             contact.removeRole(qualifyRole(organisation).apply(ADMIN_ROLE_NAME));
         }
@@ -279,8 +279,8 @@ public class OrganisationService {
         }
     }
 
-    private Function<String,String> qualifyRole(Organisation organisation) {
-        return role -> role + "@" + organisation.getPrimaryAssetId();
+    private Function<String, String> qualifyRole(Organisation organisation) {
+        return role -> role + "@" + organisation.getName();
     }
 
     private void createAssetContainer(String organisationDn) {
