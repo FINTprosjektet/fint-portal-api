@@ -1,5 +1,6 @@
 package no.fint.portal.ldap;
 
+import lombok.extern.slf4j.Slf4j;
 import no.fint.portal.utilities.LdapUniqueNameUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.LdapTemplate;
@@ -11,6 +12,7 @@ import javax.naming.directory.SearchControls;
 import java.util.List;
 
 @Service
+@Slf4j
 public class LdapService {
 
     private final SearchControls searchControls;
@@ -68,6 +70,7 @@ public class LdapService {
             ldapTemplate.lookup(LdapNameBuilder.newInstance(dn).build());
             return true;
         } catch (org.springframework.ldap.NamingException e) {
+            log.debug("entryExists: {}", dn, e);
             return false;
         }
     }
@@ -83,6 +86,7 @@ public class LdapService {
         try {
             return ldapTemplate.findByDn(LdapNameBuilder.newInstance(dn).build(), type);
         } catch (org.springframework.ldap.NamingException e) {
+            log.debug("getEntry {} {}", dn, type, e);
             return null;
         }
     }

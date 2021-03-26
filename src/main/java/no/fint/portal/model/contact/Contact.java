@@ -4,12 +4,14 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import no.fint.portal.ldap.BasicLdapEntry;
+import no.fint.portal.utilities.LdapTimestamp;
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Entry;
 import org.springframework.ldap.odm.annotations.Id;
 import org.springframework.ldap.support.LdapNameBuilder;
 
 import javax.naming.Name;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +59,13 @@ public final class Contact implements BasicLdapEntry {
     @ApiModelProperty(value = "Roles for the contact.")
     @Attribute(name = "fintContactRoles")
     private List<String> roles;
+
+    @Attribute(name="modifyTimestamp", readonly = true)
+    private String modifyTimestamp;
+
+    public LocalDateTime getLastModified() {
+        return LdapTimestamp.toLocalTimeDate(modifyTimestamp);
+    }
 
     public Contact() {
         technical = new ArrayList<>();
