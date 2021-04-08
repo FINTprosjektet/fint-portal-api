@@ -299,4 +299,52 @@ class OrganisationServiceSpec extends Specification {
         1 * contactService.getContacts() >> IntStream.rangeClosed(1, 9).mapToObj(Integer.&toString).map{ def o = ObjectFactory.newContact("11111111111"); o.nin = it * 11; o.dn = "dn="+o.nin+",ou=contacts,o=fint"; o}.collect(Collectors.toList())
     }
 
+    def "When adding admin role, all other roles should be removed"() {
+        given:
+        def organisation = ObjectFactory.newOrganisation()
+        def contact = ObjectFactory.newContact("11111111111")
+        contact.setRoles(['ROLE_MONKEY@TestOrganisation', 'ROLE_STUPID@TestOrganisation'])
+
+        when:
+        organisationService.addRoles(organisation, contact, ["ROLE_ADMIN"])
+
+        then:
+        1 * contactService.updateContact(_ as Contact) >> true
+        contact.getRoles().size() == 1
+        contact.roles.every {it == 'ROLE_ADMIN@TestOrganisation'}
+
+    }
+
+    def "When adding admin role, no roles for other organisations should be removed"() {
+        given:
+        def organisation = ObjectFactory.newOrganisation()
+        def contact = ObjectFactory.newContact("11111111111")
+        contact.setRoles(['ROLE_MONKEY@bar.org', 'ROLE_STUPID@foo.org', 'ROLE_COCKY@TestOrganisation'])
+
+        when:
+        organisationService.addRoles(organisation, contact, ["ROLE_ADMIN"])
+
+        then:
+        1 * contactService.updateContact(_ as Contact) >> true
+        contact.getRoles().size() == 3
+        contact.roles.any {it == 'ROLE_ADMIN@TestOrganisation'}
+
+    }
+
+    def "When adding non-admin role, admin role for organisation should be removed"() {
+        given:
+        def organisation = ObjectFactory.newOrganisation()
+        def contact = ObjectFactory.newContact("11111111111")
+        contact.setRoles(['ROLE_MONKEY@bar.org', 'ROLE_STUPID@foo.org', 'ROLE_ADMIN@TestOrganisation'])
+
+        when:
+        organisationService.addRoles(organisation, contact, ["ROLE_PESANT"])
+
+        then:
+        1 * contactService.updateContact(_ as Contact) >> true
+        contact.getRoles().size() == 3
+        !contact.roles.any {it == 'ROLE_ADMIN@TestOrganisation'}
+
+    }
+
 }

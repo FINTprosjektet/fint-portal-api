@@ -1,6 +1,7 @@
 package no.fint.portal.model.organisation;
 
 import lombok.extern.slf4j.Slf4j;
+import no.fint.portal.exceptions.UpdateEntityException;
 import no.fint.portal.ldap.Container;
 import no.fint.portal.ldap.LdapService;
 import no.fint.portal.model.adapter.Adapter;
@@ -22,7 +23,10 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static no.fint.portal.model.contact.ContactService.ADMIN_ROLE_NAME;
 
 @SuppressWarnings("ALL")
 @Slf4j
@@ -246,6 +250,37 @@ public class OrganisationService {
                         contact -> contact.getDn().equals(organisation.getLegalContact())
                 ).findAny()
                 .orElse(null);
+    }
+
+    public void addRoles(Organisation organisation, Contact contact, List<String> roles) {
+
+        if (roles.contains(ADMIN_ROLE_NAME)) {
+            contact.getRoles().removeIf(role -> role.endsWith("@" + organisation.getName()));
+        } else {
+            contact.removeRole(qualifyRole(organisation).apply(ADMIN_ROLE_NAME));
+        }
+
+        roles.stream()
+                .map(qualifyRole(organisation))
+                .forEach(contact::addRole);
+
+        if (!contactService.updateContact(contact)) {
+            throw new UpdateEntityException("Unable to add roles: " + roles);
+        }
+    }
+
+    public void removeRoles(Organisation organisation, Contact contact, List<String> roles) {
+        roles.stream()
+                .map(qualifyRole(organisation))
+                .forEach(contact::removeRole);
+
+        if (!contactService.updateContact(contact)) {
+            throw new UpdateEntityException("Unable to remove roles:" + roles);
+        }
+    }
+
+    private Function<String, String> qualifyRole(Organisation organisation) {
+        return role -> role + "@" + organisation.getName();
     }
 
     private void createAssetContainer(String organisationDn) {
