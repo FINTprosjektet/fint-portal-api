@@ -35,22 +35,24 @@ dependencies {
 
 group 'no.fint'
 
-publishing {
-    repositories {
-        maven {
-            url "https://reposilite.fintlabs.no/releases"
-            credentials {
-                username = reposiliteUsername
-                password = reposiliteToken
-            }
-            authentication {
-                basic(BasicAuthentication)
+if (project.hasProperty('reposiliteUsername') && project.hasProperty('reposiliteToken')) {
+    publishing {
+        repositories {
+            maven {
+                url "https://reposilite.fintlabs.no/releases"
+                credentials {
+                    username = reposiliteUsername
+                    password = reposiliteToken
+                }
+                authentication {
+                    basic(BasicAuthentication)
+                }
             }
         }
-    }
-    publications {
-        maven(MavenPublication) {
-            from(components.java)
+        publications {
+            maven(MavenPublication) {
+                from(components.java)
+            }
         }
     }
 }
