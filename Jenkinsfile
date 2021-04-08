@@ -14,7 +14,7 @@ pipeline {
         }
         stage('Deploy') {
             environment {
-                GITHUB = credentials('github_fsjovatsen')
+                REPOSILITE = credentials('reposilite')
             }
             when {
                 tag pattern: "v\\d+\\.\\d+\\.\\d+(-\\w+-\\d+)?", comparator: "REGEXP"
@@ -24,7 +24,7 @@ pipeline {
                     VERSION = TAG_NAME[1..-1]
                 }
                 sh "echo Version is ${VERSION}"
-                sh "gradle --no-daemon -Pversion=${VERSION} -PgithubUsername=${GITHUB_USR} -PgithubToken=${GITHUB_PSW} publish"
+                sh "gradle --no-daemon -Pversion=${VERSION} -PreposiliteUsername=${REPOSILITE_USR} -PreposiliteToken=${REPOSILITE_PSW} publish"
             }
         }
     }
