@@ -39,7 +39,7 @@ if (project.hasProperty('reposiliteUsername') && project.hasProperty('reposilite
     publishing {
         repositories {
             maven {
-                url "https://reposilite.fintlabs.no/releases"
+                url "https://repo.fintlabs.no/releases"
                 credentials {
                     username = reposiliteUsername
                     password = reposiliteToken
