@@ -1,10 +1,10 @@
 plugins {
     id 'com.github.ben-manes.versions' version '0.36.0'
-    id "com.jfrog.bintray" version "1.8.5"
 }
 
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'maven-publish'
 apply plugin: 'groovy'
 apply plugin: 'java-library'
 
@@ -39,9 +39,7 @@ bintrayUpload {
     dependsOn assemble
 }
 
-if (project.hasProperty('bintrayUser') && project.hasProperty('bintrayKey')) {
-    bintray {
-        user = bintrayUser
+apply from: 'https://raw.githubusercontent.com/FINTLabs/fint-buildscripts/master/reposilite.gradle'
         key = bintrayKey
         publish = true
         configurations = ['archives']
