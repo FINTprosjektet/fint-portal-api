@@ -9,6 +9,7 @@ import no.fint.portal.oauth.NamOAuthClientService;
 import no.fint.portal.oauth.OAuthClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -72,7 +73,9 @@ public class ClientService {
     }
 
     public void deleteClient(Client client) {
-        namOAuthClientService.removeOAuthClient(client.getClientId());
+        if (StringUtils.hasText(client.getClientId())) {
+            namOAuthClientService.removeOAuthClient(client.getClientId());
+        }
         ldapService.deleteEntry(client);
     }
 
