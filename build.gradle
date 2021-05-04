@@ -33,25 +33,4 @@ dependencies {
     testImplementation "cglib:cglib-nodep:3.3.0"
 }
 
-group 'no.fint'
-
-bintrayUpload {
-    dependsOn assemble
-}
-
 apply from: 'https://raw.githubusercontent.com/FINTLabs/fint-buildscripts/master/reposilite.gradle'
-        key = bintrayKey
-        publish = true
-        configurations = ['archives']
-        pkg {
-            repo = 'maven'
-            userOrg = 'fint'
-            name = project.archivesBaseName
-            licenses = ['Apache-2.0']
-            vcsUrl = "https://github.com/FINTLabs/${project.archivesBaseName}"
-            version {
-                name = project.version
-            }
-        }
-    }
-}
