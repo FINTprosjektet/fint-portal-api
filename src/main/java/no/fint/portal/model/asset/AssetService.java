@@ -102,6 +102,6 @@ public class AssetService {
     }
 
     public Asset getPrimaryAsset(Organisation organisation) {
-        return getAssets(organisation).stream().filter(asset -> asset.isPrimaryAsset()).findFirst().orElse(new Asset());
+        return getAssets(organisation).stream().filter(asset -> asset.isPrimaryAsset()).findFirst().orElseThrow();
     }
 }
